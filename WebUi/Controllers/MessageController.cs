@@ -7,10 +7,10 @@ using WebUi.Models;
 
 namespace WebUi.Controllers
 {
+    [Authorize]
     public class MessageController : Controller
     {
-        //
-        // GET: /Message/
+
 
         public ActionResult Index()
         {

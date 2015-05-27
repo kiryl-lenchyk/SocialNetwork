@@ -8,6 +8,7 @@ using WebUi.Models;
 
 namespace WebUi.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService service;
