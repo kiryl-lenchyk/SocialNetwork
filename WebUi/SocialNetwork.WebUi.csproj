@@ -147,6 +147,7 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AcountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Infractracture\NinjectDependencyResolver.cs" />
@@ -271,8 +272,8 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
-    <Content Include="Views\User\Login.cshtml" />
-    <Content Include="Views\User\Register.cshtml" />
+    <Content Include="Views\Acount\Login.cshtml" />
+    <Content Include="Views\Acount\Register.cshtml" />
     <Content Include="Views\Message\Index.cshtml" />
     <Content Include="Views\User\_SexSelectList.cshtml" />
     <Content Include="Views\Message\Dialog.cshtml" />
