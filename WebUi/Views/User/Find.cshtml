@@ -1,0 +1,65 @@
+﻿@model WebUi.Models.UserFindModel
+
+@{
+    ViewBag.Title = "Find";
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryajax")
+}
+
+<h2>@ViewBag.Title.</h2>
+<hr/>
+
+@using (Ajax.BeginForm("Find", null, new AjaxOptions() {HttpMethod = "Post", UpdateTargetId = "result", InsertionMode = InsertionMode.Replace}, new {@class = "form-inline"}))
+{
+    <div class="row">
+        <div class="form-group  col-sm-4">
+            @Html.LabelFor(m => m.Name, new {@class = "control-label col-md-3"})
+            <div class="col-md-9 col-xs-12">
+                @Html.TextBoxFor(m => m.Name, new {@class = "form-control"})
+            </div>
+        </div>
+        <div class="form-group   col-sm-8">
+            @Html.LabelFor(m => m.BirthDayMin, new {@class = "control-label col-md-3"})
+            <div class="col-md-9 col-xs-12">
+                @Html.TextBoxFor(m => m.BirthDayMin, new {@class = "form-control", type = "date"})
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-4">
+            @Html.LabelFor(m => m.Surname, new {@class = "control-label col-md-3"})
+            <div class="col-md-9 col-xs-12">
+                @Html.TextBoxFor(m => m.Surname, new {@class = "form-control"})
+            </div>
+        </div>
+        <div class="form-group  col-sm-8">
+            @Html.LabelFor(m => m.BirthDayMax, new {@class = "control-label col-md-3"})
+            <div class="col-md-9 col-xs-12">
+                @Html.TextBoxFor(m => m.BirthDayMax, new {@class = "form-control", type = "date"})
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="form-group  col-sm-4">
+            @Html.LabelFor(m => m.Sex, new {@class = "control-label col-md-3"})
+            <div class="col-md-9 col-xs-12">
+                @Html.Action("SexList")
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-sm-offset-4 col-xs-offset-0">
+        <input type="submit" class=" btn btn-default" value="Find" />
+    </div>
+
+}
+
+<hr />
+<h4>Result</h4>
+<div id="result">
+
+</div>

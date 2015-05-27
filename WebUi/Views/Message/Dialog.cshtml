@@ -1,0 +1,31 @@
+﻿@model WebUi.Models.DialogViewModel
+
+@{
+    ViewBag.Title = "Dialog";
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryajax")
+}
+
+<h2>@Model.SecondUserName @Model.SecondUserSurname</h2>
+
+<div class="row">
+    @using (Ajax.BeginForm("Add", new AjaxOptions() { HttpMethod = "Post", UpdateTargetId = "messages", InsertionMode = InsertionMode.Replace}))
+    {
+        @Html.ValidationSummary(true)
+        @Html.Hidden("TargetId", Model.SecondUserId)
+    <div class="col-xs-12 col-md-12 form-group">
+        @Html.TextArea("Text", new { @class = "form-control" })
+    </div>
+        <br/>
+    <div class="col-md-2 col-md-offset-10 form-group" align="right">
+        <input type="submit" class="btn btn-default" value="Send" />
+    </div>
+    }
+</div>
+
+<div id="messages">
+    @Html.Partial("_DialogMessages", Model.Messages)
+</div>

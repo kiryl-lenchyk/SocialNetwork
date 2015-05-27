@@ -1,0 +1,26 @@
+﻿@using System.Globalization
+@using WebUi.Models
+@model System.Collections.Generic.List<WebUi.Models.UserPreviewViewModel>
+           
+@foreach (WebUi.Models.UserPreviewViewModel userPreviewViewModel in Model)
+{
+    <div class="row">
+        <div class="col-md-8 col-xs-12">
+            <div class="row">
+                <div class="col-sm-2">
+                    <img src="@Url.Action("Avatar", "User", new { id = userPreviewViewModel.Id })"
+                         alt="@string.Format("{0} {1}", userPreviewViewModel.Name, userPreviewViewModel.Surname)" width="60"
+                         height="90" class="img-thumbnail">
+                </div>
+                <div>
+                <a href="@Url.Action("Index", new {id = userPreviewViewModel.Id})"><strong>@string.Format("{0} {1}", userPreviewViewModel.Name, userPreviewViewModel.Surname)</strong> </a><br/>
+                    Birth day: @(userPreviewViewModel.BirthDay != null ? userPreviewViewModel.BirthDay.Value.ToString("M", new CultureInfo("en-US", true)) : "-")
+                    Sex: @(userPreviewViewModel.Sex != null ? userPreviewViewModel.Sex.Value.ToViewString() : "-")                       
+                </div>
+            </div>
+            <hr />
+        </div>
+    </div>
+}
+
+

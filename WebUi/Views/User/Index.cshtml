@@ -1,0 +1,57 @@
+﻿@using System.Globalization
+@using WebUi.Models
+@model WebUi.Models.UserPageViewModel
+
+@{
+    String fullName = string.Format("{0} {1}", Model.Name, Model.Surname);
+    ViewBag.Title = fullName;
+}
+
+<div class="row">
+    <div class="col-md-2 col-xs-4">
+        <img src="@Url.Action("Avatar", "User", new {id = Model.Id})" alt="@fullName" class="img-thumbnail btn-block">
+        @if (Model.CanWriteMessage)
+        {
+            @Html.ActionLink("Send message", "Dialog", "Message",
+                new {id = Model.Id}, new {@class = "btn btn-primary btn-sm btn-block "})
+
+        }
+        @if (Model.CanAddToFriends)
+        {
+            @Html.ActionLink("Add to friends", "AddToFriend", "User",
+                new {id = Model.Id}, new {@class = "btn btn-primary btn-sm btn-block"})
+
+        }
+    </div>
+    <div class="col-md-10 col-xs-8">
+        <h1 class="userName" align="center">@fullName</h1>
+        <dl class="dl-horizontal">
+            <dt>Birth day</dt>
+            <dd>@(Model.BirthDay != null ? Model.BirthDay.Value.ToString("M", new CultureInfo("en-US", true)) : "-")</dd>
+            <dt>Sex</dt>
+            <dd> @(Model.Sex != null ? Model.Sex.Value.ToViewString() : "-")</dd>
+            <dt>About</dt>
+            <dd class="bigword"> @Model.AboutUser</dd>
+        </dl>
+    </div>
+</div>
+<div class="row">
+    <h3 align="center">Friends @fullName</h3>
+</div>
+<div class="row">
+    @foreach (UserPreviewViewModel friend in Model.Friends)
+{
+    <a align="center" class="col-md-2 col-xs-4" href="@Url.Action("Index", new {id = friend.Id})">
+        <figure>
+            <p>
+                <img src="@Url.Action("Avatar", "User", new {id = friend.Id})"
+                     alt="@string.Format("{0} {1}", friend.Name, friend.Surname)" width="60"
+                     height="90" class="img-thumbnail">
+            </p>
+            <figcaption>
+                @string.Format("{0} {1}", friend.Name, friend.Surname)
+            </figcaption>
+        </figure>
+    </a>
+}
+</div>
