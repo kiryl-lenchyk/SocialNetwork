@@ -23,20 +23,20 @@ namespace SocialNetwork.Bll.Service
             this.userRepository = repository;
         }
 
-        public BllUser GetById(int key)
+        public BllUser GetById(int key, int currentUserId)
         {
             if(isDisposed) throw new ObjectDisposedException("UserService");
 
             DalUser dalUser = userRepository.GetById(key);
-            return dalUser == null ? null : dalUser.ToBllUser();
+            return dalUser == null ? null : dalUser.ToBllUser(currentUserId);
         }
 
-        public BllUser GetByName(string name)
+        public BllUser GetByName(string name, int currentUserId)
         {
             if (isDisposed) throw new ObjectDisposedException("UserService");
 
             DalUser dalUser = userRepository.GetByName(name);
-            return dalUser == null ? null : dalUser.ToBllUser();
+            return dalUser == null ? null : dalUser.ToBllUser(currentUserId);
         }
 
         public BllUser Create(BllUser e)

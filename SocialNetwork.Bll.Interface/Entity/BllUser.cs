@@ -20,16 +20,17 @@ namespace SocialNetwork.Bll.Interface.Entity
         public string AboutUser { get; set; }
 
         public string PasswordHash { get; set; }
+        
+        public bool CanCurrentUserAddToFriends { get; set; }
 
-        public string SecurityStamp { get; set; }
+        public bool CanCurrentUserWriteMessage { get; set; }
 
-        public IEnumerable<BllMessage> SendedMessages { get; set; }
+        public IEnumerable<int> SendedMessagesId { get; set; }
 
-        public IEnumerable<BllMessage> GottenMessages { get; set; }
+        public IEnumerable<int> GottenMessagesId { get; set; }
 
-        public IEnumerable<BllRole> Roles { get; set; }
+        public IEnumerable<int> RolesId { get; set; }
 
-        public IEnumerable<BllUser> Friends { get; set; }
- 
+        public IEnumerable<int> FriendsId { get; set; }
     }
 }

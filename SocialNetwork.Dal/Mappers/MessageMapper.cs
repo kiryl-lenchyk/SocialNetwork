@@ -10,10 +10,11 @@ namespace SocialNetwork.Dal.Mappers
             return new Message()
             {
                 Id = dalMessage.Id,
-                Sender = dalMessage.Sender.ToOrmUser(),
-                Target = dalMessage.Target.ToOrmUser(),
+                Sender = dalMessage.SenderId,
+                Target = dalMessage.TargetId,
                 Text = dalMessage.Text,
-                CreatingTime = dalMessage.CreatingTime
+                CreatingTime = dalMessage.CreatingTime,
+                IsReaded = dalMessage.IsReaded
             };
         }
 
@@ -22,10 +23,11 @@ namespace SocialNetwork.Dal.Mappers
             return new DalMessage()
             {
                 Id = message.Id,
-                Sender = message.Sender.ToDalUser(),
-                Target = message.Target.ToDalUser(),
+                SenderId = message.Sender,
+                TargetId = message.Target,
                 Text = message.Text,
-                CreatingTime = message.CreatingTime
+                CreatingTime = message.CreatingTime,
+                IsReaded = message.IsReaded
             };
         }
 

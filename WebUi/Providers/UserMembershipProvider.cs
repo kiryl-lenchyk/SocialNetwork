@@ -50,10 +50,10 @@ namespace WebUi.Providers
             userService =
                 (IUserService) DependencyResolver.Current.GetService(typeof (IUserService));
 
-            BllUser bllUser = userService.GetByName(username);
+            BllUser bllUser = userService.GetByName(username,-1);
             if (bllUser == null) return null;
 
-            return new MembershipUser("UserMembershipProvider", bllUser.UserName, null, null,
+            return new MembershipUser("UserMembershipProvider", bllUser.UserName, bllUser.Id, null,
                 null,
                 null, false, false, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue,
                 DateTime.MinValue, DateTime.MinValue);
@@ -71,7 +71,7 @@ namespace WebUi.Providers
             userService =
                 (IUserService) DependencyResolver.Current.GetService(typeof (IUserService));
 
-            BllUser bllUser = userService.GetByName(username);
+            BllUser bllUser = userService.GetByName(username,-1);
             return bllUser != null &&
                    Crypto.VerifyHashedPassword(bllUser.PasswordHash, password);
 

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Security;
 using SocialNetwork.Bll.Interface.Services;
+using WebUi.Infractracture.Mappers;
 using WebUi.Models;
 
 
@@ -18,29 +20,28 @@ namespace WebUi.Controllers
             this.service = service;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(int? id)
         {
-            return View(new UserPageViewModel
-            {
-                Name = "Name",
-                Surname = "Surname",
-                CanAddToFriends = true,
-                CanWriteMessage = true,
-                AboutUser = new String('A', 200),
-                BirthDay = new DateTime(2000,1,5),
-                Sex = Sex.Mail,
-                Friends =
-                    new List<UserPreviewViewModel>
-                    {
-                        new UserPreviewViewModel {Id = 1, Name = "Friend1", Surname = "Sur1"},
-                        new UserPreviewViewModel {Id = 2, Name = "Friend2", Surname = "Sur2"},
-                        new UserPreviewViewModel {Id = 3, Name = "Friend3", Surname = "Sur3"},
-                        new UserPreviewViewModel {Id = 4, Name = "Friend4", Surname = "Sur4"}
-                    }
-            });
+            int userId = id ?? GetCurrentUserId();
+
+            return View(service.GetById(userId,GetCurrentUserId()).ToUserPageViewModel(service));
         }
 
-        
+        private int GetCurrentUserId()
+        {
+            MembershipUser membershipUser = Membership.GetUser(HttpContext.User.Identity.Name);
+            if (membershipUser != null)
+            {
+                object providerUserKey = membershipUser.ProviderUserKey;
+                if (providerUserKey != null)
+                {
+                   return (int) providerUserKey;
+                }
+            }
+            return 1;
+        }
+
+
         public ActionResult Avatar(int id)
         {
             return File(HttpContext.Server.MapPath(@"~/App_Data/Empty.png"), "image/png");

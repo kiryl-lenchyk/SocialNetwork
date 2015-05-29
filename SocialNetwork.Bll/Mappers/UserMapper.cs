@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Dal.Interface.DTO;
 
@@ -7,9 +8,9 @@ namespace SocialNetwork.Bll.Mappers
 {
     public static class UserMapper
     {
-        public static BllUser ToBllUser(this DalUser  dalUser)
+        public static BllUser ToBllUser(this DalUser  dalUser, int currentUserId = -1)
         {
-            return new BllUser()
+            BllUser bllUser = new BllUser()
             {
                 Id = dalUser.Id,
                 UserName = dalUser.UserName,
@@ -19,12 +20,14 @@ namespace SocialNetwork.Bll.Mappers
                 Sex = dalUser.Sex != null ? (BllSex?)(int)dalUser.Sex.Value : null,
                 AboutUser = dalUser.AboutUser,
                 PasswordHash = dalUser.PasswordHash,
-                SecurityStamp = dalUser.SecurityStamp,
-                SendedMessages = dalUser.SendedMessages == null ? new List<BllMessage>() : dalUser.SendedMessages.Select(x =>x.ToBllMessage()).ToList(),
-                GottenMessages = dalUser.GottenMessages == null ? new List<BllMessage>() : dalUser.GottenMessages.Select(x => x.ToBllMessage()).ToList(),
-                Roles = dalUser.Roles == null ? new List<BllRole>() : dalUser.Roles.Select(x => x.ToBllRole()).ToList(),
-                Friends = dalUser.Friends == null ? new List<BllUser>() : dalUser.Friends.Select(x => x.ToBllUser()).ToList()
+                CanCurrentUserAddToFriends = dalUser.Id != currentUserId && dalUser.FriendsId.Count(x => x == currentUserId) == 0,
+                SendedMessagesId = dalUser.SendedMessagesId,
+                GottenMessagesId = dalUser.GottenMessagesId,
+                RolesId = dalUser.RolesId,
+                FriendsId = dalUser.FriendsId
             };
+            bllUser.CanCurrentUserWriteMessage =  dalUser.Id != currentUserId && !bllUser.CanCurrentUserAddToFriends;
+            return bllUser;
         }
 
         public static DalUser ToDalUser(this BllUser bllUser)
@@ -39,11 +42,10 @@ namespace SocialNetwork.Bll.Mappers
                 Sex = bllUser.Sex != null ? (DalSex?)(int)bllUser.Sex.Value : null,
                 AboutUser = bllUser.AboutUser,
                 PasswordHash = bllUser.PasswordHash,
-                SecurityStamp = bllUser.SecurityStamp,
-                SendedMessages = bllUser.SendedMessages == null ? new List<DalMessage>() : bllUser.SendedMessages.Select(x =>x.ToDalMessage()).ToList(),
-                GottenMessages = bllUser.GottenMessages == null ? new List<DalMessage>() : bllUser.GottenMessages.Select(x => x.ToDalMessage()).ToList(),
-                Roles = bllUser.Roles == null ? new List<DalRole>() : bllUser.Roles.Select(x => x.ToDalRole()).ToList(),
-                Friends = bllUser.Friends == null ? new List<DalUser>() : bllUser.Friends.Select(x => x.ToDalUser()).ToList()
+                SendedMessagesId = bllUser.SendedMessagesId,
+                GottenMessagesId = bllUser.GottenMessagesId,
+                RolesId = bllUser.RolesId,
+                FriendsId = bllUser.FriendsId
             };
         }
 

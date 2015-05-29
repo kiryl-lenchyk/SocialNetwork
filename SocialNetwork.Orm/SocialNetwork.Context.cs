@@ -13,10 +13,10 @@ namespace SocialNetwork.Orm
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class SocialNetworkDatabase : DbContext
+    public partial class SocialNetworkDatabaseEntities : DbContext
     {
-        public SocialNetworkDatabase()
-            : base("name=SocialNetworkDatabase")
+        public SocialNetworkDatabaseEntities()
+            : base("name=SocialNetworkDatabaseEntities")
         {
         }
     

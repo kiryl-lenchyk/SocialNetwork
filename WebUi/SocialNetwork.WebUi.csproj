@@ -150,6 +150,7 @@
     <Compile Include="Controllers\AcountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Infractracture\Mappers\UserMapper.cs" />
     <Compile Include="Infractracture\NinjectDependencyResolver.cs" />
     <Compile Include="Models\DialogPreviewModel.cs" />
     <Compile Include="Models\DialogViewModel.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Providers\UserMembershipProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Empty.png" />
     <Content Include="App_Data\SocialNetworkDatabase.mdf" />
     <Content Include="App_Data\SocialNetworkDatabase_log.ldf">
       <DependentUpon>SocialNetworkDatabase.mdf</DependentUpon>

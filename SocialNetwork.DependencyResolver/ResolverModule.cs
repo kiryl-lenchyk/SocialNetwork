@@ -21,7 +21,7 @@ namespace SocialNetwork.DependencyResolver
         public static void ConfigurateResolver(this IKernel kernel)
         {
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>().InRequestScope();
-            kernel.Bind<DbContext>().To<SocialNetworkDatabase>().InRequestScope();
+            kernel.Bind<DbContext>().To<SocialNetworkDatabaseEntities>().InRequestScope();
             kernel.Bind<IUserService>().To<UserService>();
             kernel.Bind<IUserRepository>().To<UserRepository>();
         }

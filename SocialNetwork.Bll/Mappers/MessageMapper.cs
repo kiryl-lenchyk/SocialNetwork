@@ -10,10 +10,11 @@ namespace SocialNetwork.Bll.Mappers
             return new DalMessage()
             {
                 Id = bllMessage.Id,
-                Sender = bllMessage.Sender.ToDalUser(),
-                Target = bllMessage.Target.ToDalUser(),
+                SenderId = bllMessage.SenderId,
+                TargetId = bllMessage.TargetId,
                 Text = bllMessage.Text,
-                CreatingTime = bllMessage.CreatingTime
+                CreatingTime = bllMessage.CreatingTime,
+                IsReaded = bllMessage.IsReaded
             };
         }
 
@@ -22,10 +23,12 @@ namespace SocialNetwork.Bll.Mappers
             return new BllMessage()
             {
                 Id = dalMessage.Id,
-                Sender = dalMessage.Sender.ToBllUser(),
-                Target = dalMessage.Target.ToBllUser(),
+                SenderId = dalMessage.SenderId,
+                TargetId = dalMessage.TargetId,
                 Text = dalMessage.Text,
-                CreatingTime = dalMessage.CreatingTime
+                CreatingTime = dalMessage.CreatingTime,
+                IsReaded = dalMessage.IsReaded
+
             };
         }
 

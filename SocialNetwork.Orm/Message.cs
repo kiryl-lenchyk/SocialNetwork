@@ -15,12 +15,10 @@ namespace SocialNetwork.Orm
     public partial class Message
     {
         public int Id { get; set; }
-        public int SenderId { get; set; }
-        public int TargetId { get; set; }
+        public int Sender { get; set; }
+        public int Target { get; set; }
         public string Text { get; set; }
         public System.DateTime CreatingTime { get; set; }
-    
-        public virtual User Sender { get; set; }
-        public virtual User Target { get; set; }
+        public bool IsReaded { get; set; }
     }
 }

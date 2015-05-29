@@ -9,9 +9,9 @@ namespace SocialNetwork.Bll.Interface.Services
 {
     public interface IUserService : IDisposable
     {
-        BllUser GetById(int key);
+        BllUser GetById(int key, int currentUserId);
 
-        BllUser GetByName(String name);
+        BllUser GetByName(String name, int currentUserId);
 
         BllUser Create(BllUser e);
 
