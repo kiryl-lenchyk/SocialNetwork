@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
+using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Infractracture.Mappers;
 using WebUi.Models;
@@ -23,8 +24,9 @@ namespace WebUi.Controllers
         public ActionResult Index(int? id)
         {
             int userId = id ?? GetCurrentUserId();
-
-            return View(service.GetById(userId,GetCurrentUserId()).ToUserPageViewModel(service));
+            BllUser user = service.GetById(userId, GetCurrentUserId());
+            if (user == null) return HttpNotFound();
+            return View(user.ToUserPageViewModel(service));
         }
 
         private int GetCurrentUserId()
