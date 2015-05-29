@@ -20,8 +20,13 @@
         {
             @Html.ActionLink("Add to friends", "AddToFriend", "User",
                 new {id = Model.Id}, new {@class = "btn btn-primary btn-sm btn-block"})
-
         }
+        else if(Model.UserName != User.Identity.Name)
+        {
+            @Html.ActionLink("Remove friend", "RemoveFriend", "User",
+                     new { id = Model.Id }, new { @class = "btn btn-danger btn-sm btn-block"} )
+        }
+
     </div>
     <div class="col-md-10 col-xs-8">
         <h1 class="userName" align="center">@fullName</h1>

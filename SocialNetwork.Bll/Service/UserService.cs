@@ -49,11 +49,49 @@ namespace SocialNetwork.Bll.Service
             return dalUser == null ? null : dalUser.ToBllUser();
         }
 
+        public void AddFriend(int currentUserId, int newFriendId)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserService");
+
+
+            DalUser currentUser = userRepository.GetById(currentUserId);
+            if (currentUser == null) throw new ArgumentException(String.Format("User id = {0} is no existst", currentUserId), "currentUserId");
+            DalUser newFriend = userRepository.GetById(newFriendId);
+            if (newFriend == null) throw new ArgumentException(String.Format("User id = {0} is no existst", newFriendId),"newFriendId");
+            if(currentUser.FriendsId.Contains(newFriendId)) throw new InvalidOperationException("Users are friends");
+            
+            userRepository.AddToFriends(currentUser, newFriend);
+            uow.Commit();
+        }
+
+        public void RemoveFriend(int currentUserId, int newFriendId)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserService");
+
+
+            DalUser currentUser = userRepository.GetById(currentUserId);
+            if (currentUser == null) throw new ArgumentException(String.Format("User id = {0} is no existst", currentUserId), "currentUserId");
+            DalUser newFriend = userRepository.GetById(newFriendId);
+            if (newFriend == null) throw new ArgumentException(String.Format("User id = {0} is no existst", newFriendId), "newFriendId");
+            if (!currentUser.FriendsId.Contains(newFriendId)) throw new InvalidOperationException("Users are not friends");
+
+            userRepository.RemoveFriend(currentUser, newFriend);
+            uow.Commit();
+        }
+
         public bool IsUserExists(string userName)
         {
             if (isDisposed) throw new ObjectDisposedException("UserService");
 
             return userRepository.GetByName(userName) != null;
+        }
+
+        public bool IsUserExists(int id)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserService");
+
+            return userRepository.GetById(id) != null;
+        
         }
 
         public void Delete(BllUser e)

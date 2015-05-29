@@ -11,5 +11,9 @@ namespace SocialNetwork.Dal.Interface.Repository
     public interface IUserRepository : IRepository<DalUser>
     {
         DalUser GetByName(String name);
+
+        void AddToFriends(DalUser currentUser, DalUser newFriend);
+
+        void RemoveFriend(DalUser currentUser, DalUser newFriend);
     }
 }

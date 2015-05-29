@@ -50,6 +50,7 @@ namespace WebUi.Controllers
         }
 
         [ChildActionOnly]
+        [AllowAnonymous]
         public ActionResult SexList()
         {
             var emptyValue = new SelectListItem()
@@ -92,6 +93,20 @@ namespace WebUi.Controllers
         {
             service.Dispose();
             base.Dispose(disposing);
+        }
+
+        public ActionResult AddToFriend(int id)
+        {
+            if (!service.IsUserExists(id)) return HttpNotFound();
+            service.AddFriend(GetCurrentUserId(), id);
+            return RedirectToAction("Index", new{id = id});
+        }
+
+        public ActionResult RemoveFriend(int id)
+        {
+            if (!service.IsUserExists(id)) return HttpNotFound();
+            service.RemoveFriend(GetCurrentUserId(), id);
+            return RedirectToAction("Index", new { id = id });
         }
     }
 }

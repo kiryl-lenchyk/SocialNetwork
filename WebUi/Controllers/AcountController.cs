@@ -11,6 +11,7 @@ using WebUi.Providers;
 
 namespace WebUi.Controllers
 {
+    [AllowAnonymous]
     public class AcountController : Controller
     {
         private readonly IUserService service;
@@ -53,6 +54,7 @@ namespace WebUi.Controllers
             return RedirectToAction("Login");
         }
 
+        [HttpGet]
         public ActionResult Register()
         {
             return View();

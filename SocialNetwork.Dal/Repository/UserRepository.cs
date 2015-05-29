@@ -50,6 +50,30 @@ namespace SocialNetwork.Dal.Repository
             return ormUser != null ? ormUser.ToDalUser() : null;
         }
 
+        public void AddToFriends(DalUser currentUser, DalUser newFriend)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserRepository");
+
+            User ormCurrentUser = context.Set<User>().SingleOrDefault( x => x.Id ==  currentUser.Id);
+            context.Entry(ormCurrentUser).Collection(x => x.Friends).Load();
+            User ormNewFriend = context.Set<User>().SingleOrDefault(x => x.Id == newFriend.Id);
+            context.Entry(ormNewFriend).Collection(x => x.Friends).Load();
+            ormCurrentUser.Friends.Add(ormNewFriend);
+            ormNewFriend.Friends.Add(ormCurrentUser);
+        }
+
+        public void RemoveFriend(DalUser currentUser, DalUser newFriend)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserRepository");
+
+            User ormCurrentUser = context.Set<User>().SingleOrDefault( x => x.Id ==  currentUser.Id);
+            context.Entry(ormCurrentUser).Collection(x => x.Friends).Load();
+            User ormNewFriend = context.Set<User>().SingleOrDefault(x => x.Id == newFriend.Id);
+            context.Entry(ormNewFriend).Collection(x => x.Friends).Load();
+            ormCurrentUser.Friends.Remove(ormNewFriend);
+            ormNewFriend.Friends.Remove(ormCurrentUser);
+        }
+
         public DalUser GetByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
