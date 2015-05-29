@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExpressionMappers\GenericExpressionMapper.cs" />
+    <Compile Include="ExpressionMappers\SimpleExpressionReplacer .cs" />
+    <Compile Include="ExpressionMappers\ToDalUserExpressionMapper.cs" />
     <Compile Include="Mappers\MessageMapper.cs" />
     <Compile Include="Mappers\RoleMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />

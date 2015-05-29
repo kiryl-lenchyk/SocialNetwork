@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
+using SocialNetwork.Dal.ExpressionMappers;
 using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
 using SocialNetwork.Dal.Mappers;
@@ -78,11 +79,8 @@ namespace SocialNetwork.Dal.Repository
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            Expression<Func<User, DalUser>> convert = user => user.ToDalUser();
-            var param = Expression.Parameter(typeof(User), "user");
-            var body = Expression.Invoke(predicate,
-                  Expression.Invoke(convert, param));
-            var convertedPredicate = Expression.Lambda<Func<User, bool>>(body, param);
+            Expression<Func<User, bool>> convertedPredicate =
+                (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
 
             User ormUser = context.Set<User>().FirstOrDefault(convertedPredicate);
             return ormUser != null ? ormUser.ToDalUser() : null;
