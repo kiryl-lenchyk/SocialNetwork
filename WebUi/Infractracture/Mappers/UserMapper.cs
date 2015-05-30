@@ -39,5 +39,10 @@ namespace WebUi.Infractracture.Mappers
             };
         }
 
+        public static BllSex? ToNullableBllSex(this Sex? viewSex)
+        {
+            return viewSex != null ? (BllSex?) (int) viewSex : null;
+        }
+
     }
 }

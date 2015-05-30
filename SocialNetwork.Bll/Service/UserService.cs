@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Mappers;
@@ -67,8 +69,7 @@ namespace SocialNetwork.Bll.Service
         public void RemoveFriend(int currentUserId, int newFriendId)
         {
             if (isDisposed) throw new ObjectDisposedException("UserService");
-
-
+            
             DalUser currentUser = userRepository.GetById(currentUserId);
             if (currentUser == null) throw new ArgumentException(String.Format("User id = {0} is no existst", currentUserId), "currentUserId");
             DalUser newFriend = userRepository.GetById(newFriendId);
@@ -78,6 +79,56 @@ namespace SocialNetwork.Bll.Service
             userRepository.RemoveFriend(currentUser, newFriend);
             uow.Commit();
         }
+
+        public IEnumerable<BllUser> FindUsers(string name, string surname, DateTime? birthDayMin, DateTime? birthDayMax,
+            BllSex? sex)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserService");
+
+            Expression<Func<DalUser, bool>> predicate = GetFindPredicate(name, surname, birthDayMin,
+                birthDayMax, sex);
+            return userRepository.GetAllByPredicate(predicate).Select(x => x.ToBllUser());
+        }
+
+        private static Expression<Func<DalUser, bool>> GetFindPredicate(string name, string surname,
+            DateTime? birthDayMin,
+            DateTime? birthDayMax, BllSex? sex)
+        {
+            ParameterExpression parametr = Expression.Parameter(typeof (DalUser), "dalUser");
+            Expression body = Expression.Constant(true, typeof (bool));
+
+            if (!String.IsNullOrEmpty(name))
+                body = AddFindPredicateExpression(name,typeof(String), body, parametr, "Name", Expression.Equal);
+            if (!String.IsNullOrEmpty(surname))
+                body = AddFindPredicateExpression(surname,typeof(String), body, parametr, "Surname",
+                    Expression.Equal);
+            if (sex != null)
+                body = AddFindPredicateExpression(sex.ToDalSex(),typeof(DalSex?), body, parametr, "Sex", Expression.Equal);
+            if (birthDayMin != null)
+                body = AddFindPredicateExpression(birthDayMin,typeof(DateTime?), body, parametr, "BirthDay",
+                    Expression.GreaterThanOrEqual);
+            if (birthDayMax != null)
+                body = AddFindPredicateExpression(birthDayMax, typeof(DateTime?), body, parametr, "BirthDay",
+                    Expression.LessThanOrEqual);
+
+            Expression<Func<DalUser, bool>> predicate =
+                Expression.Lambda<Func<DalUser, bool>>(
+                    body, parametr);
+            return predicate;
+        }
+
+
+        private static Expression AddFindPredicateExpression(object value, Type valuType, Expression body,
+            ParameterExpression parametr, string propertyName, 
+            Func<Expression,Expression,BinaryExpression> compareRule )
+        {
+            return Expression.And(body,
+                    compareRule(
+                        Expression.MakeMemberAccess(parametr, typeof(DalUser).GetProperty(propertyName)),
+                        Expression.Constant(value, valuType)));
+        }
+
+      
 
         public bool IsUserExists(string userName)
         {

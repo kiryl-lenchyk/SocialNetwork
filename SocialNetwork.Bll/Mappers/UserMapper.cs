@@ -39,7 +39,7 @@ namespace SocialNetwork.Bll.Mappers
                 Name = bllUser.Name,
                 Surname = bllUser.Surname,
                 BirthDay = bllUser.BirthDay,
-                Sex = bllUser.Sex != null ? (DalSex?)(int)bllUser.Sex.Value : null,
+                Sex = bllUser.Sex.ToDalSex(),
                 AboutUser = bllUser.AboutUser,
                 PasswordHash = bllUser.PasswordHash,
                 SendedMessagesId = bllUser.SendedMessagesId,
@@ -47,6 +47,11 @@ namespace SocialNetwork.Bll.Mappers
                 RolesId = bllUser.RolesId,
                 FriendsId = bllUser.FriendsId
             };
+        }
+
+        public static DalSex? ToDalSex(this BllSex? bllSex)
+        {
+            return bllSex != null ? (DalSex?) (int) bllSex.Value : null;
         }
 
     }

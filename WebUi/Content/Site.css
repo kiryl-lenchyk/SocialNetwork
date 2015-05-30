@@ -18,6 +18,10 @@ header, footer, nav, section {
     margin-top: 0;
 }
 
+.loading {
+   display: none;
+}
+
 /* Styles for basic forms
 -----------------------------------------------------------*/
 fieldset {

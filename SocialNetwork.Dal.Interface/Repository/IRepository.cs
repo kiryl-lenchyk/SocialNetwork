@@ -16,6 +16,8 @@ namespace SocialNetwork.Dal.Interface.Repository
 
         TEntity GetByPredicate(Expression<Func<TEntity, bool>> f);
 
+        IEnumerable<TEntity> GetAllByPredicate(Expression<Func<TEntity, bool>> f);
+
         TEntity Create(TEntity e);
 
         void Delete(TEntity e);

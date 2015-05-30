@@ -28,6 +28,7 @@ namespace WebUi
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                      "~/Content/bootstrap.css",
+                      "~/Content/glyphicon-animate.css",
                      "~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(

@@ -19,6 +19,9 @@ namespace SocialNetwork.Bll.Interface.Services
 
         void RemoveFriend(int currentUserId, int newFriendId);
 
+        IEnumerable<BllUser> FindUsers(string name, string surname, DateTime? birthDayMin,
+            DateTime? birthDayMax, BllSex? sex);
+
         bool IsUserExists(String userName);
 
         bool IsUserExists(int id);

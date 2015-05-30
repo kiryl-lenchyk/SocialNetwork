@@ -6,7 +6,7 @@ using System.Web;
 
 namespace WebUi.Models
 {
-    public class UserFindModel
+    public class UserFinViewModel
     {
         public String Name { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using System.Web.Security;
 using SocialNetwork.Bll.Interface.Entity;
@@ -73,18 +74,15 @@ namespace WebUi.Controllers
 
         public ActionResult Find()
         {
-            return View(new UserFindModel());
+            return View(new UserFinViewModel());
         }
 
         [HttpPost]
-        public ActionResult Find(UserFindModel model)
+        public ActionResult Find(UserFinViewModel model)
         {
-            List<UserPreviewViewModel> partialModel = new List<UserPreviewViewModel>()
-            {
-                new UserPreviewViewModel(){Id = 1, BirthDay = model.BirthDayMin,Name = model.Name,Surname = model.Surname,Sex = model.Sex},
-                new UserPreviewViewModel(){Id = 2, BirthDay = new DateTime(2015,7,8),Name = "name1",Surname = "Surname1",Sex = Sex.Mail},
-                new UserPreviewViewModel(){Id = 3, BirthDay = new DateTime(2015,8,8),Name = "Name2",Surname = "Surname2",Sex = Sex.Third},
-            };
+            IEnumerable<UserPreviewViewModel> partialModel =
+                service.FindUsers(model.Name, model.Surname, model.BirthDayMin, model.BirthDayMax,
+                    model.Sex.ToNullableBllSex()).Select(x => x.ToUserPreviewViewModel()).ToList();
 
             return PartialView("_FindResult",partialModel);
         }

@@ -55,22 +55,26 @@ namespace SocialNetwork.Dal.Repository
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            User ormCurrentUser = context.Set<User>().SingleOrDefault( x => x.Id ==  currentUser.Id);
-            context.Entry(ormCurrentUser).Collection(x => x.Friends).Load();
-            User ormNewFriend = context.Set<User>().SingleOrDefault(x => x.Id == newFriend.Id);
-            context.Entry(ormNewFriend).Collection(x => x.Friends).Load();
+            User ormCurrentUser = GetOrmUserWithFriends(currentUser);
+            User ormNewFriend = GetOrmUserWithFriends(newFriend);
             ormCurrentUser.Friends.Add(ormNewFriend);
             ormNewFriend.Friends.Add(ormCurrentUser);
+        }
+
+        private User GetOrmUserWithFriends(DalUser dalUser)
+        {
+            User ormCurrentUser = context.Set<User>().SingleOrDefault(x => x.Id == dalUser.Id);
+            if (ormCurrentUser == null) throw new ArgumentException("User has incorrect id");
+            context.Entry(ormCurrentUser).Collection(x => x.Friends).Load();
+            return ormCurrentUser;
         }
 
         public void RemoveFriend(DalUser currentUser, DalUser newFriend)
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            User ormCurrentUser = context.Set<User>().SingleOrDefault( x => x.Id ==  currentUser.Id);
-            context.Entry(ormCurrentUser).Collection(x => x.Friends).Load();
-            User ormNewFriend = context.Set<User>().SingleOrDefault(x => x.Id == newFriend.Id);
-            context.Entry(ormNewFriend).Collection(x => x.Friends).Load();
+            User ormCurrentUser = GetOrmUserWithFriends(currentUser);
+            User ormNewFriend = GetOrmUserWithFriends(newFriend);
             ormCurrentUser.Friends.Remove(ormNewFriend);
             ormNewFriend.Friends.Remove(ormCurrentUser);
         }
@@ -84,6 +88,14 @@ namespace SocialNetwork.Dal.Repository
 
             User ormUser = context.Set<User>().FirstOrDefault(convertedPredicate);
             return ormUser != null ? ormUser.ToDalUser() : null;
+        }
+
+        public IEnumerable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
+        {
+            Expression<Func<User, bool>> convertedPredicate =
+                (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
+
+            return context.Set<User>().Where( convertedPredicate).ToList().Select(x => x.ToDalUser());
         }
 
         public DalUser Create(DalUser e)
