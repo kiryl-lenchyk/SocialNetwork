@@ -49,6 +49,7 @@ namespace SocialNetwork.Bll.Mappers
             };
         }
 
+
         public static DalSex? ToDalSex(this BllSex? bllSex)
         {
             return bllSex != null ? (DalSex?) (int) bllSex.Value : null;

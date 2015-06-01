@@ -25,30 +25,27 @@ namespace SocialNetwork.Dal.Repository
             this.context = context;
         }
 
-        public IEnumerable<DalUser> GetAll()
+        public IQueryable<DalUser> GetAll()
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            foreach (User user in context.Set<User>())
-            {
-                yield return user.ToDalUser();
-            }
+            return context.Set<User>().Select(UserMapper.ToDalUserConverter); 
         }
 
         public DalUser GetById(int key)
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == key);
-            return ormUser != null ? ormUser.ToDalUser() : null;
+            return context.Set<User>().Select(UserMapper.ToDalUserConverter).FirstOrDefault(x => x.Id == key);
+           // return ormUser != null ? ormUser.ToDalUser() : null;
         }
 
         public DalUser GetByName(String name)
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            User ormUser = context.Set<User>().FirstOrDefault(x => x.UserName == name);
-            return ormUser != null ? ormUser.ToDalUser() : null;
+            return context.Set<User>().Select(UserMapper.ToDalUserConverter).FirstOrDefault(x => x.UserName == name);
+           // return ormUser != null ? ormUser.ToDalUser() : null;
         }
 
         public void AddToFriends(DalUser currentUser, DalUser newFriend)
@@ -90,12 +87,12 @@ namespace SocialNetwork.Dal.Repository
             return ormUser != null ? ormUser.ToDalUser() : null;
         }
 
-        public IEnumerable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
+        public IQueryable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
 
-            return context.Set<User>().Where( convertedPredicate).ToList().Select(x => x.ToDalUser());
+            return context.Set<User>().Where( convertedPredicate).Select(UserMapper.ToDalUserConverter);
         }
 
         public DalUser Create(DalUser e)

@@ -80,10 +80,11 @@ namespace WebUi.Controllers
         [HttpPost]
         public ActionResult Find(UserFinViewModel model)
         {
-            IEnumerable<UserPreviewViewModel> partialModel =
+            List<UserPreviewViewModel> partialModel =
                 service.FindUsers(model.Name, model.Surname, model.BirthDayMin, model.BirthDayMax,
                     model.Sex.ToNullableBllSex()).Select(x => x.ToUserPreviewViewModel()).ToList();
-
+          int a =  service.FindUsers(model.Name, model.Surname, model.BirthDayMin, model.BirthDayMax,
+                model.Sex.ToNullableBllSex()).Count();
             return PartialView("_FindResult",partialModel);
         }
 

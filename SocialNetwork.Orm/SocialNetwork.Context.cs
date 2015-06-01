@@ -18,6 +18,7 @@ namespace SocialNetwork.Orm
         public SocialNetworkDatabaseEntities()
             : base("name=SocialNetworkDatabaseEntities")
         {
+            
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

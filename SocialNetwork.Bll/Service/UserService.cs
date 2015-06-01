@@ -80,14 +80,13 @@ namespace SocialNetwork.Bll.Service
             uow.Commit();
         }
 
-        public IEnumerable<BllUser> FindUsers(string name, string surname, DateTime? birthDayMin, DateTime? birthDayMax,
-            BllSex? sex)
+        public IEnumerable<BllUser> FindUsers(string name, string surname, DateTime? birthDayMin, DateTime? birthDayMax, BllSex? sex)
         {
             if (isDisposed) throw new ObjectDisposedException("UserService");
 
             Expression<Func<DalUser, bool>> predicate = GetFindPredicate(name, surname, birthDayMin,
                 birthDayMax, sex);
-            return userRepository.GetAllByPredicate(predicate).Select(x => x.ToBllUser());
+            return userRepository.GetAllByPredicate(predicate).ToList().Select(x => x.ToBllUser());
         }
 
         private static Expression<Func<DalUser, bool>> GetFindPredicate(string name, string surname,
