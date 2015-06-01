@@ -92,6 +92,8 @@ namespace SocialNetwork.Dal.Repository
 
         public IEnumerable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
+            if (isDisposed) throw new ObjectDisposedException("UserRepository");
+
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
 

@@ -52,10 +52,12 @@
   <ItemGroup>
     <Compile Include="ExpressionMappers\GenericExpressionMapper.cs" />
     <Compile Include="ExpressionMappers\SimpleExpressionReplacer .cs" />
-    <Compile Include="ExpressionMappers\ToDalUserExpressionMapper.cs" />
+    <Compile Include="ExpressionMappers\MessageExpressionMapper.cs" />
+    <Compile Include="ExpressionMappers\UserExpressionMapper.cs" />
     <Compile Include="Mappers\MessageMapper.cs" />
     <Compile Include="Mappers\RoleMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
+    <Compile Include="Repository\MessageRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitOfWork.cs" />
