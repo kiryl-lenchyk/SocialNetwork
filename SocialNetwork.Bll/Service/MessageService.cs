@@ -62,6 +62,14 @@ namespace SocialNetwork.Bll.Service
             };
         }
 
+        public void CreateMessage(BllMessage message)
+        {
+            if (isDisposed) throw new ObjectDisposedException("MessageService");
+
+            messageRepository.Create(message.ToDalMessage());
+            uow.Commit();
+        }
+
         public void Dispose()
         {
             if (!isDisposed)

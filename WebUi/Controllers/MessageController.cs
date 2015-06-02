@@ -44,75 +44,23 @@ namespace WebUi.Controllers
         [HttpPost]
         public ActionResult Add(int targetId, String text)
         {
-            var model = new List<MessageViewModel>
+            if (!userService.IsUserExists(targetId)) return HttpNotFound();
+            int currentUserId = MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
+            messageService.CreateMessage(new BllMessage
             {
-                new MessageViewModel()
-                {
-                    UserId = 1,
-                    UserName = "Sender",
-                    UserSurname = "SenderS",
-                    Text = new String('A', 50),
-                    CreaingTime = DateTime.Now,
-                    IsSended = true
-                },
-                new MessageViewModel()
-                {
-                    UserId = 2,
-                    UserName = "You",
-                    UserSurname = "YouS",
-                    Text = new String('B', 50),
-                    CreaingTime = DateTime.Now.AddSeconds(35),
-                    IsSended = false
-                },
-                new MessageViewModel()
-                {
-                    UserId = 1,
-                    UserName = "Sender",
-                    UserSurname = "SenderS",
-                    Text = new String('C', 50),
-                    CreaingTime = DateTime.Now.AddSeconds(70),
-                    IsSended = true
-                },
-                new MessageViewModel()
-                {
-                    UserId = 2,
-                    UserName = "You",
-                    UserSurname = "YouS",
-                    Text = new String('D', 50),
-                    CreaingTime = DateTime.Now.AddSeconds(105),
-                    IsSended = false
-                },
-                new MessageViewModel()
-                {
-                    UserId = targetId,
-                    UserName = "Sender",
-                    UserSurname = "SenderS",
-                    Text = new String('E', 50),
-                    CreaingTime = DateTime.Now.AddSeconds(140),
-                    IsSended = true
-                },
-                new MessageViewModel()
-                {
-                    UserId = 2,
-                    UserName = "You",
-                    UserSurname = "YouS",
-                    Text = new String('F', 50),
-                    CreaingTime = DateTime.Now.AddSeconds(175),
-                    IsSended = false
-                },
-                new MessageViewModel()
-                {
-                    UserId =  2,
-                    UserName = "You",
-                    UserSurname = "YouS",
-                    Text = text,
-                    CreaingTime = DateTime.Now,
-                    IsSended = false
-                }
-            };
+                CreatingTime = DateTime.Now,
+                IsReaded = false,
+                SenderId = currentUserId,
+                TargetId = targetId,
+                Text = text
+            });
 
 
-            return PartialView("_DialogMessages", model);
+            return PartialView("_DialogMessages", messageService.GetUsersDialog(
+                userService.GetById(currentUserId, currentUserId),
+                userService.GetById(targetId, currentUserId))
+                .ToDialogViewModel(currentUserId)
+                .Messages);
         }
 
         protected override void Dispose(bool disposing)

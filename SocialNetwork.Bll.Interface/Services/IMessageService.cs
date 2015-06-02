@@ -12,5 +12,7 @@ namespace SocialNetwork.Bll.Interface.Services
         IEnumerable<BllDialog> GetUserDialogs(int userId);
 
         BllDialog GetUsersDialog(BllUser firstUser, BllUser secondUser);
+
+        void CreateMessage(BllMessage message);
     }
 }
