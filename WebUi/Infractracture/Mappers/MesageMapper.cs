@@ -23,5 +23,35 @@ namespace WebUi.Infractracture.Mappers
             };
         }
 
+        public static DialogViewModel ToDialogViewModel(this BllDialog dialog, int currentUserId)
+        {
+            BllUser interlocutor = dialog.FirstUser.Id == currentUserId
+               ? dialog.SecondUser
+               : dialog.FirstUser;
+            return new DialogViewModel()
+            {
+                SecondUserId = interlocutor.Id,
+                SecondUserName = interlocutor.Name,
+                SecondUserSurname = interlocutor.Surname,
+                Messages = dialog.Messages.Select(x => x.ToMessageViewModel(currentUserId,dialog))
+            };
+        }
+
+        public static MessageViewModel ToMessageViewModel(this BllMessage message, int currentUserId, BllDialog dialog)
+        {
+            BllUser sender = message.SenderId == dialog.FirstUser.Id
+                ? dialog.FirstUser
+                : dialog.SecondUser;
+            return new MessageViewModel()
+            {
+                CreaingTime = message.CreatingTime,
+                Text = message.Text,
+                UserId = sender.Id,
+                UserName = sender.Name,
+                UserSurname = sender.Surname,
+                IsSended = sender.Id == currentUserId
+            };
+        }
+
     }
 }
