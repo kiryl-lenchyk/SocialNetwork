@@ -23,8 +23,8 @@ namespace WebUi.Infractracture.Mappers
                 CanAddToFriends = bllUser.CanCurrentUserAddToFriends,
                 CanWriteMessage = bllUser.CanCurrentUserWriteMessage,
                 UserName = bllUser.UserName,
-                Friends = bllUser.FriendsId.Select(x => userService.GetById(x,-1).ToUserPreviewViewModel())
-            };
+                Friends = bllUser.FriendsId.Select(x => userService.GetById(x,-1).ToUserPreviewViewModel()),
+             };
         }
 
         public static UserPreviewViewModel ToUserPreviewViewModel(this BllUser bllUser)

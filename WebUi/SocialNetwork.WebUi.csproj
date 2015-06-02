@@ -150,6 +150,7 @@
     <Compile Include="Controllers\AcountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Infractracture\Mappers\MesageMapper.cs" />
     <Compile Include="Infractracture\Mappers\UserMapper.cs" />
     <Compile Include="Infractracture\NinjectDependencyResolver.cs" />
     <Compile Include="Models\DialogPreviewModel.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Models\UserPageViewModel.cs" />
     <Compile Include="Models\UserPreviewViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\MembershipHelper.cs" />
     <Compile Include="Providers\UserMembershipProvider.cs" />
   </ItemGroup>
   <ItemGroup>

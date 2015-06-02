@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Ninject;
 using Ninject.Web.Common;
+using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Service;
 using SocialNetwork.Dal;
 using SocialNetwork.Dal.Interface;
+using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
 using SocialNetwork.Dal.Repository;
 using SocialNetwork.Orm;
@@ -24,6 +26,8 @@ namespace SocialNetwork.DependencyResolver
             kernel.Bind<DbContext>().To<SocialNetworkDatabaseEntities>().InRequestScope();
             kernel.Bind<IUserService>().To<UserService>();
             kernel.Bind<IUserRepository>().To<UserRepository>();
+            kernel.Bind<IRepository<DalMessage>>().To<MessageRepository>();
+            kernel.Bind<IMessageService>().To<MessageService>();
         }
     }
 }

@@ -42,6 +42,7 @@
     <Compile Include="Mappers\MessageMapper.cs" />
     <Compile Include="Mappers\RoleMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
+    <Compile Include="Service\MessageService.cs" />
     <Compile Include="Service\UserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

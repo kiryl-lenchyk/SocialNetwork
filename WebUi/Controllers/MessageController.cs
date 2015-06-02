@@ -3,26 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SocialNetwork.Bll.Interface.Services;
+using WebUi.Infractracture.Mappers;
 using WebUi.Models;
+using WebUi.Providers;
 
 namespace WebUi.Controllers
 {
     [Authorize]
     public class MessageController : Controller
     {
+          private readonly IMessageService service;
 
+        public MessageController(IMessageService service)
+        {
+            this.service = service;
+        }
 
         public ActionResult Index()
         {
-            List<DialogPreviewModel> model = new List<DialogPreviewModel>()
-            {
-                new DialogPreviewModel(){UserId = 1, UserName = "Name1", UserSurname = "Surname1", LastMessage = new String('A',50)},
-                new DialogPreviewModel(){UserId = 2, UserName = "Name2", UserSurname = "Surname2", LastMessage = new String('B',50)},
-                new DialogPreviewModel(){UserId = 3, UserName = "Name3", UserSurname = "Surname3", LastMessage = new String('C',50)},
-                new DialogPreviewModel(){UserId = 4, UserName = "Name4", UserSurname = "Surname4", LastMessage = new String('D',50)}
-            };
-
-            return View(model);
+            int currentUserId = MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
+            return View(service.GetUserDialogs(currentUserId).Select(x => x.ToDialogPreviewModel(currentUserId)));
         }
 
         public ActionResult Dialog(int id)
@@ -165,5 +166,12 @@ namespace WebUi.Controllers
 
             return PartialView("_DialogMessages", model);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            service.Dispose();
+            base.Dispose(disposing);
+        }
+
     }
 }

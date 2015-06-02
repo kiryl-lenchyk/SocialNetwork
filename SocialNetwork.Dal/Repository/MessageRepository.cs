@@ -4,8 +4,6 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using SocialNetwork.Dal.ExpressionMappers;
 using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
@@ -65,7 +63,7 @@ namespace SocialNetwork.Dal.Repository
 
             return context.Set<Message>().Where(convertedPredicate).ToList().Select(x => x.ToDalMessage());
         }
-
+        
         public DalMessage Create(DalMessage e)
         {
             if (isDisposed) throw new ObjectDisposedException("MessageRepository");
@@ -97,5 +95,7 @@ namespace SocialNetwork.Dal.Repository
                 isDisposed = true;
             }
         }
+
+       
     }
 }

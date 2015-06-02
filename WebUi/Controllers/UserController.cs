@@ -8,6 +8,7 @@ using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Infractracture.Mappers;
 using WebUi.Models;
+using WebUi.Providers;
 
 
 namespace WebUi.Controllers
@@ -24,25 +25,13 @@ namespace WebUi.Controllers
 
         public ActionResult Index(int? id)
         {
-            int userId = id ?? GetCurrentUserId();
-            BllUser user = service.GetById(userId, GetCurrentUserId());
+            int userId = id ?? MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
+            BllUser user = service.GetById(userId, MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name));
             if (user == null) return HttpNotFound();
             return View(user.ToUserPageViewModel(service));
         }
 
-        private int GetCurrentUserId()
-        {
-            MembershipUser membershipUser = Membership.GetUser(HttpContext.User.Identity.Name);
-            if (membershipUser != null)
-            {
-                object providerUserKey = membershipUser.ProviderUserKey;
-                if (providerUserKey != null)
-                {
-                   return (int) providerUserKey;
-                }
-            }
-            return 1;
-        }
+        
 
 
         public ActionResult Avatar(int id)
@@ -80,7 +69,7 @@ namespace WebUi.Controllers
         [HttpPost]
         public ActionResult Find(UserFinViewModel model)
         {
-            IEnumerable<UserPreviewViewModel> partialModel =
+            List<UserPreviewViewModel> partialModel =
                 service.FindUsers(model.Name, model.Surname, model.BirthDayMin, model.BirthDayMax,
                     model.Sex.ToNullableBllSex()).Select(x => x.ToUserPreviewViewModel()).ToList();
 
@@ -96,14 +85,14 @@ namespace WebUi.Controllers
         public ActionResult AddToFriend(int id)
         {
             if (!service.IsUserExists(id)) return HttpNotFound();
-            service.AddFriend(GetCurrentUserId(), id);
+            service.AddFriend(MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name), id);
             return RedirectToAction("Index", new{id = id});
         }
 
         public ActionResult RemoveFriend(int id)
         {
             if (!service.IsUserExists(id)) return HttpNotFound();
-            service.RemoveFriend(GetCurrentUserId(), id);
+            service.RemoveFriend(MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name), id);
             return RedirectToAction("Index", new { id = id });
         }
     }
