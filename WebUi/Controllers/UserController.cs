@@ -41,7 +41,7 @@ namespace WebUi.Controllers
 
         [ChildActionOnly]
         [AllowAnonymous]
-        public ActionResult SexList()
+        public ActionResult SexList(Sex? selected)
         {
             var emptyValue = new SelectListItem()
             {
@@ -54,16 +54,17 @@ namespace WebUi.Controllers
                 .Select( sexValue =>
                         new SelectListItem()
                         {
+                            Selected = sexValue == selected,
                             Text = sexValue.ToViewString(),
                             Value = sexValue.ToString()
                         })).ToList());
-            return PartialView("_SexSelectList", new SelectList(sexItems, "Value", "Text", emptyValue));
+            return PartialView("_SexSelectList", new SelectList(sexItems, "Value", "Text", selected == null ? "" : selected.ToString()));
 
         }
 
         public ActionResult Find()
         {
-            return View(new UserFinViewModel());
+            return View();
         }
 
         [HttpPost]

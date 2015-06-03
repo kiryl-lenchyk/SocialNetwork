@@ -37,6 +37,7 @@ build/
 *.tli
 *.tlh
 *.tmp
+*.mdf
 *.tmp_proj
 *.log
 *.vspscc

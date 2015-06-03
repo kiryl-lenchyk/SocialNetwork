@@ -39,6 +39,33 @@ namespace WebUi.Infractracture.Mappers
             };
         }
 
+        public static EdirAccountViewModel ToEdirAccountViewModel(this BllUser bllUser)
+        {
+            return new EdirAccountViewModel()
+            {
+                Id = bllUser.Id,
+                BirthDay = bllUser.BirthDay,
+                Name = bllUser.Name,
+                Surname = bllUser.Surname,
+                Sex = bllUser.Sex != null ? (Sex?)(int)bllUser.Sex : null,
+                AboutUser = bllUser.AboutUser
+            };
+        }
+
+        public static BllUser ToBllUser(this EdirAccountViewModel edirAccountViewModel)
+        {
+            return new BllUser()
+            {
+                Id = edirAccountViewModel.Id,
+                BirthDay = edirAccountViewModel.BirthDay,
+                Name = edirAccountViewModel.Name,
+                Surname = edirAccountViewModel.Surname,
+                Sex = edirAccountViewModel.Sex != null ? (BllSex?)(int)edirAccountViewModel.Sex : null,
+                AboutUser = edirAccountViewModel.AboutUser
+            };
+        }
+
+
         public static BllSex? ToNullableBllSex(this Sex? viewSex)
         {
             return viewSex != null ? (BllSex?) (int) viewSex : null;

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
+using WebUi.Infractracture.Mappers;
 using WebUi.Models;
 using WebUi.Providers;
 
@@ -84,6 +85,36 @@ namespace WebUi.Controllers
                 ModelState.AddModelError("", "Registration error");
                 
             }  
+            return View(model);
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult Edit()
+        {
+            return View(service.GetByName(User.Identity.Name,-1).ToEdirAccountViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult Edit(EdirAccountViewModel model)
+        {
+           
+            if (ModelState.IsValid)
+            {
+                BllUser newUser = model.ToBllUser();
+                BllUser oldUser = service.GetById(model.Id, -1);
+                if (oldUser == null) return HttpNotFound();
+
+                newUser.UserName = oldUser.UserName;
+                newUser.PasswordHash = oldUser.PasswordHash;
+                service.Update(newUser);
+
+                ViewBag.StatusMessage = "User information successfully changed";
+                return View(model);
+            }
             return View(model);
         }
 

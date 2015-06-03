@@ -156,6 +156,7 @@
     <Compile Include="Models\DialogPreviewModel.cs" />
     <Compile Include="Models\DialogViewModel.cs" />
     <Compile Include="Models\MessageViewModel.cs" />
+    <Compile Include="Models\EditAccountViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -285,6 +286,7 @@
     <Content Include="Views\Message\_DialogMessages.cshtml" />
     <Content Include="Views\User\Find.cshtml" />
     <Content Include="Views\User\_FindResult.cshtml" />
+    <Content Include="Views\Acount\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
