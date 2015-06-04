@@ -37,5 +37,8 @@ namespace WebUi.Models
         
         [Display(Name = "About you")]
         public String AboutUser { get; set; }
+
+        [Required]
+        public string Captcha { get; set; }
     }
 }

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
+using WebUi.Infractracture;
 using WebUi.Infractracture.Mappers;
 using WebUi.Models;
 using WebUi.Providers;
@@ -65,6 +69,12 @@ namespace WebUi.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(RegisterViewModel model, HttpPostedFileWrapper avatar)
         {
+            if (model.Captcha != (string)Session[CaptchaImage.captchaValueKey])
+            {
+                ModelState.AddModelError("Captcha", "Incorrect text from image");
+                return View(model);
+            }
+
             if (service.IsUserExists(model.UserName))
             {
                 ModelState.AddModelError("UserName", "User with this name already exists");
@@ -149,6 +159,21 @@ namespace WebUi.Controllers
             return View(model);
         }
 
+
+        public ActionResult Captcha()
+        {
+            Session[CaptchaImage.captchaValueKey] =
+                new Random(DateTime.Now.Millisecond).Next(1111, 9999).ToString(CultureInfo.InvariantCulture);
+            
+            using(CaptchaImage captcha = 
+                new CaptchaImage(Session[CaptchaImage.captchaValueKey].ToString(), 211, 50, "Helvetica"))
+            {
+                Response.Clear();
+                Response.ContentType = "image/jpeg";
+                captcha.Image.Save(this.Response.OutputStream, ImageFormat.Jpeg);
+            }
+            return null;
+        }
 
         private    ActionResult RedirectToLocal(string url)
         {

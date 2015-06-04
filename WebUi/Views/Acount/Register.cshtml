@@ -7,23 +7,23 @@
 
 <h2>@ViewBag.Title.</h2>
 
-@using (Html.BeginForm("Register", "Acount", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Register", "Acount", FormMethod.Post, new {@class = "form-horizontal", role = "form", enctype = "multipart/form-data"}))
 {
     @Html.AntiForgeryToken()
     <h4>Create a new account.</h4>
-    <hr />
+    <hr/>
     @Html.ValidationSummary()
 
     <div class="form-group">
-        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+        @Html.LabelFor(m => m.UserName, new {@class = "col-md-2 control-label"})
         <div class="col-md-8 col-xs-10">
-            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.UserName, new {@class = "form-control"})
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+        @Html.LabelFor(m => m.Password, new {@class = "col-md-2 control-label"})
         <div class="col-md-8 col-xs-10">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            @Html.PasswordFor(m => m.Password, new {@class = "form-control"})
         </div>
     </div>
     <div class="form-group">
@@ -43,18 +43,18 @@
         @Html.LabelFor(m => m.Surname, new {@class = "col-md-2 control-label"})
         <div class="col-md-8 col-xs-10">
             @Html.TextBoxFor(m => m.Surname, new {@class = "form-control"})
-        </div>  
+        </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.BirthDay, new {@class = "col-md-2 control-label"})
         <div class="col-md-8 col-xs-10">
-            @Html.TextBoxFor(m => m.BirthDay, new {@class = "form-control", type="date"})
+            @Html.TextBoxFor(m => m.BirthDay, new {@class = "form-control", type = "date"})
         </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Sex, new {@class = "col-md-2 control-label"})
         <div class="col-md-8 col-xs-10">
-            @Html.Action("SexList","User")
+            @Html.Action("SexList", "User")
         </div>
     </div>
     <div class="form-group">
@@ -70,8 +70,20 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-md-2 control-label">Enter text from image</label>
+        <div class="col-md-8 col-xs-10">
+                <label>
+                    <img src="@Url.Action("Captcha", "Acount")" alt="captcha"/>
+                </label>
+
+                @Html.TextBoxFor(model => model.Captcha, new { @class = "form-control col-md-4" })
+                @Html.ValidationMessageFor(model => model.Captcha)
+
+            </div>
+    </div>
+    <div class="form-group">
         <div class="col-xs-offset-2 col-md-8 col-xs-10">
-            <input type="submit" class="btn btn-default" value="Register" />
+            <input type="submit" class="btn btn-default" value="Register"/>
         </div>
     </div>
 }

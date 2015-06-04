@@ -150,6 +150,7 @@
     <Compile Include="Controllers\AcountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Infractracture\CaptchaImage.cs" />
     <Compile Include="Infractracture\Mappers\MesageMapper.cs" />
     <Compile Include="Infractracture\Mappers\UserMapper.cs" />
     <Compile Include="Infractracture\NinjectDependencyResolver.cs" />
@@ -174,10 +175,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Avatars\noavatar.png" />
-    <Content Include="App_Data\SocialNetworkDatabase.mdf" />
-    <Content Include="App_Data\SocialNetworkDatabase_log.ldf">
-      <DependentUpon>SocialNetworkDatabase.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
