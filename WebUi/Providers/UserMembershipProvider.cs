@@ -42,7 +42,16 @@ namespace WebUi.Providers
 
         public override bool ChangePassword(string username, string oldPassword, string newPassword)
         {
-            throw new System.NotImplementedException();
+            userService =
+               (IUserService)DependencyResolver.Current.GetService(typeof(IUserService));
+
+            BllUser bllUser = userService.GetByName(username, -1);
+            if (bllUser == null) return false;
+
+            if (!Crypto.VerifyHashedPassword(bllUser.PasswordHash, oldPassword)) return false;
+            bllUser.PasswordHash = Crypto.HashPassword(newPassword);
+            userService.Update(bllUser);
+            return true;
         }
 
         public override MembershipUser GetUser(string username, bool userIsOnline)

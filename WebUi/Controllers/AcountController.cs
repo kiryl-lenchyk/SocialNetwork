@@ -117,9 +117,35 @@ namespace WebUi.Controllers
             }
             return View(model);
         }
+        
+        [HttpGet]
+        [Authorize]
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Membership.Provider.ChangePassword(User.Identity.Name, model.OldPassword,
+                    model.NewPassword))
+                {
+
+                    ViewBag.StatusMessage = "Password successfully changed";
+                    return View(model);
+                }
+            }
+            ModelState.AddModelError("", "Incorrect password");
+            return View(model);
+        }
 
 
-        private ActionResult RedirectToLocal(string url)
+        private    ActionResult RedirectToLocal(string url)
         {
             if (Url.IsLocalUrl(url))
             {

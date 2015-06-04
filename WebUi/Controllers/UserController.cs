@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Web.Mvc;
-using System.Web.Security;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Infractracture.Mappers;

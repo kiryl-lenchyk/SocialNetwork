@@ -153,6 +153,7 @@
     <Compile Include="Infractracture\Mappers\MesageMapper.cs" />
     <Compile Include="Infractracture\Mappers\UserMapper.cs" />
     <Compile Include="Infractracture\NinjectDependencyResolver.cs" />
+    <Compile Include="Models\ChangePasswordViewModel.cs" />
     <Compile Include="Models\DialogPreviewModel.cs" />
     <Compile Include="Models\DialogViewModel.cs" />
     <Compile Include="Models\MessageViewModel.cs" />
@@ -287,6 +288,7 @@
     <Content Include="Views\User\Find.cshtml" />
     <Content Include="Views\User\_FindResult.cshtml" />
     <Content Include="Views\Acount\Edit.cshtml" />
+    <Content Include="Views\Acount\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
