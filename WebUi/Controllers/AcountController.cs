@@ -63,7 +63,7 @@ namespace WebUi.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
+        public ActionResult Register(RegisterViewModel model, HttpPostedFileWrapper avatar)
         {
             if (service.IsUserExists(model.UserName))
             {
@@ -80,6 +80,9 @@ namespace WebUi.Controllers
                 if (membershipUser != null)
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, false);
+
+                    if (avatar != null) service.SetUserAvatar((int)membershipUser.ProviderUserKey, avatar.InputStream);
+
                     return RedirectToAction("Index", "User");
                 }
                 ModelState.AddModelError("", "Registration error");
@@ -99,7 +102,7 @@ namespace WebUi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Edit(EdirAccountViewModel model)
+        public ActionResult Edit(EdirAccountViewModel model, HttpPostedFileWrapper avatar)
         {
            
             if (ModelState.IsValid)
@@ -111,6 +114,8 @@ namespace WebUi.Controllers
                 newUser.UserName = oldUser.UserName;
                 newUser.PasswordHash = oldUser.PasswordHash;
                 service.Update(newUser);
+
+                if (avatar != null) service.SetUserAvatar(model.Id, avatar.InputStream);
 
                 ViewBag.StatusMessage = "User information successfully changed";
                 return View(model);

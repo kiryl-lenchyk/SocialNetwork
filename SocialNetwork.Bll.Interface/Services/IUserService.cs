@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,10 @@ namespace SocialNetwork.Bll.Interface.Services
         void Delete(BllUser e);
 
         void Update(BllUser e);
+
+        void SetUserAvatar(int userId, Stream avatarStream);
+
+        Stream GetUserAvatarStream(int userId);
 
     }
 }

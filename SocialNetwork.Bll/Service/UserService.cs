@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using SocialNetwork.Bll.Interface.Entity;
@@ -159,6 +160,22 @@ namespace SocialNetwork.Bll.Service
 
             userRepository.Update(e.ToDalUser());
             uow.Commit();
+        }
+
+        public void SetUserAvatar(int userId, Stream avatarStream)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserService");
+
+            userRepository.SetUserAvatar(userId,avatarStream);
+            uow.Commit();
+        }
+
+        public Stream GetUserAvatarStream(int userId)
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserService");
+
+            Stream avatarStream = userRepository.GetUserAvatarStream(userId);
+            return avatarStream ?? userRepository.GetDefaultAvatarStream();
         }
 
         public void Dispose()

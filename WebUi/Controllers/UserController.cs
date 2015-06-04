@@ -34,7 +34,7 @@ namespace WebUi.Controllers
 
         public ActionResult Avatar(int id)
         {
-            return File(HttpContext.Server.MapPath(@"~/App_Data/Empty.png"), "image/png");
+            return File(service.GetUserAvatarStream(id),  "image/png");
         }
 
         [ChildActionOnly]

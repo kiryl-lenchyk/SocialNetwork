@@ -11,7 +11,7 @@
     <p class="success">@ViewBag.StatusMessage</p>
 }
 
-@using (Html.BeginForm("Edit", "Acount", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("Edit", "Acount", FormMethod.Post, new { @class = "form-horizontal", role = "form" ,enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     <hr />
@@ -42,9 +42,15 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.AboutUser, new { @class = "col-md-2 control-label" })
+        @Html.LabelFor(m => m.AboutUser, new {@class = "col-md-2 control-label"})
         <div class="col-md-8 col-xs-10">
-            @Html.TextAreaFor(m => m.AboutUser, new { @class = "form-control" })
+            @Html.TextAreaFor(m => m.AboutUser, new {@class = "form-control"})
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label" for="avatar">Upload avatar</label>
+        <div class="col-md-8 col-xs-10">
+            <input type="file" name="avatar" id="avatar"  class="form-control" />
         </div>
     </div>
     <div class="form-group">
@@ -53,3 +59,4 @@
         </div>
     </div>
 }
+

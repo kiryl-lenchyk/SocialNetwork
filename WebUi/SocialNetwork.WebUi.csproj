@@ -173,7 +173,7 @@
     <Compile Include="Providers\UserMembershipProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\Empty.png" />
+    <Content Include="App_Data\Avatars\noavatar.png" />
     <Content Include="App_Data\SocialNetworkDatabase.mdf" />
     <Content Include="App_Data\SocialNetworkDatabase_log.ldf">
       <DependentUpon>SocialNetworkDatabase.mdf</DependentUpon>
