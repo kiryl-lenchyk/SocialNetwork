@@ -22,6 +22,18 @@ header, footer, nav, section {
    display: none;
 }
 
+.admin-menu {
+    background: #ffeeee;
+    margin-top: 10px;
+    margin-right: 10px;
+    padding-bottom: 10px;
+    border-radius: 5px;
+}
+
+thead {
+    background: #ffeeee;
+}
+
 /* Styles for basic forms
 -----------------------------------------------------------*/
 fieldset {

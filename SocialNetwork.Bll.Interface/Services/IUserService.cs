@@ -23,6 +23,8 @@ namespace SocialNetwork.Bll.Interface.Services
         IEnumerable<BllUser> FindUsers(string name, string surname, DateTime? birthDayMin,
             DateTime? birthDayMax, BllSex? sex);
 
+        IEnumerable<BllUser> GetAllUsers();
+
         bool IsUserExists(String userName);
 
         bool IsUserExists(int id);

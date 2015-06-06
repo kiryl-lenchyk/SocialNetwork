@@ -91,6 +91,13 @@ namespace SocialNetwork.Bll.Service
             return userRepository.GetAllByPredicate(predicate).Select(x => x.ToBllUser());
         }
 
+        public IEnumerable<BllUser> GetAllUsers()
+        {
+            if (isDisposed) throw new ObjectDisposedException("UserService");
+
+            return userRepository.GetAll().Select(x => x.ToBllUser());
+        }
+
         private static Expression<Func<DalUser, bool>> GetFindPredicate(string name, string surname,
             DateTime? birthDayMin,
             DateTime? birthDayMax, BllSex? sex)
