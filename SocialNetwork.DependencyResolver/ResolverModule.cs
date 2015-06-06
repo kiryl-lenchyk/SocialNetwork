@@ -28,6 +28,8 @@ namespace SocialNetwork.DependencyResolver
             kernel.Bind<IUserRepository>().To<UserRepository>();
             kernel.Bind<IRepository<DalMessage>>().To<MessageRepository>();
             kernel.Bind<IMessageService>().To<MessageService>();
+            kernel.Bind<IRoleService>().To<RoleService>();
+            kernel.Bind<IRoleRepository>().To<RoleRepository>();
         }
     }
 }

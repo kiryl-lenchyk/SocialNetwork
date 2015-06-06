@@ -15,6 +15,10 @@ namespace SocialNetwork.Dal.ExpressionMappers
 
         private readonly Dictionary<MemberInfo, LambdaExpression> mappings;
 
+        internal GenericExpressionMapper() : this(new Dictionary<MemberInfo, LambdaExpression>())
+        {
+        }
+
         internal GenericExpressionMapper(Dictionary<MemberInfo, LambdaExpression> mappings)
         {
             this.mappings = mappings;

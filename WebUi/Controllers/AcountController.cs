@@ -89,6 +89,7 @@ namespace WebUi.Controllers
 
                 if (membershipUser != null)
                 {
+                    Roles.AddUserToRole(model.UserName, "User");
                     FormsAuthentication.SetAuthCookie(model.UserName, false);
 
                     if (avatar != null) service.SetUserAvatar((int)membershipUser.ProviderUserKey, avatar.InputStream);
