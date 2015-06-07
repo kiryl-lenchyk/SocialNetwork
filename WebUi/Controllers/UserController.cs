@@ -94,5 +94,7 @@ namespace WebUi.Controllers
             service.RemoveFriend(MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name), id);
             return RedirectToAction("Index", new { id = id });
         }
+
+       
     }
 }

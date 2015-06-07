@@ -163,7 +163,9 @@ namespace SocialNetwork.Dal.Repository
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            context.Set<User>().Remove(e.ToOrmUser());
+            User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == e.Id);
+            if (ormUser == null) throw new ArgumentException("User has incorrect id");
+            context.Set<User>().Remove(ormUser);
         }
 
         public void Update(DalUser e)

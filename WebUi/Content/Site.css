@@ -30,6 +30,11 @@ header, footer, nav, section {
     border-radius: 5px;
 }
 
+.control-readonly-label {
+    margin-bottom: 0;
+    text-align: right;
+}
+
 thead {
     background: #ffeeee;
 }

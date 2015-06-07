@@ -69,6 +69,17 @@ namespace SocialNetwork.Bll.Service
             roleRepository.RmoveUserFromRole(user, role);
         }
 
+        public void UpdateUserRoles(string username, IEnumerable<int> rolesIds)
+        {
+            if (isDisposed) throw new ObjectDisposedException("RoleService");
+
+            DalUser  user = userRepository.GetByName(username);
+            if (user == null) return;
+            RemoveUserFromRoles(user,rolesIds);
+            user = userRepository.GetByName(username);
+            AddUserInewRoles(user,rolesIds);
+        }
+
         public IEnumerable<BllUser> GetUsersInRole(string roleName)
         {
             if (isDisposed) throw new ObjectDisposedException("RoleService");
@@ -84,6 +95,30 @@ namespace SocialNetwork.Bll.Service
             if (isDisposed) throw new ObjectDisposedException("RoleService");
 
             return roleRepository.GetAll().Select(x => x.ToBllRole());
+        }
+
+        private void RemoveUserFromRoles(DalUser user, IEnumerable<int> newRoles)
+        {
+            var rolesForRemove = user.RolesId.Where(x => !newRoles.Contains(x)).ToList();
+            foreach (int oldRoleId in rolesForRemove)
+            {
+                DalRole role = roleRepository.GetById(oldRoleId);
+                if (role != null)
+                    RemoveUserFromRole(user.UserName, role.Name);
+            }
+        }
+
+        private void AddUserInewRoles(DalUser user, IEnumerable<int> newRoles)
+        {
+            foreach (int newRoleId in newRoles)
+            {
+                if (!user.RolesId.Contains(newRoleId))
+                {
+                    DalRole role = roleRepository.GetById(newRoleId);
+                    if (role != null)
+                        AddUserInRole(user.UserName, role.Name);
+                }
+            }
         }
 
         public void Dispose()

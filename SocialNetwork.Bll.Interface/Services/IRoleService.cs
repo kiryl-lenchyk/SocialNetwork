@@ -17,6 +17,8 @@ namespace SocialNetwork.Bll.Interface.Services
 
         void RemoveUserFromRole(string username, string roleName);
 
+        void UpdateUserRoles(string username, IEnumerable<int> rolesIds);
+
         IEnumerable<BllUser> GetUsersInRole(string roleName);
 
         IEnumerable<BllRole> GetAllRoles();
