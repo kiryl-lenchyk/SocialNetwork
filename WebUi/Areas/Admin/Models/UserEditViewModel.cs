@@ -33,7 +33,7 @@ namespace WebUi.Areas.Admin.Models
         [Display(Name = "About you")]
         public String AboutUser { get; set; }
 
-        public List<Role> AllRoles { get; set; }
+        public List<RoleViewModel> AllRoles { get; set; }
         public List<int> UserRolesIds { get; set; }
         public int[] SelectedRoles { get; set; } 
     }

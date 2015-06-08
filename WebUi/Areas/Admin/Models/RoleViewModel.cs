@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WebUi.Areas.Admin.Models
 {
-    public class Role
+    public class RoleViewModel
     {
         public int Id { get; set; }
 

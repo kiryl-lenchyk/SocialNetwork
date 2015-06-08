@@ -154,7 +154,7 @@
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Mappers\RoleMappers.cs" />
     <Compile Include="Areas\Admin\Mappers\UserMappers.cs" />
-    <Compile Include="Areas\Admin\Models\Role.cs" />
+    <Compile Include="Areas\Admin\Models\RoleViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UserEditViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UserPreviewViewModel.cs" />
     <Compile Include="Controllers\AcountController.cs" />

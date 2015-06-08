@@ -9,9 +9,9 @@ namespace WebUi.Areas.Admin.Mappers
 {
     public static  class RoleMappers
     {
-        public static Role ToRoleView(this BllRole bllRole )
+        public static RoleViewModel ToRoleView(this BllRole bllRole )
         {
-            return new Role()
+            return new RoleViewModel()
             {
                 Id = bllRole.Id,
                 Name = bllRole.Name
