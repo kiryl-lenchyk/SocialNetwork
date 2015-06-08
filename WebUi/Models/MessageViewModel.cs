@@ -18,5 +18,7 @@ namespace WebUi.Models
         public DateTime CreaingTime { get; set; }
 
         public bool IsSended { get; set; }
+
+        public bool IsReaded { get; set; }
     }
 }

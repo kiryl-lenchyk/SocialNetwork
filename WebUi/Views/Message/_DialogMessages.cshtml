@@ -16,7 +16,7 @@
                         <a href="@Url.Action("Index", new {id = messageView.UserId})"><strong>@string.Format("{0} {1}", messageView.UserName, messageView.UserSurname)</strong> </a>
                         @messageView.CreaingTime.ToShortTimeString() <br/>
                     </div>
-                    <div class="bigword">@HttpUtility.HtmlEncode(messageView.Text)</div>
+                    <div class="bigword @(messageView.IsReaded ? "" : "admin-message") ">@messageView.Text</div>
 
                 </div>
             </div>

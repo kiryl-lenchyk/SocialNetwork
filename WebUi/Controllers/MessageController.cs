@@ -34,12 +34,16 @@ namespace WebUi.Controllers
             int currentUserId = MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
             BllUser secondUser = userService.GetById(id, currentUserId);
             if (secondUser == null) return HttpNotFound();
-            return
-                View(
-                    messageService.GetUsersDialog(
-                        userService.GetById(currentUserId, currentUserId),
-                        secondUser).ToDialogViewModel(currentUserId));
+
+            BllDialog dialog = messageService.GetUsersDialog(
+                userService.GetById(currentUserId, currentUserId),
+                secondUser);
+            MarkDialogAsReaded(id, dialog);
+
+            return View(dialog.ToDialogViewModel(currentUserId));
         }
+
+        
 
         [HttpPost]
         public ActionResult Add(int targetId, String text)
@@ -63,9 +67,27 @@ namespace WebUi.Controllers
                 .Messages);
         }
 
+        [ChildActionOnly]
+        public ActionResult NotReadedMessages()
+        {
+            return
+                PartialView("_NotReadedMessages",
+                    messageService.GetUserNotReadedMessagesCount(
+                        MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name)));
+        }
+
+        private void MarkDialogAsReaded(int id, BllDialog dialog)
+        {
+            foreach (BllMessage message in dialog.Messages.Where(x => x.SenderId == id && !x.IsReaded))
+            {
+                messageService.MarkAsReaded(message);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             messageService.Dispose();
+            userService.Dispose();
             base.Dispose(disposing);
         }
 

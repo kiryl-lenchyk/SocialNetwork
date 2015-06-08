@@ -23,5 +23,9 @@ namespace SocialNetwork.Bll.Interface.Services
         void EditMessage(BllMessage message, String editorName);
 
         void DeleteMessage(BllMessage message, String editorName);
+
+        int GetUserNotReadedMessagesCount(int userId);
+
+        void MarkAsReaded(BllMessage message);
     }
 }

@@ -98,6 +98,22 @@ namespace SocialNetwork.Bll.Service
             uow.Commit();
         }
 
+        public int GetUserNotReadedMessagesCount(int userId)
+        {
+            if (isDisposed) throw new ObjectDisposedException("MessageService");
+
+            return messageRepository.GetAllByPredicate(x => x.TargetId == userId && !x.IsReaded).Count();
+        }
+
+        public void MarkAsReaded(BllMessage message)
+        {
+            if (isDisposed) throw new ObjectDisposedException("MessageService");
+
+            message.IsReaded = true;
+            messageRepository.Update(message.ToDalMessage());
+            uow.Commit();
+        }
+
         public IEnumerable<BllMessage> GetAllMessages()
         {
             if (isDisposed) throw new ObjectDisposedException("MessageService");

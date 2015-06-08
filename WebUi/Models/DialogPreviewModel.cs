@@ -15,5 +15,7 @@ namespace WebUi.Models
 
         public String LastMessage { get; set; }
 
+        public bool IsReaded { get; set; }
+
     }
 }

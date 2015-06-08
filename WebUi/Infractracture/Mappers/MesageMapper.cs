@@ -14,12 +14,14 @@ namespace WebUi.Infractracture.Mappers
             BllUser interlocutor = dialog.FirstUser.Id == currentUserId
                 ? dialog.SecondUser
                 : dialog.FirstUser;
+            BllMessage lastMessage = dialog.Messages.First();
             return new DialogPreviewModel()
             {
                 UserId = interlocutor.Id,
                 UserName = interlocutor.Name,
                 UserSurname = interlocutor.Surname,
-                LastMessage = dialog.Messages.First().Text
+                LastMessage = lastMessage.Text,
+                IsReaded = lastMessage.SenderId == currentUserId || lastMessage.IsReaded
             };
         }
 
@@ -49,7 +51,8 @@ namespace WebUi.Infractracture.Mappers
                 UserId = sender.Id,
                 UserName = sender.Name,
                 UserSurname = sender.Surname,
-                IsSended = sender.Id == currentUserId
+                IsSended = sender.Id == currentUserId,
+                IsReaded = sender.Id == currentUserId || message.IsReaded
             };
         }
 
