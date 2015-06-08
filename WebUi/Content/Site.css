@@ -12,6 +12,7 @@ header, footer, nav, section {
 
 .bigword {
     word-break: break-all;
+    white-space: pre-line;
 }
 
 .userName {
@@ -30,6 +31,14 @@ header, footer, nav, section {
     border-radius: 5px;
 }
 
+.admin-message {
+    background: #f0eeee;
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 .control-readonly-label {
     margin-bottom: 0;
     text-align: right;
@@ -37,6 +46,10 @@ header, footer, nav, section {
 
 thead {
     background: #ffeeee;
+}
+
+a {
+    color: #000000;
 }
 
 /* Styles for basic forms

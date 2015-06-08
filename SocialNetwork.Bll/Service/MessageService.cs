@@ -30,6 +30,14 @@ namespace SocialNetwork.Bll.Service
             this.userRepository = userRepository;
         }
 
+        public BllMessage GetById(int id)
+        {
+            if (isDisposed) throw new ObjectDisposedException("MessageService");
+
+            DalMessage dalMessage = messageRepository.GetById(id);
+            return dalMessage == null ? null : dalMessage.ToBllMessage();
+        }
+
         public IEnumerable<BllDialog> GetUserDialogs(int userId)
         {
             if (isDisposed) throw new ObjectDisposedException("MessageService");
@@ -68,6 +76,33 @@ namespace SocialNetwork.Bll.Service
 
             messageRepository.Create(message.ToDalMessage());
             uow.Commit();
+        }
+
+        public void EditMessage(BllMessage message, string editorName)
+        {
+            if (isDisposed) throw new ObjectDisposedException("MessageService");
+
+            message.Text += String.Format("\r\n[Text edited by {0} at {1}]", editorName,
+                DateTime.Now.ToString("g"));
+            messageRepository.Update(message.ToDalMessage());
+            uow.Commit();
+        }
+
+        public void DeleteMessage(BllMessage message, string editorName)
+        {
+            if (isDisposed) throw new ObjectDisposedException("MessageService");
+
+            message.Text = String.Format("[Message deleted by {0} at {1}]", editorName,
+               DateTime.Now.ToString("g"));
+            messageRepository.Update(message.ToDalMessage());
+            uow.Commit();
+        }
+
+        public IEnumerable<BllMessage> GetAllMessages()
+        {
+            if (isDisposed) throw new ObjectDisposedException("MessageService");
+
+            return messageRepository.GetAll().OrderByDescending(x => x.CreatingTime).Select(x => x.ToBllMessage());
         }
 
         public void Dispose()

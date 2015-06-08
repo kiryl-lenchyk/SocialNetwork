@@ -17,12 +17,10 @@
                          alt="@string.Format("{0} {1}", dialogPreviewModel.UserName, dialogPreviewModel.UserSurname)" width="60"
                          height="90" class="img-thumbnail">
                 </div>
-                <div>
-                    <a href="@Url.Action("Dialog",new {id = dialogPreviewModel.UserId})"><strong>@string.Format("{0} {1}", dialogPreviewModel.UserName, dialogPreviewModel.UserSurname)</strong> </a><br/>
-                    <div class="bigword">
-                        @dialogPreviewModel.LastMessage
-                    </div>
-                    
+                <div class="col-xs-10">
+                    <a href="@Url.Action("Dialog",new {id = dialogPreviewModel.UserId})"><strong>@string.Format("{0} {1}", dialogPreviewModel.UserName, dialogPreviewModel.UserSurname)</strong> </a><br />
+                    <div class="bigword">@dialogPreviewModel.LastMessage</div>
+
                 </div>
             </div>
             

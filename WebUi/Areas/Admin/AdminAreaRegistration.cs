@@ -17,7 +17,7 @@ namespace WebUi.Areas.Admin
             context.MapRoute(
                 "Admin_default",
                 "Admin/{controller}/{action}/{id}",
-                new {  action = "Index", id = UrlParameter.Optional }
+                new {controller = "User",action = "Index", id = UrlParameter.Optional }
             );
         }
     }
