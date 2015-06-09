@@ -34,10 +34,7 @@ namespace SocialNetwork.Dal.Repository
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            foreach (User user in context.Set<User>())
-            {
-                yield return user.ToDalUser();
-            }
+            return context.Set<User>().Select(UserMapper.ToDalUserConvertion);
         }
 
         public DalUser GetById(int key)
@@ -147,7 +144,7 @@ namespace SocialNetwork.Dal.Repository
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
 
-            return context.Set<User>().Where( convertedPredicate).ToList().Select(x => x.ToDalUser());
+            return context.Set<User>().Where( convertedPredicate).Select(UserMapper.ToDalUserConvertion);
         }
 
         public DalUser Create(DalUser e)
@@ -163,8 +160,8 @@ namespace SocialNetwork.Dal.Repository
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == e.Id);
-            if (ormUser == null) throw new ArgumentException("User has incorrect id");
+            User ormUser = e.ToOrmUser();
+            context.Set<User>().Attach(ormUser);
             context.Set<User>().Remove(ormUser);
         }
 
@@ -172,7 +169,9 @@ namespace SocialNetwork.Dal.Repository
         {
             if (isDisposed) throw new ObjectDisposedException("UserRepository");
 
-            context.Set<User>().AddOrUpdate(e.ToOrmUser());
+            User ormUser = e.ToOrmUser();
+            context.Set<User>().Attach(ormUser);
+            context.Set<User>().AddOrUpdate(ormUser);
         }
 
         public void Dispose()

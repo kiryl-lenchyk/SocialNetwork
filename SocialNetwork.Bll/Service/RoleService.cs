@@ -66,7 +66,7 @@ namespace SocialNetwork.Bll.Service
             DalUser user = userRepository.GetByName(username);
             if (user == null) return;
 
-            roleRepository.RmoveUserFromRole(user, role);
+            roleRepository.RemoveUserFromRole(user, role);
         }
 
         public void UpdateUserRoles(string username, IEnumerable<int> rolesIds)

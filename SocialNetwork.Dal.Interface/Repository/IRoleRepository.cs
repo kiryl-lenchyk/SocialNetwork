@@ -19,6 +19,6 @@ namespace SocialNetwork.Dal.Interface.Repository
 
         void AddUserToRole(DalUser user, DalRole role);
 
-        void RmoveUserFromRole(DalUser user, DalRole role);
+        void RemoveUserFromRole(DalUser user, DalRole role);
     }
 }

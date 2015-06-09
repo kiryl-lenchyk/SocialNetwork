@@ -126,7 +126,7 @@ namespace SocialNetwork.Dal.Repository
             ormUser.Roles.Add(ormRole);
         }
 
-        public void RmoveUserFromRole(DalUser user, DalRole role)
+        public void RemoveUserFromRole(DalUser user, DalRole role)
         {
             if (isDisposed) throw new ObjectDisposedException("RoleRepository");
 

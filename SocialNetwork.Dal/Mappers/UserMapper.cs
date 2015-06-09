@@ -31,21 +31,29 @@ namespace SocialNetwork.Dal.Mappers
 
         public static DalUser ToDalUser(this User user)
         {
-            return new DalUser()
+            return ToDalUserConvertion.Compile()(user);
+        }
+
+        public static Expression<Func<User, DalUser>> ToDalUserConvertion
+        {
+            get
             {
-                Id = user.Id,
-                UserName = user.UserName,
-                Name = user.Name,
-                Surname = user.Surname,
-                BirthDay = user.BirthDay,
-                Sex = user.Sex != null ? (DalSex?) (int) user.Sex.Value : null,
-                AboutUser = user.AboutUser,
-                PasswordHash = user.PasswordHash,
-                SendedMessagesId = user.SendedMessages.Select(x => x.Id),
-                GottenMessagesId = user.GottenMessages.Select(x => x.Id),
-                RolesId = user.Roles.Select(x => x.Id),
-                FriendsId = user.Friends.Select(x => x.Id),
-            };
+                return (User user) => new DalUser()
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    BirthDay = user.BirthDay,
+                    Sex = user.Sex != null ? (DalSex?) (int) user.Sex.Value : null,
+                    AboutUser = user.AboutUser,
+                    PasswordHash = user.PasswordHash,
+                    SendedMessagesId = user.SendedMessages.Select(x => x.Id),
+                    GottenMessagesId = user.GottenMessages.Select(x => x.Id),
+                    RolesId = user.Roles.Select(x => x.Id),
+                    FriendsId = user.Friends.Select(x => x.Id),
+                };
+            }
         }
 
     }
