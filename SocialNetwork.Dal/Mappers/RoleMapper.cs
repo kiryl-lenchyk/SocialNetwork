@@ -1,4 +1,6 @@
-﻿using SocialNetwork.Dal.Interface.DTO;
+﻿using System;
+using System.Linq.Expressions;
+using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Orm;
 
 namespace SocialNetwork.Dal.Mappers
@@ -16,11 +18,19 @@ namespace SocialNetwork.Dal.Mappers
 
         public static DalRole ToDalRole(this Role role)
         {
-            return new DalRole()
+            return ToDalRolExpression.Compile()(role);
+        }
+
+        public static Expression<Func<Role, DalRole>> ToDalRolExpression
+        {
+            get
             {
-                Id = role.Id,
-                Name = role.Name
-            };
+                return (Role role) => new DalRole()
+                {
+                    Id = role.Id,
+                    Name = role.Name
+                };
+            }
         }
 
     }

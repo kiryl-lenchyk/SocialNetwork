@@ -1,4 +1,6 @@
-﻿using SocialNetwork.Dal.Interface.DTO;
+﻿using System;
+using System.Linq.Expressions;
+using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Orm;
 
 namespace SocialNetwork.Dal.Mappers
@@ -20,15 +22,25 @@ namespace SocialNetwork.Dal.Mappers
 
         public static DalMessage ToDalMessage(this Message message)
         {
-            return new DalMessage()
+            return ToDalMesaageConvertion.Compile()(message);
+        }
+
+        public static Expression<Func<Message, DalMessage>> ToDalMesaageConvertion
+        {
+            get
             {
-                Id = message.Id,
-                SenderId = message.Sender,
-                TargetId = message.Target,
-                Text = message.Text,
-                CreatingTime = message.CreatingTime,
-                IsReaded = message.IsReaded
-            };
+                return (Message message) =>
+                    new DalMessage()
+                    {
+                        Id = message.Id,
+                        SenderId = message.Sender,
+                        TargetId = message.Target,
+                        Text = message.Text,
+                        CreatingTime = message.CreatingTime,
+                        IsReaded = message.IsReaded
+                    };
+            }
+            
         }
 
     }

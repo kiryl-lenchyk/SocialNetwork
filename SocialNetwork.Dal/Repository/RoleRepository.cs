@@ -25,7 +25,7 @@ namespace SocialNetwork.Dal.Repository
 
         public IEnumerable<DalRole> GetAll()
         {
-            return context.Set<Role>().ToList().Select(x => x.ToDalRole());
+            return context.Set<Role>().Select(RoleMapper.ToDalRolExpression);
         }
 
         public DalRole GetById(int key)
@@ -49,7 +49,7 @@ namespace SocialNetwork.Dal.Repository
             Expression<Func<Role, bool>> convertedPredicate =
                  (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole, Role>().Visit(predicate));
 
-            return context.Set<Role>().Where(convertedPredicate).ToList().Select(x => x.ToDalRole());
+            return context.Set<Role>().Where(convertedPredicate).Select(RoleMapper.ToDalRolExpression);
         }
 
         public DalRole Create(DalRole e)

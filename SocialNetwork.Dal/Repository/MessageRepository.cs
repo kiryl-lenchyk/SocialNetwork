@@ -24,10 +24,7 @@ namespace SocialNetwork.Dal.Repository
         
         public IEnumerable<DalMessage> GetAll()
         {
-            foreach (Message message in context.Set<Message>())
-            {
-                yield return message.ToDalMessage();
-            }
+            return context.Set<Message>().Select(MessageMapper.ToDalMesaageConvertion);
         }
 
         public DalMessage GetById(int key)
@@ -50,7 +47,7 @@ namespace SocialNetwork.Dal.Repository
             Expression<Func<Message, bool>> convertedPredicate =
                 (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));
 
-            return context.Set<Message>().Where(convertedPredicate).ToList().Select(x => x.ToDalMessage());
+            return context.Set<Message>().Where(convertedPredicate).Select(MessageMapper.ToDalMesaageConvertion);
         }
         
         public DalMessage Create(DalMessage e)
