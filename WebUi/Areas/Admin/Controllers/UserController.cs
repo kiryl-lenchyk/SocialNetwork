@@ -34,7 +34,9 @@ namespace WebUi.Areas.Admin.Controllers
             BllUser bllUser = userService.GetById(id,-1);
             if (bllUser == null) return HttpNotFound();
 
-            return View(bllUser.ToUserEditViewModel(roleService.GetAllRoles()));
+            return
+                View(bllUser.ToUserEditViewModel(roleService.GetAllRoles(),
+                    roleService.GetUserRoles(bllUser.UserName).Select(x => x.Id)));
         }
 
         [ValidateAntiForgeryToken]
@@ -70,13 +72,6 @@ namespace WebUi.Areas.Admin.Controllers
         }
 
         
-
-        protected override void Dispose(bool disposing)
-        {
-            userService.Dispose();
-            roleService.Dispose();
-            base.Dispose(disposing);
-        }
 
     }
 }

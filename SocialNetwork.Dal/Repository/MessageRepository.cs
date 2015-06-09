@@ -17,18 +17,13 @@ namespace SocialNetwork.Dal.Repository
 
         private readonly DbContext context;
 
-        private bool isDisposed;
-
         public MessageRepository(DbContext context)
         {
-            isDisposed = false;
             this.context = context;
         }
         
         public IEnumerable<DalMessage> GetAll()
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageRepository");
-
             foreach (Message message in context.Set<Message>())
             {
                 yield return message.ToDalMessage();
@@ -37,16 +32,12 @@ namespace SocialNetwork.Dal.Repository
 
         public DalMessage GetById(int key)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageRepository");
-
             Message ormMessage = context.Set<Message>().FirstOrDefault(x => x.Id == key);
             return ormMessage != null ? ormMessage.ToDalMessage() : null;
         }
 
         public DalMessage GetByPredicate(Expression<Func<DalMessage, bool>> predicate)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageRepository");
-
             Expression<Func<Message, bool>> convertedPredicate =
                 (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));
 
@@ -56,8 +47,6 @@ namespace SocialNetwork.Dal.Repository
 
         public IEnumerable<DalMessage> GetAllByPredicate(Expression<Func<DalMessage, bool>> predicate)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageRepository");
-
             Expression<Func<Message, bool>> convertedPredicate =
                 (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));
 
@@ -66,8 +55,6 @@ namespace SocialNetwork.Dal.Repository
         
         public DalMessage Create(DalMessage e)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageRepository");
-
             Message ormMessage = e.ToOrmMessage();
             context.Set<Message>().Add(ormMessage);
             return ormMessage.ToDalMessage();
@@ -75,26 +62,15 @@ namespace SocialNetwork.Dal.Repository
 
         public void Delete(DalMessage e)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageRepository");
-
             context.Set<Message>().Remove(e.ToOrmMessage());
         }
 
         public void Update(DalMessage e)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageRepository");
-
             context.Set<Message>().AddOrUpdate(e.ToOrmMessage());
         }
 
-        public void Dispose()
-        {
-            if (!isDisposed)
-            {
-                context.Dispose();
-                isDisposed = true;
-            }
-        }
+       
 
        
     }

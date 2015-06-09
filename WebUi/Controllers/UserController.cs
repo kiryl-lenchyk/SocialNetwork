@@ -75,13 +75,7 @@ namespace WebUi.Controllers
             return PartialView("_FindResult",partialModel);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            service.Dispose();
-            base.Dispose(disposing);
-        }
-
-        public ActionResult AddToFriend(int id)
+      public ActionResult AddToFriend(int id)
         {
             if (!service.IsUserExists(id)) return HttpNotFound();
             service.AddFriend(MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name), id);

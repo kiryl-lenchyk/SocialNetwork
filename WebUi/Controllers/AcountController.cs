@@ -182,11 +182,6 @@ namespace WebUi.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            service.Dispose();
-            base.Dispose(disposing);
-        }
-
+      
     }
 }

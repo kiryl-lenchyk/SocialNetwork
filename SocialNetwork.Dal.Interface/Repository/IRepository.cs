@@ -8,7 +8,7 @@ using SocialNetwork.Dal.Interface.DTO;
 
 namespace SocialNetwork.Dal.Interface.Repository
 {
-    public interface IRepository<TEntity> : IDisposable where TEntity : IEntity
+    public interface IRepository<TEntity>  where TEntity : IEntity
     {
         IEnumerable<TEntity> GetAll();
 

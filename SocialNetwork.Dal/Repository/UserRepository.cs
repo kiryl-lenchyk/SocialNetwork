@@ -20,43 +20,33 @@ namespace SocialNetwork.Dal.Repository
 
         private readonly DbContext context;
 
-        private bool isDisposed;
         private static readonly string AvatarLocation = AppDomain.CurrentDomain.GetData("DataDirectory").ToString() + "{0}Avatars{0}{1}.png";
         private static readonly String DefaultAvatar = "noavatar";
 
         public UserRepository(DbContext context)
         {
-            isDisposed = false;
             this.context = context;
         }
 
         public IEnumerable<DalUser> GetAll()
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             return context.Set<User>().Select(UserMapper.ToDalUserConvertion);
         }
 
         public DalUser GetById(int key)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == key);
             return ormUser != null ? ormUser.ToDalUser() : null;
         }
 
         public DalUser GetByName(String name)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             User ormUser = context.Set<User>().FirstOrDefault(x => x.UserName == name);
             return ormUser != null ? ormUser.ToDalUser() : null;
         }
 
         public void AddToFriends(DalUser currentUser, DalUser newFriend)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             User ormCurrentUser = GetOrmUserWithFriends(currentUser);
             User ormNewFriend = GetOrmUserWithFriends(newFriend);
             ormCurrentUser.Friends.Add(ormNewFriend);
@@ -73,8 +63,6 @@ namespace SocialNetwork.Dal.Repository
 
         public void RemoveFriend(DalUser currentUser, DalUser newFriend)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             User ormCurrentUser = GetOrmUserWithFriends(currentUser);
             User ormNewFriend = GetOrmUserWithFriends(newFriend);
             ormCurrentUser.Friends.Remove(ormNewFriend);
@@ -83,8 +71,6 @@ namespace SocialNetwork.Dal.Repository
 
         public void SetUserAvatar(int userId, Stream avatarStream)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             using (Bitmap avatar = new Bitmap(avatarStream))
             {
                 avatar.Save(string.Format(AvatarLocation, Path.DirectorySeparatorChar, userId),
@@ -95,8 +81,6 @@ namespace SocialNetwork.Dal.Repository
 
         public Stream GetUserAvatarStream(int userId)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             if (!File.Exists(string.Format(AvatarLocation,
                 Path.DirectorySeparatorChar, userId))) return null;
 
@@ -113,8 +97,6 @@ namespace SocialNetwork.Dal.Repository
 
         public Stream GetDefaultAvatarStream()
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-            
             MemoryStream avatarStream = new MemoryStream();
             using (Bitmap avatar = new Bitmap(string.Format(AvatarLocation,
                     Path.DirectorySeparatorChar, DefaultAvatar)))
@@ -128,8 +110,6 @@ namespace SocialNetwork.Dal.Repository
 
         public DalUser GetByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
 
@@ -139,8 +119,6 @@ namespace SocialNetwork.Dal.Repository
 
         public IEnumerable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
 
@@ -149,8 +127,6 @@ namespace SocialNetwork.Dal.Repository
 
         public DalUser Create(DalUser e)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             User ormUser = e.ToOrmUser();
             context.Set<User>().Add(ormUser);
             return ormUser.ToDalUser();
@@ -158,8 +134,6 @@ namespace SocialNetwork.Dal.Repository
 
         public void Delete(DalUser e)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             User ormUser = e.ToOrmUser();
             context.Set<User>().Attach(ormUser);
             context.Set<User>().Remove(ormUser);
@@ -167,21 +141,12 @@ namespace SocialNetwork.Dal.Repository
 
         public void Update(DalUser e)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             User ormUser = e.ToOrmUser();
             context.Set<User>().Attach(ormUser);
             context.Set<User>().AddOrUpdate(ormUser);
         }
 
-        public void Dispose()
-        {
-            if (!isDisposed)
-            {
-                context.Dispose();
-                isDisposed = true;
-            }
-        }  
+        
         
     }
 }

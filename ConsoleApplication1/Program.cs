@@ -16,12 +16,12 @@ namespace ConsoleApplication1
         {
             using (SocialNetworkDatabaseEntities socialNetworkDatabase = new SocialNetworkDatabaseEntities())
             {
-                using (UserRepository repository = new UserRepository(socialNetworkDatabase))
-                {
+                UserRepository repository = new UserRepository(socialNetworkDatabase);
+
                     DalUser user = repository.GetByPredicate(x => x.Id == 1 && x.Sex == null);
                     Console.WriteLine("Id {0}\nName {1}\nSurname {2}", user.Id, user.Name, user.Surname);
                     
-                }
+
             }
 
 

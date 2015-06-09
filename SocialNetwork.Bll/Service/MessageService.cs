@@ -15,16 +15,14 @@ namespace SocialNetwork.Bll.Service
 {
     public class MessageService : IMessageService
     {
-      
+
         private readonly IUnitOfWork uow;
         private readonly IRepository<DalMessage> messageRepository;
         private readonly IUserRepository userRepository;
-        private bool isDisposed;
 
-
-        public MessageService(IUnitOfWork uow, IRepository<DalMessage> messageRepository, IUserRepository userRepository)
+        public MessageService(IUnitOfWork uow, IRepository<DalMessage> messageRepository,
+            IUserRepository userRepository)
         {
-            isDisposed = false;
             this.uow = uow;
             this.messageRepository = messageRepository;
             this.userRepository = userRepository;
@@ -32,18 +30,15 @@ namespace SocialNetwork.Bll.Service
 
         public BllMessage GetById(int id)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
             DalMessage dalMessage = messageRepository.GetById(id);
             return dalMessage == null ? null : dalMessage.ToBllMessage();
         }
 
         public IEnumerable<BllDialog> GetUserDialogs(int userId)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-            
             DalUser currentDalUser = userRepository.GetById(userId);
-            if(currentDalUser == null) throw  new ArgumentException(string.Format("User with id = {0} not found", userId));
+            if (currentDalUser == null)
+                throw new ArgumentException(string.Format("User with id = {0} not found", userId));
             BllUser currentBllUser = currentDalUser.ToBllUser();
 
             return messageRepository.GetAllByPredicate(x => x.SenderId == userId)
@@ -56,8 +51,6 @@ namespace SocialNetwork.Bll.Service
 
         public BllDialog GetUsersDialog(BllUser firstUser, BllUser secondUser)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
             return new BllDialog
             {
                 FirstUser = firstUser,
@@ -72,16 +65,12 @@ namespace SocialNetwork.Bll.Service
 
         public void CreateMessage(BllMessage message)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
             messageRepository.Create(message.ToDalMessage());
             uow.Commit();
         }
 
         public void EditMessage(BllMessage message, string editorName)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
             message.Text += String.Format("\r\n[Text edited by {0} at {1}]", editorName,
                 DateTime.Now.ToString("g"));
             messageRepository.Update(message.ToDalMessage());
@@ -90,25 +79,21 @@ namespace SocialNetwork.Bll.Service
 
         public void DeleteMessage(BllMessage message, string editorName)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
             message.Text = String.Format("[Message deleted by {0} at {1}]", editorName,
-               DateTime.Now.ToString("g"));
+                DateTime.Now.ToString("g"));
             messageRepository.Update(message.ToDalMessage());
             uow.Commit();
         }
 
         public int GetUserNotReadedMessagesCount(int userId)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
-            return messageRepository.GetAllByPredicate(x => x.TargetId == userId && !x.IsReaded).Count();
+            return
+                messageRepository.GetAllByPredicate(x => x.TargetId == userId && !x.IsReaded)
+                    .Count();
         }
 
         public void MarkAsReaded(BllMessage message)
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
             message.IsReaded = true;
             messageRepository.Update(message.ToDalMessage());
             uow.Commit();
@@ -116,23 +101,11 @@ namespace SocialNetwork.Bll.Service
 
         public IEnumerable<BllMessage> GetAllMessages()
         {
-            if (isDisposed) throw new ObjectDisposedException("MessageService");
-
-            return messageRepository.GetAll().OrderByDescending(x => x.CreatingTime).Select(x => x.ToBllMessage());
+            return
+                messageRepository.GetAll()
+                    .OrderByDescending(x => x.CreatingTime)
+                    .Select(x => x.ToBllMessage());
         }
 
-        public void Dispose()
-        {
-            if (!isDisposed)
-            {
-                isDisposed = true;
-                uow.Dispose();
-                messageRepository.Dispose();
-                userRepository.Dispose();
-            }
-
-        }
-
-       
     }
 }

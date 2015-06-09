@@ -8,7 +8,7 @@ using SocialNetwork.Bll.Interface.Entity;
 
 namespace SocialNetwork.Bll.Interface.Services
 {
-    public interface IUserService : IDisposable
+    public interface IUserService
     {
         BllUser GetById(int key, int currentUserId);
 

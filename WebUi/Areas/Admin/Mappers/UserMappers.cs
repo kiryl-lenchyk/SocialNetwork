@@ -23,7 +23,7 @@ namespace WebUi.Areas.Admin.Mappers
         }
 
         public static UserEditViewModel ToUserEditViewModel(this BllUser bllUser,
-            IEnumerable<BllRole> allRoles)
+            IEnumerable<BllRole> allRoles, IEnumerable<int> userRoles )
         {
             return new UserEditViewModel()
             {
@@ -35,7 +35,7 @@ namespace WebUi.Areas.Admin.Mappers
                 Name = bllUser.Name,
                 Surname = bllUser.Surname,
                 AllRoles = allRoles.Select(x => x.ToRoleView()).ToList(),
-                UserRolesIds = bllUser.RolesId.ToList()
+                UserRolesIds = userRoles.ToList()
             };
         }
 

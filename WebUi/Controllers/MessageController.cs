@@ -81,12 +81,6 @@ namespace WebUi.Controllers
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            messageService.Dispose();
-            userService.Dispose();
-            base.Dispose(disposing);
-        }
 
     }
 }

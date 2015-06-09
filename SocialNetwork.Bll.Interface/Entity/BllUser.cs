@@ -25,12 +25,6 @@ namespace SocialNetwork.Bll.Interface.Entity
 
         public bool CanCurrentUserWriteMessage { get; set; }
 
-        public IEnumerable<int> SendedMessagesId { get; set; }
-
-        public IEnumerable<int> GottenMessagesId { get; set; }
-
-        public IEnumerable<int> RolesId { get; set; }
-
         public IEnumerable<int> FriendsId { get; set; }
     }
 }
