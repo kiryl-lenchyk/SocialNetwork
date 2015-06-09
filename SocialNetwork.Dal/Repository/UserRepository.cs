@@ -134,16 +134,14 @@ namespace SocialNetwork.Dal.Repository
 
         public void Delete(DalUser e)
         {
-            User ormUser = e.ToOrmUser();
-            context.Set<User>().Attach(ormUser);
+            User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == e.Id);
+            if (ormUser == null) throw new ArgumentException("User has incorrect id");
             context.Set<User>().Remove(ormUser);
         }
 
         public void Update(DalUser e)
         {
-            User ormUser = e.ToOrmUser();
-            context.Set<User>().Attach(ormUser);
-            context.Set<User>().AddOrUpdate(ormUser);
+            context.Set<User>().AddOrUpdate(e.ToOrmUser());
         }
 
         
