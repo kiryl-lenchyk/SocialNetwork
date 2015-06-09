@@ -22,7 +22,7 @@ namespace SocialNetwork.Dal.Repository
             this.context = context;
         }
         
-        public IEnumerable<DalMessage> GetAll()
+        public IQueryable<DalMessage> GetAll()
         {
             return context.Set<Message>().Select(MessageMapper.ToDalMesaageConvertion);
         }
@@ -42,7 +42,7 @@ namespace SocialNetwork.Dal.Repository
             return ormMessage != null ? ormMessage.ToDalMessage() : null;
         }
 
-        public IEnumerable<DalMessage> GetAllByPredicate(Expression<Func<DalMessage, bool>> predicate)
+        public IQueryable<DalMessage> GetAllByPredicate(Expression<Func<DalMessage, bool>> predicate)
         {
             Expression<Func<Message, bool>> convertedPredicate =
                 (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));

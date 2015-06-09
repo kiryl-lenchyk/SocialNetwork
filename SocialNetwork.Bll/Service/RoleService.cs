@@ -23,7 +23,7 @@ namespace SocialNetwork.Bll.Service
 
         public bool IsUserInRole(string username, string roleName)
         {
-DalUser user = userRepository.GetByName(username);
+            DalUser user = userRepository.GetByName(username);
             if (user == null) return false;
 
             return roleRepository.GetUserRoles(user).Count(x => x.Name == roleName) != 0;
@@ -33,13 +33,13 @@ DalUser user = userRepository.GetByName(username);
         {
             DalUser user = userRepository.GetByName(username);
             if (user == null) return new List<BllRole>();
-            
-            return roleRepository.GetUserRoles(user).Select(x => x.ToBllRole());
+
+            return roleRepository.GetUserRoles(user).ToList().Select(x => x.ToBllRole());
         }
 
         public void AddUserInRole(string username, string roleName)
         {
-DalRole role = roleRepository.GetByName(roleName);
+            DalRole role = roleRepository.GetByName(roleName);
             if (role == null) return;
             DalUser user = userRepository.GetByName(username);
             if (user == null) return;
@@ -71,12 +71,12 @@ DalUser  user = userRepository.GetByName(username);
 DalRole role = roleRepository.GetByName(roleName);
             if (role == null) return new List<BllUser>();
 
-            return roleRepository.GetRoleUsers(role).Select(x => x.ToBllUser());
+            return roleRepository.GetRoleUsers(role).ToList().Select(x => x.ToBllUser());
         }
 
         public IEnumerable<BllRole> GetAllRoles()
         {
-return roleRepository.GetAll().Select(x => x.ToBllRole());
+            return roleRepository.GetAll().ToList().Select(x => x.ToBllRole());
         }
 
         private void RemoveUserFromRoles(DalUser user, IEnumerable<int> newRoles)

@@ -28,7 +28,7 @@ namespace SocialNetwork.Dal.Repository
             this.context = context;
         }
 
-        public IEnumerable<DalUser> GetAll()
+        public IQueryable<DalUser> GetAll()
         {
             return context.Set<User>().Select(UserMapper.ToDalUserConvertion);
         }
@@ -117,7 +117,7 @@ namespace SocialNetwork.Dal.Repository
             return ormUser != null ? ormUser.ToDalUser() : null;
         }
 
-        public IEnumerable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
+        public IQueryable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));

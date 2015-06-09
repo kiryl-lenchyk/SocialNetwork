@@ -46,7 +46,8 @@ namespace SocialNetwork.Bll.Service
                 .Union(
                     messageRepository.GetAllByPredicate(x => x.TargetId == userId)
                         .Select(x => x.SenderId))
-                .Select(x => GetUsersDialog(currentBllUser, userRepository.GetById(x).ToBllUser()));
+                .ToList()
+                .Select(x => GetUsersDialog(currentBllUser, userRepository.GetById(x).ToBllUser(-1)));
         }
 
         public BllDialog GetUsersDialog(BllUser firstUser, BllUser secondUser)
@@ -59,7 +60,7 @@ namespace SocialNetwork.Bll.Service
                     x =>
                         x.SenderId == firstUser.Id && x.TargetId == secondUser.Id ||
                         x.TargetId == firstUser.Id && x.SenderId == secondUser.Id)
-                    .OrderByDescending(x => x.CreatingTime).Select(x => x.ToBllMessage())
+                    .OrderByDescending(x => x.CreatingTime).ToList().Select(x => x.ToBllMessage())
             };
         }
 
@@ -103,7 +104,7 @@ namespace SocialNetwork.Bll.Service
         {
             return
                 messageRepository.GetAll()
-                    .OrderByDescending(x => x.CreatingTime)
+                    .OrderByDescending(x => x.CreatingTime).ToList()
                     .Select(x => x.ToBllMessage());
         }
 

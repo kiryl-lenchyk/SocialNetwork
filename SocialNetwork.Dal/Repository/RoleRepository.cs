@@ -23,7 +23,7 @@ namespace SocialNetwork.Dal.Repository
         }
         
 
-        public IEnumerable<DalRole> GetAll()
+        public IQueryable<DalRole> GetAll()
         {
             return context.Set<Role>().Select(RoleMapper.ToDalRolExpression);
         }
@@ -44,7 +44,7 @@ namespace SocialNetwork.Dal.Repository
             return ormRole != null ? ormRole.ToDalRole() : null;
         }
 
-        public IEnumerable<DalRole> GetAllByPredicate(Expression<Func<DalRole, bool>> predicate)
+        public IQueryable<DalRole> GetAllByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
             Expression<Func<Role, bool>> convertedPredicate =
                  (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole, Role>().Visit(predicate));

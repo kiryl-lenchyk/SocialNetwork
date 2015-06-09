@@ -10,13 +10,13 @@ namespace SocialNetwork.Dal.Interface.Repository
 {
     public interface IRepository<TEntity>  where TEntity : IEntity
     {
-        IEnumerable<TEntity> GetAll();
+        IQueryable<TEntity> GetAll();
 
         TEntity GetById(int key);
 
         TEntity GetByPredicate(Expression<Func<TEntity, bool>> f);
 
-        IEnumerable<TEntity> GetAllByPredicate(Expression<Func<TEntity, bool>> f);
+        IQueryable<TEntity> GetAllByPredicate(Expression<Func<TEntity, bool>> f);
 
         TEntity Create(TEntity e);
 
