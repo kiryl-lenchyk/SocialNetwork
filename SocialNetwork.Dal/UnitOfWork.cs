@@ -23,14 +23,5 @@ namespace SocialNetwork.Dal
             context.SaveChanges();
         }
 
-        public void Dispose()
-        {
-            if (!isDisposed)
-            {
-                context.SaveChanges();
-                context.Dispose();
-                isDisposed = true;
-            }
-        }
     }
 }

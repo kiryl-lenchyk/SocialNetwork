@@ -7,7 +7,7 @@ using SocialNetwork.Bll.Interface.Entity;
 
 namespace SocialNetwork.Bll.Interface.Services
 {
-    public interface IMessageService : IDisposable
+    public interface IMessageService 
     {
 
         IEnumerable<BllMessage> GetAllMessages();

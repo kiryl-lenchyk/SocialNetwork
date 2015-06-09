@@ -21,9 +21,6 @@ namespace SocialNetwork.Bll.Mappers
                 AboutUser = dalUser.AboutUser,
                 PasswordHash = dalUser.PasswordHash,
                 CanCurrentUserAddToFriends = dalUser.Id != currentUserId && dalUser.FriendsId.Count(x => x == currentUserId) == 0,
-                SendedMessagesId = dalUser.SendedMessagesId,
-                GottenMessagesId = dalUser.GottenMessagesId,
-                RolesId = dalUser.RolesId,
                 FriendsId = dalUser.FriendsId
             };
             bllUser.CanCurrentUserWriteMessage =  dalUser.Id != currentUserId && !bllUser.CanCurrentUserAddToFriends;
@@ -42,9 +39,6 @@ namespace SocialNetwork.Bll.Mappers
                 Sex = bllUser.Sex.ToDalSex(),
                 AboutUser = bllUser.AboutUser,
                 PasswordHash = bllUser.PasswordHash,
-                SendedMessagesId = bllUser.SendedMessagesId,
-                GottenMessagesId = bllUser.GottenMessagesId,
-                RolesId = bllUser.RolesId,
                 FriendsId = bllUser.FriendsId
             };
         }

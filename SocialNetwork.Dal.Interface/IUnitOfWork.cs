@@ -2,7 +2,7 @@
 
 namespace SocialNetwork.Dal.Interface
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
         void Commit();
     }

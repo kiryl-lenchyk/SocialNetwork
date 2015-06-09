@@ -7,7 +7,7 @@ using SocialNetwork.Bll.Interface.Entity;
 
 namespace SocialNetwork.Bll.Interface.Services
 {
-    public interface IRoleService : IDisposable
+    public interface IRoleService
     {
         bool IsUserInRole(string username, string roleName);
 

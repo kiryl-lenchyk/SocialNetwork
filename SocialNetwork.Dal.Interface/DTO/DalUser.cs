@@ -26,12 +26,6 @@ namespace SocialNetwork.Dal.Interface.DTO
 
         public string PasswordHash { get; set; }
 
-        public IEnumerable<int> SendedMessagesId { get; set; }
-
-        public IEnumerable<int> GottenMessagesId { get; set; }
-
-        public IEnumerable<int> RolesId { get; set; }
-
         public IEnumerable<int> FriendsId { get; set; }
  
     }

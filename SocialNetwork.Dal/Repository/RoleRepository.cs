@@ -17,26 +17,19 @@ namespace SocialNetwork.Dal.Repository
 
         private readonly DbContext context;
 
-        private bool isDisposed;
-
         public RoleRepository(DbContext context)
         {
-            isDisposed = false;
             this.context = context;
         }
         
 
-        public IEnumerable<DalRole> GetAll()
+        public IQueryable<DalRole> GetAll()
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
-            return context.Set<Role>().ToList().Select(x => x.ToDalRole());
+            return context.Set<Role>().Select(RoleMapper.ToDalRolExpression);
         }
 
         public DalRole GetById(int key)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == key);
             return ormRole == null ? null : ormRole.ToDalRole();
 
@@ -44,8 +37,6 @@ namespace SocialNetwork.Dal.Repository
 
         public DalRole GetByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             Expression<Func<Role, bool>> convertedPredicate =
                  (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole,Role>().Visit(predicate));
 
@@ -53,20 +44,16 @@ namespace SocialNetwork.Dal.Repository
             return ormRole != null ? ormRole.ToDalRole() : null;
         }
 
-        public IEnumerable<DalRole> GetAllByPredicate(Expression<Func<DalRole, bool>> predicate)
+        public IQueryable<DalRole> GetAllByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             Expression<Func<Role, bool>> convertedPredicate =
                  (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole, Role>().Visit(predicate));
 
-            return context.Set<Role>().Where(convertedPredicate).ToList().Select(x => x.ToDalRole());
+            return context.Set<Role>().Where(convertedPredicate).Select(RoleMapper.ToDalRolExpression);
         }
 
         public DalRole Create(DalRole e)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             Role ormRole = e.ToOrmRole();
             context.Set<Role>().Add(ormRole);
             return ormRole.ToDalRole();
@@ -74,32 +61,24 @@ namespace SocialNetwork.Dal.Repository
 
         public void Delete(DalRole e)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             Role ormRole = e.ToOrmRole();
             context.Set<Role>().Remove(ormRole);
         }
 
         public void Update(DalRole e)
         {
-            if (isDisposed) throw new ObjectDisposedException("UserRepository");
-
             Role ormRole = e.ToOrmRole();
             context.Set<Role>().AddOrUpdate(ormRole);
         }
 
         public DalRole GetByName(string roleName)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Name == roleName);
             return ormRole == null ? null : ormRole.ToDalRole();
         }
 
         public IEnumerable<DalRole> GetUserRoles(DalUser user)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == user.Id);
             if (ormUser == null) return new List<DalRole>();
             return ormUser.Roles.Select(x => x.ToDalRole());
@@ -107,8 +86,6 @@ namespace SocialNetwork.Dal.Repository
 
         public IEnumerable<DalUser> GetRoleUsers(DalRole role)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
             if (ormRole == null) return new List<DalUser>();
             return
@@ -117,8 +94,6 @@ namespace SocialNetwork.Dal.Repository
 
         public void AddUserToRole(DalUser user, DalRole role)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             User ormUser = GetOrmUserWithRoles(user);
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
             if (ormRole == null) throw new ArgumentException("Role has incorrect id");
@@ -126,10 +101,8 @@ namespace SocialNetwork.Dal.Repository
             ormUser.Roles.Add(ormRole);
         }
 
-        public void RmoveUserFromRole(DalUser user, DalRole role)
+        public void RemoveUserFromRole(DalUser user, DalRole role)
         {
-            if (isDisposed) throw new ObjectDisposedException("RoleRepository");
-
             User ormUser = GetOrmUserWithRoles(user);
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
             if (ormRole == null) throw new ArgumentException("Role has incorrect id");
@@ -144,14 +117,5 @@ namespace SocialNetwork.Dal.Repository
             context.Entry(ormCurrentUser).Collection(x => x.Roles).Load();
             return ormCurrentUser;
         }
-
-        public void Dispose()
-        {
-            if (!isDisposed)
-            {
-                context.Dispose();
-                isDisposed = true;
-            }
-        }  
     }
 }
