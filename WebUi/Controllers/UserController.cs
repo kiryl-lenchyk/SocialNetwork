@@ -24,9 +24,9 @@ namespace WebUi.Controllers
         public ActionResult Index(int? id)
         {
             int userId = id ?? MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
-            BllUser user = service.GetById(userId, MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name));
+            BllUser user = service.GetById(userId);
             if (user == null) return HttpNotFound();
-            return View(user.ToUserPageViewModel(service));
+            return View(user.ToUserPageViewModel(service, MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name)));
         }
 
         

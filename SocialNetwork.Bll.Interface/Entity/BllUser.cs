@@ -20,10 +20,6 @@ namespace SocialNetwork.Bll.Interface.Entity
         public string AboutUser { get; set; }
 
         public string PasswordHash { get; set; }
-        
-        public bool CanCurrentUserAddToFriends { get; set; }
-
-        public bool CanCurrentUserWriteMessage { get; set; }
 
         public IEnumerable<int> FriendsId { get; set; }
     }

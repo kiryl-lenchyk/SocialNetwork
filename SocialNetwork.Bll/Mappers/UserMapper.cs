@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using SocialNetwork.Bll.Interface.Entity;
+﻿using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Dal.Interface.DTO;
 
 namespace SocialNetwork.Bll.Mappers
 {
     public static class UserMapper
     {
-        public static BllUser ToBllUser(this DalUser  dalUser, int currentUserId = -1)
+        public static BllUser ToBllUser(this DalUser  dalUser)
         {
-            BllUser bllUser = new BllUser()
+            return new BllUser()
             {
                 Id = dalUser.Id,
                 UserName = dalUser.UserName,
@@ -20,11 +17,8 @@ namespace SocialNetwork.Bll.Mappers
                 Sex = dalUser.Sex != null ? (BllSex?)(int)dalUser.Sex.Value : null,
                 AboutUser = dalUser.AboutUser,
                 PasswordHash = dalUser.PasswordHash,
-                CanCurrentUserAddToFriends = dalUser.Id != currentUserId && dalUser.FriendsId.Count(x => x == currentUserId) == 0,
                 FriendsId = dalUser.FriendsId
             };
-            bllUser.CanCurrentUserWriteMessage =  dalUser.Id != currentUserId && !bllUser.CanCurrentUserAddToFriends;
-            return bllUser;
         }
 
         public static DalUser ToDalUser(this BllUser bllUser)

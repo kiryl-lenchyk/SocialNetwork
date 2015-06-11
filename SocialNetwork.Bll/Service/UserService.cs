@@ -24,16 +24,16 @@ namespace SocialNetwork.Bll.Service
             this.userRepository = repository;
         }
 
-        public BllUser GetById(int key, int currentUserId)
+        public BllUser GetById(int key)
         {
             DalUser dalUser = userRepository.GetById(key);
-            return dalUser == null ? null : dalUser.ToBllUser(currentUserId);
+            return dalUser == null ? null : dalUser.ToBllUser();
         }
 
-        public BllUser GetByName(string name, int currentUserId)
+        public BllUser GetByName(string name)
         {
             DalUser dalUser = userRepository.GetByName(name);
-            return dalUser == null ? null : dalUser.ToBllUser(currentUserId);
+            return dalUser == null ? null : dalUser.ToBllUser();
         }
 
         public BllUser Create(BllUser e)
@@ -84,12 +84,12 @@ namespace SocialNetwork.Bll.Service
         {
             Expression<Func<DalUser, bool>> predicate = GetFindPredicate(name, surname, birthDayMin,
                 birthDayMax, sex);
-            return userRepository.GetAllByPredicate(predicate).ToList().Select(x => x.ToBllUser(-1));
+            return userRepository.GetAllByPredicate(predicate).ToList().Select(x => x.ToBllUser());
         }
 
         public IEnumerable<BllUser> GetAllUsers()
         {
-            return userRepository.GetAll().ToList().Select(x => x.ToBllUser(-1));
+            return userRepository.GetAll().ToList().Select(x => x.ToBllUser());
         }
 
         private static Expression<Func<DalUser, bool>> GetFindPredicate(string name, string surname,
@@ -173,6 +173,16 @@ namespace SocialNetwork.Bll.Service
             return avatarStream ?? userRepository.GetDefaultAvatarStream();
         }
 
+        public bool CanUserAddToFriends(int userId, int friendId)
+        {
+            BllUser user = GetById(userId);
+            if (user == null) return false;
+            return !user.FriendsId.Contains(friendId) && userId != friendId;
+        }
 
+        public bool CanUserWrieMesage(int targetId, int senderId)
+        {
+            return !CanUserAddToFriends(targetId, senderId) && targetId != senderId;
+        }
     }
 }

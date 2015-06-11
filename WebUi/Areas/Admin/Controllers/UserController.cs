@@ -31,7 +31,7 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Edit(int id)
         {
-            BllUser bllUser = userService.GetById(id,-1);
+            BllUser bllUser = userService.GetById(id);
             if (bllUser == null) return HttpNotFound();
 
             return
@@ -43,7 +43,7 @@ namespace WebUi.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult Edit(UserEditViewModel model)
         {
-            BllUser bllUser = userService.GetById(model.Id,-1);
+            BllUser bllUser = userService.GetById(model.Id);
             if (bllUser == null) return HttpNotFound();
             bllUser = UpdateBllUser(bllUser, model);
             userService.Update(bllUser);
@@ -56,7 +56,7 @@ namespace WebUi.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            BllUser bllUser = userService.GetById(id, -1);
+            BllUser bllUser = userService.GetById(id);
             if (bllUser == null) return HttpNotFound();
 
             userService.Delete(bllUser);

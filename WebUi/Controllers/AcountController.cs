@@ -104,7 +104,7 @@ namespace WebUi.Controllers
         [Authorize]
         public ActionResult Edit()
         {
-            return View(service.GetByName(User.Identity.Name,-1).ToEdirAccountViewModel());
+            return View(service.GetByName(User.Identity.Name).ToEdirAccountViewModel());
         }
 
         [HttpPost]
@@ -116,7 +116,7 @@ namespace WebUi.Controllers
             if (ModelState.IsValid)
             {
                 BllUser newUser = model.ToBllUser();
-                BllUser oldUser = service.GetById(model.Id, -1);
+                BllUser oldUser = service.GetById(model.Id);
                 if (oldUser == null) return HttpNotFound();
 
                 newUser.UserName = oldUser.UserName;

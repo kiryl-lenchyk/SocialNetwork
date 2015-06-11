@@ -29,11 +29,11 @@ namespace WebUi.Controllers
         public ActionResult Dialog(int id)
         {
             int currentUserId = MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
-            BllUser secondUser = userService.GetById(id, currentUserId);
+            BllUser secondUser = userService.GetById(id);
             if (secondUser == null) return HttpNotFound();
 
             BllDialog dialog = messageService.GetUsersDialog(
-                userService.GetById(currentUserId, currentUserId),
+                userService.GetById(currentUserId),
                 secondUser);
             MarkDialogAsReaded(id, dialog);
 
@@ -58,8 +58,8 @@ namespace WebUi.Controllers
 
 
             return PartialView("_DialogMessages", messageService.GetUsersDialog(
-                userService.GetById(currentUserId, currentUserId),
-                userService.GetById(targetId, currentUserId))
+                userService.GetById(currentUserId),
+                userService.GetById(targetId))
                 .ToDialogViewModel(currentUserId)
                 .Messages);
         }

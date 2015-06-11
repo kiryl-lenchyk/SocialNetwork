@@ -30,8 +30,8 @@ namespace WebUi.Areas.Admin.Controllers
                     messageService.GetAllMessages().Select(
                             x =>
                                 x.ToMessageViewModel(
-                                    userService.GetById(x.SenderId, -1),
-                                    userService.GetById(x.TargetId, -1))));
+                                    userService.GetById(x.SenderId),
+                                    userService.GetById(x.TargetId))));
         }
 
         public ActionResult Edit(int id)
@@ -40,8 +40,8 @@ namespace WebUi.Areas.Admin.Controllers
             if (bllMessage == null) return HttpNotFound();
 
             return View(bllMessage.ToMessageViewModel(
-                userService.GetById(bllMessage.SenderId, -1),
-                userService.GetById(bllMessage.TargetId, -1)));
+                userService.GetById(bllMessage.SenderId),
+                userService.GetById(bllMessage.TargetId)));
         }
 
         [ValidateAntiForgeryToken]

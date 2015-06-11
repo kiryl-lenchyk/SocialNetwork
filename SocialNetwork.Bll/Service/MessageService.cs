@@ -47,7 +47,7 @@ namespace SocialNetwork.Bll.Service
                     messageRepository.GetAllByPredicate(x => x.TargetId == userId)
                         .Select(x => x.SenderId))
                 .ToList()
-                .Select(x => GetUsersDialog(currentBllUser, userRepository.GetById(x).ToBllUser(-1)));
+                .Select(x => GetUsersDialog(currentBllUser, userRepository.GetById(x).ToBllUser()));
         }
 
         public BllDialog GetUsersDialog(BllUser firstUser, BllUser secondUser)

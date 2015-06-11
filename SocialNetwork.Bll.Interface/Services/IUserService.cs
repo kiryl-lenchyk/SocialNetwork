@@ -10,9 +10,9 @@ namespace SocialNetwork.Bll.Interface.Services
 {
     public interface IUserService
     {
-        BllUser GetById(int key, int currentUserId);
+        BllUser GetById(int key);
 
-        BllUser GetByName(String name, int currentUserId);
+        BllUser GetByName(String name);
 
         BllUser Create(BllUser e);
 
@@ -36,6 +36,10 @@ namespace SocialNetwork.Bll.Interface.Services
         void SetUserAvatar(int userId, Stream avatarStream);
 
         Stream GetUserAvatarStream(int userId);
+
+        bool CanUserAddToFriends(int userId, int friendId);
+
+        bool CanUserWrieMesage(int targetId, int senderId);
 
     }
 }
