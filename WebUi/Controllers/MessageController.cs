@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Security;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Infractracture.Mappers;
@@ -22,13 +23,13 @@ namespace WebUi.Controllers
 
         public ActionResult Index()
         {
-            int currentUserId = MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
+            int currentUserId = userService.GetByName(User.Identity.Name).Id;
             return View(messageService.GetUserDialogs(currentUserId).Select(x => x.ToDialogPreviewModel(currentUserId)));
         }
 
         public ActionResult Dialog(int id)
         {
-            int currentUserId = MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
+            int currentUserId = userService.GetByName(User.Identity.Name).Id;
             BllUser secondUser = userService.GetById(id);
             if (secondUser == null) return HttpNotFound();
 
@@ -46,7 +47,7 @@ namespace WebUi.Controllers
         public ActionResult Add(int targetId, String text)
         {
             if (!userService.IsUserExists(targetId)) return HttpNotFound();
-            int currentUserId = MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
+            int currentUserId = userService.GetByName(User.Identity.Name).Id;
             messageService.CreateMessage(new BllMessage
             {
                 CreatingTime = DateTime.Now,
@@ -70,7 +71,7 @@ namespace WebUi.Controllers
             return
                 PartialView("_NotReadedMessages",
                     messageService.GetUserNotReadedMessagesCount(
-                        MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name)));
+                        userService.GetByName(User.Identity.Name).Id));
         }
 
         private void MarkDialogAsReaded(int id, BllDialog dialog)

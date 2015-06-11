@@ -23,10 +23,11 @@ namespace WebUi.Controllers
 
         public ActionResult Index(int? id)
         {
-            int userId = id ?? MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name);
+            int currentUserId = service.GetByName(HttpContext.User.Identity.Name).Id;
+            int userId = id ?? currentUserId;
             BllUser user = service.GetById(userId);
             if (user == null) return HttpNotFound();
-            return View(user.ToUserPageViewModel(service, MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name)));
+            return View(user.ToUserPageViewModel(service, currentUserId));
         }
 
         
@@ -78,14 +79,14 @@ namespace WebUi.Controllers
       public ActionResult AddToFriend(int id)
         {
             if (!service.IsUserExists(id)) return HttpNotFound();
-            service.AddFriend(MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name), id);
+            service.AddFriend(service.GetByName(User.Identity.Name).Id, id);
             return RedirectToAction("Index", new{id = id});
         }
 
         public ActionResult RemoveFriend(int id)
         {
             if (!service.IsUserExists(id)) return HttpNotFound();
-            service.RemoveFriend(MembershipHelper.GetCurrentUserId(HttpContext.User.Identity.Name), id);
+            service.RemoveFriend(service.GetByName(User.Identity.Name).Id, id);
             return RedirectToAction("Index", new { id = id });
         }
 

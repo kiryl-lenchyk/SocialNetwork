@@ -183,7 +183,6 @@
     <Compile Include="Models\UserPageViewModel.cs" />
     <Compile Include="Models\UserPreviewViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\MembershipHelper.cs" />
     <Compile Include="Providers\UserMembershipProvider.cs" />
     <Compile Include="Providers\SocialNetworkRoleProvider.cs" />
   </ItemGroup>
