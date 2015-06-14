@@ -32,11 +32,11 @@ namespace WebUi
             var httpException = exception as HttpException;
             if (httpException != null && httpException.GetHttpCode() == 404)
             {
-                Response.Redirect("/Home/NotFound");
+                Response.Redirect("/404");
             }
             else
             {
-                Response.Redirect("/Home/Error");
+                Response.Redirect("/Error");
             }
         }
     }
