@@ -18,13 +18,22 @@
         }
         @if (Model.CanAddToFriends)
         {
-            @Html.ActionLink("Add to friends", "AddToFriend", "User",
-                new {id = Model.Id}, new {@class = "btn btn-primary btn-sm btn-block"})
+            using (Html.BeginForm("AddToFriend", "User", FormMethod.Post, new {id = "add-friend-form"}))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.Id)
+    <input type="submit" value="Add to friends" class="btn btn-primary btn-sm btn-block friend-btn" />
+            }
         }
-        else if(Model.UserName != User.Identity.Name)
+        else if (Model.UserName != User.Identity.Name)
         {
-            @Html.ActionLink("Remove friend", "RemoveFriend", "User",
-                     new { id = Model.Id }, new { @class = "btn btn-danger btn-sm btn-block"} )
+            using (Html.BeginForm("RemoveFriend", "User", FormMethod.Post, new { id = "add-friend-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.Id)
+                <input type="submit" value="Remove friend" class="btn btn-danger btn-sm btn-block friend-btn"/>
+            }
+
         }
 
     </div>

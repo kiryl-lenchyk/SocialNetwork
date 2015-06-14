@@ -29,10 +29,7 @@ namespace WebUi.Controllers
             if (user == null) throw new HttpException(404, "Not found");
             return View(user.ToUserPageViewModel(service, currentUserId));
         }
-
         
-
-
         public ActionResult Avatar(int id)
         {
             return File(service.GetUserAvatarStream(id),  "image/png");
@@ -76,13 +73,17 @@ namespace WebUi.Controllers
             return PartialView("_FindResult",partialModel);
         }
 
-      public ActionResult AddToFriend(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddToFriend(int id)
         {
             if (!service.IsUserExists(id)) throw new HttpException(404, "Not found");
             service.AddFriend(service.GetByName(User.Identity.Name).Id, id);
             return RedirectToAction("Index", new{id = id});
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RemoveFriend(int id)
         {
             if (!service.IsUserExists(id)) throw new HttpException(404, "Not found");
