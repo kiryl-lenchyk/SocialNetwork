@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using SocialNetwork.Bll.Interface.Entity;
@@ -31,7 +32,7 @@ namespace WebUi.Controllers
         {
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
             BllUser secondUser = userService.GetById(id);
-            if (secondUser == null) return HttpNotFound();
+            if (secondUser == null) throw new HttpException(404, "Not found");
 
             BllDialog dialog = messageService.GetUsersDialog(
                 userService.GetById(currentUserId),
@@ -46,7 +47,7 @@ namespace WebUi.Controllers
         [HttpPost]
         public ActionResult Add(int targetId, String text)
         {
-            if (!userService.IsUserExists(targetId)) return HttpNotFound();
+            if (!userService.IsUserExists(targetId)) throw new HttpException(404, "Not found");
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
             messageService.CreateMessage(new BllMessage
             {

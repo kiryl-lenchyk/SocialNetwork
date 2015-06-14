@@ -32,12 +32,16 @@ namespace SocialNetwork.Bll.Service
 
         public BllUser GetByName(string name)
         {
+            if(name == null) throw new ArgumentNullException("name");
+
             DalUser dalUser = userRepository.GetByName(name);
             return dalUser == null ? null : dalUser.ToBllUser();
         }
 
         public BllUser Create(BllUser e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             DalUser dalUser = e.ToDalUser();
             dalUser = userRepository.Create(dalUser);
             uow.Commit();
@@ -50,10 +54,12 @@ namespace SocialNetwork.Bll.Service
             if (currentUser == null)
                 throw new ArgumentException(
                     String.Format("User id = {0} is no existst", currentUserId), "currentUserId");
+
             DalUser newFriend = userRepository.GetById(newFriendId);
             if (newFriend == null)
                 throw new ArgumentException(
                     String.Format("User id = {0} is no existst", newFriendId), "newFriendId");
+
             if (currentUser.FriendsId.Contains(newFriendId))
                 throw new InvalidOperationException("Users are friends");
 
@@ -67,10 +73,12 @@ namespace SocialNetwork.Bll.Service
             if (currentUser == null)
                 throw new ArgumentException(
                     String.Format("User id = {0} is no existst", currentUserId), "currentUserId");
+
             DalUser newFriend = userRepository.GetById(newFriendId);
             if (newFriend == null)
                 throw new ArgumentException(
                     String.Format("User id = {0} is no existst", newFriendId), "newFriendId");
+
             if (!currentUser.FriendsId.Contains(newFriendId))
                 throw new InvalidOperationException("Users are not friends");
 
@@ -140,6 +148,8 @@ namespace SocialNetwork.Bll.Service
 
         public bool IsUserExists(string userName)
         {
+            if (userName == null) throw new ArgumentNullException("userName");
+
             return userRepository.GetByName(userName) != null;
         }
 
@@ -151,18 +161,24 @@ namespace SocialNetwork.Bll.Service
 
         public void Delete(BllUser e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             userRepository.Delete(e.ToDalUser());
             uow.Commit();
         }
 
         public void Update(BllUser e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             userRepository.Update(e.ToDalUser());
             uow.Commit();
         }
 
         public void SetUserAvatar(int userId, Stream avatarStream)
         {
+            if (avatarStream == null) throw new ArgumentNullException("avatarStream");
+
             userRepository.SetUserAvatar(userId, avatarStream);
             uow.Commit();
         }

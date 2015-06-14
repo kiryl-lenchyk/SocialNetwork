@@ -34,6 +34,8 @@ namespace SocialNetwork.Dal.Repository
 
         public DalMessage GetByPredicate(Expression<Func<DalMessage, bool>> predicate)
         {
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
             Expression<Func<Message, bool>> convertedPredicate =
                 (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));
 
@@ -43,6 +45,8 @@ namespace SocialNetwork.Dal.Repository
 
         public IQueryable<DalMessage> GetAllByPredicate(Expression<Func<DalMessage, bool>> predicate)
         {
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
             Expression<Func<Message, bool>> convertedPredicate =
                 (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));
 
@@ -51,6 +55,8 @@ namespace SocialNetwork.Dal.Repository
         
         public DalMessage Create(DalMessage e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             Message ormMessage = e.ToOrmMessage();
             context.Set<Message>().Add(ormMessage);
             return ormMessage.ToDalMessage();
@@ -58,11 +64,15 @@ namespace SocialNetwork.Dal.Repository
 
         public void Delete(DalMessage e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             context.Set<Message>().Remove(e.ToOrmMessage());
         }
 
         public void Update(DalMessage e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             context.Set<Message>().AddOrUpdate(e.ToOrmMessage());
         }
 

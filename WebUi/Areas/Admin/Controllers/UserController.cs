@@ -32,7 +32,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Edit(int id)
         {
             BllUser bllUser = userService.GetById(id);
-            if (bllUser == null) return HttpNotFound();
+            if (bllUser == null) throw new HttpException(404, "Not found");
 
             return
                 View(bllUser.ToUserEditViewModel(roleService.GetAllRoles(),
@@ -44,7 +44,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Edit(UserEditViewModel model)
         {
             BllUser bllUser = userService.GetById(model.Id);
-            if (bllUser == null) return HttpNotFound();
+            if (bllUser == null) throw new HttpException(404, "Not found");
             bllUser = UpdateBllUser(bllUser, model);
             userService.Update(bllUser);
             roleService.UpdateUserRoles(bllUser.UserName,model.SelectedRoles == null ? new List<int>() : model.SelectedRoles.ToList());
@@ -57,7 +57,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Delete(int id)
         {
             BllUser bllUser = userService.GetById(id);
-            if (bllUser == null) return HttpNotFound();
+            if (bllUser == null) throw new HttpException(404, "Not found");
 
             userService.Delete(bllUser);
             return RedirectToAction("Index");

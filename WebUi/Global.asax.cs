@@ -23,5 +23,21 @@ namespace WebUi
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            Exception exception = Server.GetLastError();
+            Server.ClearError();
+
+            var httpException = exception as HttpException;
+            if (httpException != null && httpException.GetHttpCode() == 404)
+            {
+                Response.Redirect("/Home/NotFound");
+            }
+            else
+            {
+                Response.Redirect("/Home/Error");
+            }
+        }
     }
 }

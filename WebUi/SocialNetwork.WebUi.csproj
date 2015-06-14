@@ -297,7 +297,6 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\Acount\Login.cshtml" />
@@ -311,6 +310,8 @@
     <Content Include="Views\Acount\Edit.cshtml" />
     <Content Include="Views\Acount\ChangePassword.cshtml" />
     <Content Include="Views\Message\_NotReadedMessages.cshtml" />
+    <Content Include="Views\Home\Error.cshtml" />
+    <Content Include="Views\Home\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

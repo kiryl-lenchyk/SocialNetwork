@@ -14,7 +14,22 @@ namespace WebUi.Controllers
 
         public ActionResult Index()
         {
-            return RedirectToAction("Index","User", 1);
+            return RedirectToAction("Index","User");
+        }
+
+        public ActionResult Error()
+        {
+            return View();
+        }
+
+        public ActionResult NotFound()
+        {
+            return View();
+        }
+
+        public ActionResult ThrowException()
+        {
+           throw new ArgumentNullException();
         }
 
     }

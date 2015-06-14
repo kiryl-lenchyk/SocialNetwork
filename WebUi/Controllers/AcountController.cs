@@ -117,7 +117,7 @@ namespace WebUi.Controllers
             {
                 BllUser newUser = model.ToBllUser();
                 BllUser oldUser = service.GetById(model.Id);
-                if (oldUser == null) return HttpNotFound();
+                if (oldUser == null) throw new HttpException(404, "Not found");
 
                 newUser.UserName = oldUser.UserName;
                 newUser.PasswordHash = oldUser.PasswordHash;

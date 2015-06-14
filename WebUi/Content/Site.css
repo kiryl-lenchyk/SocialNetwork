@@ -70,7 +70,15 @@ textarea {
     resize: vertical;
 }
 
+.error-message {
+    font-size: 100px;
+    margin-top: 100px;
+}
 
+.error-icon {
+    font-size: 300px;
+    color: blue;
+}
 
 
 /* Styles for validation helpers

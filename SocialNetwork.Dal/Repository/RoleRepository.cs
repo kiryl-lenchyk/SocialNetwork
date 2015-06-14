@@ -37,6 +37,8 @@ namespace SocialNetwork.Dal.Repository
 
         public DalRole GetByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
+            if(predicate == null) throw new ArgumentNullException("predicate");
+
             Expression<Func<Role, bool>> convertedPredicate =
                  (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole,Role>().Visit(predicate));
 
@@ -46,6 +48,8 @@ namespace SocialNetwork.Dal.Repository
 
         public IQueryable<DalRole> GetAllByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
             Expression<Func<Role, bool>> convertedPredicate =
                  (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole, Role>().Visit(predicate));
 
@@ -54,6 +58,8 @@ namespace SocialNetwork.Dal.Repository
 
         public DalRole Create(DalRole e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             Role ormRole = e.ToOrmRole();
             context.Set<Role>().Add(ormRole);
             return ormRole.ToDalRole();
@@ -61,24 +67,33 @@ namespace SocialNetwork.Dal.Repository
 
         public void Delete(DalRole e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+
             Role ormRole = e.ToOrmRole();
             context.Set<Role>().Remove(ormRole);
         }
 
         public void Update(DalRole e)
         {
+            if (e == null) throw new ArgumentNullException("e");
+            
             Role ormRole = e.ToOrmRole();
             context.Set<Role>().AddOrUpdate(ormRole);
         }
 
         public DalRole GetByName(string roleName)
         {
+            if (roleName == null) throw new ArgumentNullException("roleName");
+
+            
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Name == roleName);
             return ormRole == null ? null : ormRole.ToDalRole();
         }
 
         public IEnumerable<DalRole> GetUserRoles(DalUser user)
         {
+            if (user == null) throw new ArgumentNullException("user");
+
             User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == user.Id);
             if (ormUser == null) return new List<DalRole>();
             return ormUser.Roles.Select(x => x.ToDalRole());
@@ -86,6 +101,8 @@ namespace SocialNetwork.Dal.Repository
 
         public IEnumerable<DalUser> GetRoleUsers(DalRole role)
         {
+            if (role == null) throw new ArgumentNullException("role");
+
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
             if (ormRole == null) return new List<DalUser>();
             return
@@ -94,6 +111,9 @@ namespace SocialNetwork.Dal.Repository
 
         public void AddUserToRole(DalUser user, DalRole role)
         {
+            if (user == null) throw new ArgumentNullException("user");
+            if (role == null) throw new ArgumentNullException("role");
+
             User ormUser = GetOrmUserWithRoles(user);
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
             if (ormRole == null) throw new ArgumentException("Role has incorrect id");
@@ -103,6 +123,9 @@ namespace SocialNetwork.Dal.Repository
 
         public void RemoveUserFromRole(DalUser user, DalRole role)
         {
+            if (user == null) throw new ArgumentNullException("user");
+            if (role == null) throw new ArgumentNullException("role");
+
             User ormUser = GetOrmUserWithRoles(user);
             Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
             if (ormRole == null) throw new ArgumentException("Role has incorrect id");

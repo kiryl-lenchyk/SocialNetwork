@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Infractracture.Mappers;
 using WebUi.Models;
-using WebUi.Providers;
 
 
 namespace WebUi.Controllers
@@ -26,7 +26,7 @@ namespace WebUi.Controllers
             int currentUserId = service.GetByName(HttpContext.User.Identity.Name).Id;
             int userId = id ?? currentUserId;
             BllUser user = service.GetById(userId);
-            if (user == null) return HttpNotFound();
+            if (user == null) throw new HttpException(404, "Not found");
             return View(user.ToUserPageViewModel(service, currentUserId));
         }
 
@@ -78,14 +78,14 @@ namespace WebUi.Controllers
 
       public ActionResult AddToFriend(int id)
         {
-            if (!service.IsUserExists(id)) return HttpNotFound();
+            if (!service.IsUserExists(id)) throw new HttpException(404, "Not found");
             service.AddFriend(service.GetByName(User.Identity.Name).Id, id);
             return RedirectToAction("Index", new{id = id});
         }
 
         public ActionResult RemoveFriend(int id)
         {
-            if (!service.IsUserExists(id)) return HttpNotFound();
+            if (!service.IsUserExists(id)) throw new HttpException(404, "Not found");
             service.RemoveFriend(service.GetByName(User.Identity.Name).Id, id);
             return RedirectToAction("Index", new { id = id });
         }

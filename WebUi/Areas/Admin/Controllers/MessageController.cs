@@ -37,7 +37,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Edit(int id)
         {
             BllMessage bllMessage = messageService.GetById(id);
-            if (bllMessage == null) return HttpNotFound();
+            if (bllMessage == null) throw new HttpException(404, "Not found");
 
             return View(bllMessage.ToMessageViewModel(
                 userService.GetById(bllMessage.SenderId),
@@ -49,7 +49,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Edit(MessageViewModel model)
         {
             BllMessage bllMessage = messageService.GetById(model.Id);
-            if (bllMessage == null) return HttpNotFound();
+            if (bllMessage == null) throw new HttpException(404, "Not found");
             bllMessage.Text = model.Text;
             messageService.EditMessage(bllMessage, User.Identity.Name);
             return RedirectToAction("Index");
@@ -60,7 +60,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Delete(int id)
         {
             BllMessage bllMessage = messageService.GetById(id);
-            if (bllMessage == null) return HttpNotFound();
+            if (bllMessage == null) throw new HttpException(404, "Not found");
             messageService.DeleteMessage(bllMessage, User.Identity.Name);
             return RedirectToAction("Index");
         }

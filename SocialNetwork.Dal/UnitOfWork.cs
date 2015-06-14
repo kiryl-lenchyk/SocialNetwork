@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Validation;
 using SocialNetwork.Dal.Interface;
 
 namespace SocialNetwork.Dal
@@ -9,8 +9,6 @@ namespace SocialNetwork.Dal
     {
         private readonly DbContext context;
 
-        private bool isDisposed = false;
-
         public UnitOfWork(DbContext context)
         {
             this.context = context;
@@ -18,9 +16,16 @@ namespace SocialNetwork.Dal
 
         public void Commit()
         {
-            if (isDisposed) throw new ObjectDisposedException("UnitOfWork");
-
-            context.SaveChanges();
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (InvalidOperationException ex)
+            {
+                //TODO: Log
+                throw new DataException("Can't save data to database",ex);
+            }
+            
         }
 
     }

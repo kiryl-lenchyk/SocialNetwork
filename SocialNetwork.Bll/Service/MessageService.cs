@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Text;
-using System.Threading.Tasks;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Mappers;
@@ -52,6 +49,9 @@ namespace SocialNetwork.Bll.Service
 
         public BllDialog GetUsersDialog(BllUser firstUser, BllUser secondUser)
         {
+            if(firstUser == null) throw new ArgumentNullException("firstUser");
+            if (secondUser == null) throw new ArgumentNullException("secondUser");
+
             return new BllDialog
             {
                 FirstUser = firstUser,
@@ -66,12 +66,17 @@ namespace SocialNetwork.Bll.Service
 
         public void CreateMessage(BllMessage message)
         {
+            if (message == null) throw new ArgumentNullException("message");
+
             messageRepository.Create(message.ToDalMessage());
             uow.Commit();
         }
 
         public void EditMessage(BllMessage message, string editorName)
         {
+            if (message == null) throw new ArgumentNullException("message");
+            if (editorName == null) throw new ArgumentNullException("editorName");
+
             message.Text += String.Format("\r\n[Text edited by {0} at {1}]", editorName,
                 DateTime.Now.ToString("g"));
             messageRepository.Update(message.ToDalMessage());
@@ -80,6 +85,9 @@ namespace SocialNetwork.Bll.Service
 
         public void DeleteMessage(BllMessage message, string editorName)
         {
+            if (message == null) throw new ArgumentNullException("message");
+            if (editorName == null) throw new ArgumentNullException("editorName");
+
             message.Text = String.Format("[Message deleted by {0} at {1}]", editorName,
                 DateTime.Now.ToString("g"));
             messageRepository.Update(message.ToDalMessage());
@@ -95,6 +103,8 @@ namespace SocialNetwork.Bll.Service
 
         public void MarkAsReaded(BllMessage message)
         {
+            if (message == null) throw new ArgumentNullException("message");
+
             message.IsReaded = true;
             messageRepository.Update(message.ToDalMessage());
             uow.Commit();

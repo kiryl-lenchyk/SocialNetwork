@@ -23,53 +23,67 @@ namespace SocialNetwork.Bll.Service
 
         public bool IsUserInRole(string username, string roleName)
         {
+            if (username == null) throw new ArgumentNullException("username");
+            if (roleName == null) throw new ArgumentNullException("roleName");
+            
             DalUser user = userRepository.GetByName(username);
-            if (user == null) return false;
+            if (user == null) throw new ArgumentException(String.Format("User name={0} not found",username));
 
             return roleRepository.GetUserRoles(user).Count(x => x.Name == roleName) != 0;
         }
 
         public IEnumerable<BllRole> GetUserRoles(string username)
         {
+            if (username == null) throw new ArgumentNullException("username");
+
             DalUser user = userRepository.GetByName(username);
-            if (user == null) return new List<BllRole>();
+            if (user == null) throw new ArgumentException(String.Format("User name={0} not found", username));
 
             return roleRepository.GetUserRoles(user).ToList().Select(x => x.ToBllRole());
         }
 
         public void AddUserInRole(string username, string roleName)
         {
+            if (username == null) throw new ArgumentNullException("username");
+            if (roleName == null) throw new ArgumentNullException("roleName");
+
             DalRole role = roleRepository.GetByName(roleName);
-            if (role == null) return;
+            if (role == null) throw new ArgumentException(String.Format("Role name={0} not found", roleName));
             DalUser user = userRepository.GetByName(username);
-            if (user == null) return;
+            if (user == null) throw new ArgumentException(String.Format("User name={0} not found", username));
 
             roleRepository.AddUserToRole(user, role);
         }
 
         public void RemoveUserFromRole(string username, string roleName)
         {
-DalRole role = roleRepository.GetByName(roleName);
-            if (role == null) return;
+            DalRole role = roleRepository.GetByName(roleName);
+            if (role == null) throw new ArgumentException(String.Format("Role name={0} not found", roleName));
             DalUser user = userRepository.GetByName(username);
-            if (user == null) return;
+            if (user == null) throw new ArgumentException(String.Format("User name={0} not found", username));
 
             roleRepository.RemoveUserFromRole(user, role);
         }
 
         public void UpdateUserRoles(string username, IEnumerable<int> rolesIds)
         {
-DalUser  user = userRepository.GetByName(username);
-            if (user == null) return;
-            RemoveUserFromRoles(user,rolesIds);
+            if (username == null) throw new ArgumentNullException("username");
+            if (rolesIds == null) throw new ArgumentNullException("rolesIds");
+
+            DalUser user = userRepository.GetByName(username);
+            if (user == null) throw new ArgumentException(String.Format("User name={0} not found", username));
+
+            RemoveUserFromRoles(user, rolesIds);
             user = userRepository.GetByName(username);
-            AddUserInewRoles(user,rolesIds);
+            AddUserInewRoles(user, rolesIds);
         }
 
         public IEnumerable<BllUser> GetUsersInRole(string roleName)
         {
-DalRole role = roleRepository.GetByName(roleName);
-            if (role == null) return new List<BllUser>();
+            if (roleName == null) throw new ArgumentNullException("roleName");
+
+            DalRole role = roleRepository.GetByName(roleName);
+            if (role == null) throw new ArgumentException(String.Format("Role name={0} not found", roleName));
 
             return roleRepository.GetRoleUsers(role).ToList().Select(x => x.ToBllUser());
         }
