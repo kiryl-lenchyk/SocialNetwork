@@ -1,15 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Areas.Admin.Mappers;
 using WebUi.Areas.Admin.Models;
+using WebUi.Filters;
 
 namespace WebUi.Areas.Admin.Controllers
-{ 
-    [Authorize(Roles = "Admin")]
+{
+
+    [AutorizeRolesFromConfig("AdminRoleName")]
     public class UserController : Controller
     {
         private readonly IUserService userService;

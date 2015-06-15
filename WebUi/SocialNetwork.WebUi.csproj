@@ -163,6 +163,7 @@
     <Compile Include="Controllers\AcountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Filters\AutorizeRolesFromConfigAttribute.cs" />
     <Compile Include="Infractracture\CaptchaImage.cs" />
     <Compile Include="Infractracture\Mappers\MesageMapper.cs" />
     <Compile Include="Infractracture\Mappers\UserMapper.cs" />

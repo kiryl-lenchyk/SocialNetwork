@@ -7,10 +7,11 @@ using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Areas.Admin.Mappers;
 using WebUi.Areas.Admin.Models;
+using WebUi.Filters;
 
 namespace WebUi.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   [AutorizeRolesFromConfig("AdminRoleName")]
     public class MessageController : Controller
     {
         private readonly IUserService userService;
