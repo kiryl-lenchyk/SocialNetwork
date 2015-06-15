@@ -13,7 +13,7 @@ namespace WebUi.Controllers
     [Authorize]
     public class MessageController : Controller
     {
-          private readonly IMessageService messageService;
+        private readonly IMessageService messageService;
         private readonly IUserService userService;
 
         public MessageController(IMessageService messageService, IUserService userService)

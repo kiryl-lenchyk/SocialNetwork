@@ -31,16 +31,16 @@ namespace WebUi
         {
             Exception exception = Server.GetLastError();
             Server.ClearError();
-
-            Logger.Error(exception,exception.Message);
-
+            
             var httpException = exception as HttpException;
             if (httpException != null && httpException.GetHttpCode() == 404)
             {
+                Logger.Warn(exception, exception.Message);
                 Response.Redirect("/404");
             }
             else
             {
+                Logger.Fatal(exception, exception.Message);
                 Response.Redirect("/Error");
             }
         }
