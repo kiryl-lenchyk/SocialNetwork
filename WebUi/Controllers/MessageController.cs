@@ -50,8 +50,8 @@ namespace WebUi.Controllers
         [HttpPost]
         public ActionResult Add(int targetId, String text)
         {
-            Logger.Trace("Request send message to id = {0}. Current user id = {1}", targetId.ToString(), currentUserId.ToString());
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
+            Logger.Trace("Request send message to id = {0}. Current user id = {1}", targetId.ToString(), currentUserId.ToString());
             if (!userService.IsUserExists(targetId)) throw new HttpException(404, string.Format("User id = {0} Not found", targetId));
        
             messageService.CreateMessage(new BllMessage

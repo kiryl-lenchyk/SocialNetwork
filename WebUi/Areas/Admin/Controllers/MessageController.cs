@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Areas.Admin.Mappers;
@@ -14,6 +13,8 @@ namespace WebUi.Areas.Admin.Controllers
    [AutorizeRolesFromConfig("AdminRoleName")]
     public class MessageController : Controller
     {
+       private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly IUserService userService;
 
         private readonly IMessageService messageService;
@@ -26,6 +27,7 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
+            Logger.Trace("Request messages list for admin");
             return
                 View(
                     messageService.GetAllMessages().Select(
@@ -37,8 +39,9 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Edit(int id)
         {
+            Logger.Trace("Request message edit page for admin id = {0}", id.ToString());
             BllMessage bllMessage = messageService.GetById(id);
-            if (bllMessage == null) throw new HttpException(404, "Not found");
+            if (bllMessage == null) throw new HttpException(404, string.Format("Message id = {0} Not found. Edit message", id));
 
             return View(bllMessage.ToMessageViewModel(
                 userService.GetById(bllMessage.SenderId),
@@ -50,7 +53,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Edit(MessageViewModel model)
         {
             BllMessage bllMessage = messageService.GetById(model.Id);
-            if (bllMessage == null) throw new HttpException(404, "Not found");
+            if (bllMessage == null) throw new HttpException(404, string.Format("Message id = {0} Not found. Edit message", id));
             bllMessage.Text = model.Text;
             messageService.EditMessage(bllMessage, User.Identity.Name);
             return RedirectToAction("Index");
@@ -61,7 +64,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Delete(int id)
         {
             BllMessage bllMessage = messageService.GetById(id);
-            if (bllMessage == null) throw new HttpException(404, "Not found");
+            if (bllMessage == null) throw new HttpException(404, string.Format("Message id = {0} Not found. Delete message", id));
             messageService.DeleteMessage(bllMessage, User.Identity.Name);
             return RedirectToAction("Index");
         }
