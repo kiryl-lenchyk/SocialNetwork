@@ -2,11 +2,10 @@
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
+using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Infractracture.Mappers;
-using WebUi.Providers;
 
 namespace WebUi.Controllers
 {
@@ -15,6 +14,8 @@ namespace WebUi.Controllers
     {
         private readonly IMessageService messageService;
         private readonly IUserService userService;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public MessageController(IMessageService messageService, IUserService userService)
         {
@@ -25,6 +26,7 @@ namespace WebUi.Controllers
         public ActionResult Index()
         {
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
+            Logger.Trace("Request dialog list page . Current user id = {0}", currentUserId.ToString());
             return View(messageService.GetUserDialogs(currentUserId).Select(x => x.ToDialogPreviewModel(currentUserId)));
         }
 
@@ -32,7 +34,8 @@ namespace WebUi.Controllers
         {
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
             BllUser secondUser = userService.GetById(id);
-            if (secondUser == null) throw new HttpException(404, "Not found");
+            Logger.Trace("Request dialog page id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
+            if (secondUser == null) throw new HttpException(404, string.Format("User id = {0} Not found", id));
 
             BllDialog dialog = messageService.GetUsersDialog(
                 userService.GetById(currentUserId),
@@ -47,8 +50,10 @@ namespace WebUi.Controllers
         [HttpPost]
         public ActionResult Add(int targetId, String text)
         {
-            if (!userService.IsUserExists(targetId)) throw new HttpException(404, "Not found");
+            Logger.Trace("Request send message to id = {0}. Current user id = {1}", targetId.ToString(), currentUserId.ToString());
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
+            if (!userService.IsUserExists(targetId)) throw new HttpException(404, string.Format("User id = {0} Not found", targetId));
+       
             messageService.CreateMessage(new BllMessage
             {
                 CreatingTime = DateTime.Now,
