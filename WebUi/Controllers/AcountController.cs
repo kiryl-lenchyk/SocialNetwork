@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using WebUi.Infractracture;
@@ -18,6 +19,8 @@ namespace WebUi.Controllers
     {
         private readonly IUserService service;
 
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public AcountController(IUserService service)
         {
             this.service = service;
@@ -26,6 +29,7 @@ namespace WebUi.Controllers
 
         public ActionResult Login(string returnUrl)
         {
+            Logger.Trace("Request login page");
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -37,11 +41,13 @@ namespace WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
+                Logger.Trace("Try to login userName = {0}", model.UserName);
                 if (Membership.ValidateUser(model.UserName, model.Password))
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                     return RedirectToLocal(returnUrl);
                 }
+                Logger.Debug("Login fault userName = {0}", model.UserName);
                 ModelState.AddModelError("", "Incorrect user name or password");
             }
 
@@ -52,6 +58,7 @@ namespace WebUi.Controllers
         [Authorize]
         public ActionResult LogOff()
         {
+            Logger.Trace("Request logoff");
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }
@@ -59,6 +66,7 @@ namespace WebUi.Controllers
         [HttpGet]
         public ActionResult Register()
         {
+            Logger.Trace("Request register page");
             return View();
         }
 
@@ -68,18 +76,21 @@ namespace WebUi.Controllers
         {
             if (model.Captcha != (string)Session[CaptchaImage.captchaValueKey])
             {
+                Logger.Debug("Invalid captcha. Input value = {0}, correct value = {1}", model.Captcha, Session[CaptchaImage.captchaValueKey]);
                 ModelState.AddModelError("Captcha", "Incorrect text from image");
                 return View(model);
             }
 
             if (service.IsUserExists(model.UserName))
             {
+                Logger.Trace("Try to register exist user userName = {0}", model.UserName);
                 ModelState.AddModelError("UserName", "User with this name already exists");
                 return View(model);
             }
 
             if (ModelState.IsValid)
             {
+                Logger.Trace("Try to register userName = {0}", model.UserName);
                 MembershipUser membershipUser = ((UserMembershipProvider) Membership.Provider)
                     .CreateUser(model.UserName, model.Password, model.Name, model.Surname,
                     model.AboutUser, model.BirthDay, model.Sex == null ? null : (BllSex?)(int) model.Sex);
@@ -104,6 +115,7 @@ namespace WebUi.Controllers
         [Authorize]
         public ActionResult Edit()
         {
+            Logger.Trace("Request edit user page userName = {0}", User.Identity.Name);
             return View(service.GetByName(User.Identity.Name).ToEdirAccountViewModel());
         }
 
@@ -115,6 +127,8 @@ namespace WebUi.Controllers
            
             if (ModelState.IsValid)
             {
+                Logger.Trace("Edit user page userName = {0}", User.Identity.Name);
+
                 BllUser newUser = model.ToBllUser();
                 BllUser oldUser = service.GetById(model.Id);
                 if (oldUser == null) throw new HttpException(404, "Not found");
@@ -135,6 +149,7 @@ namespace WebUi.Controllers
         [Authorize]
         public ActionResult ChangePassword()
         {
+            Logger.Trace("Request ChangePassword page userName = {0}", User.Identity.Name);
             return View();
         }
 
@@ -148,10 +163,11 @@ namespace WebUi.Controllers
                 if (Membership.Provider.ChangePassword(User.Identity.Name, model.OldPassword,
                     model.NewPassword))
                 {
-
+                    Logger.Trace("Change password  userName = {0}", User.Identity.Name);
                     ViewBag.StatusMessage = "Password successfully changed";
                     return View(model);
                 }
+                Logger.Trace("Change password fault userName = {0}", User.Identity.Name);
             }
             ModelState.AddModelError("", "Incorrect password");
             return View(model);
