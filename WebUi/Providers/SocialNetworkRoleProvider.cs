@@ -1,16 +1,16 @@
 ﻿using System;
-using System.EnterpriseServices;
 using System.Linq;
-using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Security;
-using SocialNetwork.Bll.Interface.Entity;
+using NLog;
 using SocialNetwork.Bll.Interface.Services;
 
 namespace WebUi.Providers
 {
     public class SocialNetworkRoleProvider : RoleProvider
     {
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private IRoleService roleService;
 
@@ -21,7 +21,9 @@ namespace WebUi.Providers
             roleService =
                 (IRoleService) DependencyResolver.Current.GetService(typeof (IRoleService));
 
-            return roleService.IsUserInRole(username, roleName);
+            if (roleService.IsUserInRole(username, roleName)) return true;
+            Logger.Trace("User in role return false. Username = {0} Role = {1}",username, roleName);
+            return false;
 
         }
 

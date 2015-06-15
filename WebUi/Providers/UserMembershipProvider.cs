@@ -2,6 +2,7 @@
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Security;
+using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 
@@ -9,6 +10,8 @@ namespace WebUi.Providers
 {
     public class UserMembershipProvider : MembershipProvider
     {
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private IUserService userService;
 
@@ -18,6 +21,7 @@ namespace WebUi.Providers
             MembershipUser membershipUser = GetUser(username, false);
             if (membershipUser != null)
             {
+                Logger.Debug("Try create user with exsist username = {0}", username);
                 return null;
             }
 
@@ -37,6 +41,7 @@ namespace WebUi.Providers
             });
 
             membershipUser = GetUser(username, false);
+            Logger.Trace("User username = {0} created", username);
             return membershipUser;
         }
 
@@ -46,11 +51,20 @@ namespace WebUi.Providers
                (IUserService)DependencyResolver.Current.GetService(typeof(IUserService));
 
             BllUser bllUser = userService.GetByName(username);
-            if (bllUser == null) return false;
+            if (bllUser == null)
+            {
+                Logger.Debug("Try change password not exist user username = {0}", username);
+                return false;
+            }
 
-            if (!Crypto.VerifyHashedPassword(bllUser.PasswordHash, oldPassword)) return false;
+            if (!Crypto.VerifyHashedPassword(bllUser.PasswordHash, oldPassword))
+            {
+                Logger.Debug("Try change password with incorrect password user username = {0}", username);
+                return false;
+            }
             bllUser.PasswordHash = Crypto.HashPassword(newPassword);
             userService.Update(bllUser);
+            Logger.Trace("Password cnahged. Username = {0}", username);
             return true;
         }
 
@@ -60,7 +74,11 @@ namespace WebUi.Providers
                 (IUserService) DependencyResolver.Current.GetService(typeof (IUserService));
 
             BllUser bllUser = userService.GetByName(username);
-            if (bllUser == null) return null;
+            if (bllUser == null)
+            {
+                Logger.Debug("Try get not exist user username = {0}", username);
+                return null;
+            }
 
             return new MembershipUser("UserMembershipProvider", bllUser.UserName, bllUser.Id, null,
                 null,
@@ -69,10 +87,7 @@ namespace WebUi.Providers
 
         }
 
-        public override bool DeleteUser(string username, bool deleteAllRelatedData)
-        {
-            throw new System.NotImplementedException();
-        }
+        
 
 
         public override bool ValidateUser(string username, string password)
@@ -81,13 +96,24 @@ namespace WebUi.Providers
                 (IUserService) DependencyResolver.Current.GetService(typeof (IUserService));
 
             BllUser bllUser = userService.GetByName(username);
-            return bllUser != null &&
-                   Crypto.VerifyHashedPassword(bllUser.PasswordHash, password);
+            if (bllUser == null)
+            {
+                Logger.Debug("Try validate not exist user username = {0}", username);
+                return false;
+            }
+            if (Crypto.VerifyHashedPassword(bllUser.PasswordHash, password)) return true;
+            Logger.Debug("User validate fault username = {0}", username);
+            return false;
 
         }
 
 
         #region Not Implemented
+
+        public override bool DeleteUser(string username, bool deleteAllRelatedData)
+        {
+            throw new System.NotImplementedException();
+        }
 
         public override MembershipUser CreateUser(string username, string password, string email,
             string passwordQuestion,
