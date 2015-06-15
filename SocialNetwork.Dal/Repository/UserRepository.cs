@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -20,8 +21,8 @@ namespace SocialNetwork.Dal.Repository
 
         private readonly DbContext context;
 
-        private static readonly string AvatarLocation = AppDomain.CurrentDomain.GetData("DataDirectory").ToString() + "{0}Avatars{0}{1}.png";
-        private static readonly String DefaultAvatar = "noavatar";
+        private static readonly string AvatarLocation = AppDomain.CurrentDomain.GetData("DataDirectory").ToString() + ConfigurationManager.AppSettings["AvatarPathMask"];
+        private static readonly string DefaultAvatar = ConfigurationManager.AppSettings["DefaultAvatarId"]; 
 
         public UserRepository(DbContext context)
         {
