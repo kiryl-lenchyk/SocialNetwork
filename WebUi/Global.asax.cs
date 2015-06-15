@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using NLog;
 
 namespace WebUi
 {
@@ -14,6 +15,8 @@ namespace WebUi
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -28,6 +31,8 @@ namespace WebUi
         {
             Exception exception = Server.GetLastError();
             Server.ClearError();
+
+            Logger.Error(exception,exception.Message);
 
             var httpException = exception as HttpException;
             if (httpException != null && httpException.GetHttpCode() == 404)

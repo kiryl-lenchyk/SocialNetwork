@@ -29,7 +29,7 @@ namespace WebUi.Controllers
 
         public ActionResult ThrowException()
         {
-           throw new ArgumentNullException();
+           throw new Exception("Test");
         }
 
     }
