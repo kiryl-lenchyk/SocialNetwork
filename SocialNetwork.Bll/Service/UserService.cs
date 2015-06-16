@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Mappers;
@@ -17,6 +18,8 @@ namespace SocialNetwork.Bll.Service
         private readonly IUnitOfWork uow;
         private readonly IUserRepository userRepository;
 
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public UserService(IUnitOfWork uow, IUserRepository repository)
         {
 
@@ -26,6 +29,7 @@ namespace SocialNetwork.Bll.Service
 
         public BllUser GetById(int key)
         {
+            Logger.Trace("UserService.GetById invoked key = {0}",key);
             DalUser dalUser = userRepository.GetById(key);
             return dalUser == null ? null : dalUser.ToBllUser();
         }
@@ -33,6 +37,7 @@ namespace SocialNetwork.Bll.Service
         public BllUser GetByName(string name)
         {
             if(name == null) throw new ArgumentNullException("name");
+            Logger.Trace("UserService.GetByName invoked name = {0}", name);
 
             DalUser dalUser = userRepository.GetByName(name);
             return dalUser == null ? null : dalUser.ToBllUser();
@@ -41,7 +46,8 @@ namespace SocialNetwork.Bll.Service
         public BllUser Create(BllUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-
+            Logger.Trace("UserService.Create invoked userName = {0}", e.UserName);
+            
             DalUser dalUser = e.ToDalUser();
             dalUser = userRepository.Create(dalUser);
             uow.Commit();
@@ -50,6 +56,8 @@ namespace SocialNetwork.Bll.Service
 
         public void AddFriend(int currentUserId, int newFriendId)
         {
+            Logger.Trace("UserService.AddFriend invoked currentUserId = {0}, newFriendId = {1}", currentUserId, newFriendId);
+
             DalUser currentUser = userRepository.GetById(currentUserId);
             if (currentUser == null)
                 throw new ArgumentException(
@@ -61,7 +69,10 @@ namespace SocialNetwork.Bll.Service
                     String.Format("User id = {0} is no existst", newFriendId), "newFriendId");
 
             if (currentUser.FriendsId.Contains(newFriendId))
+            {
+                Logger.Debug("Try add to friend user, who is friend already currentUserId = {0}, newFriendId = {1}", currentUserId, newFriendId);
                 throw new InvalidOperationException("Users are friends");
+            }
 
             userRepository.AddToFriends(currentUser, newFriend);
             uow.Commit();
@@ -69,6 +80,8 @@ namespace SocialNetwork.Bll.Service
 
         public void RemoveFriend(int currentUserId, int newFriendId)
         {
+            Logger.Trace("UserService.RemoveFriend invoked currentUserId = {0}, newFriendId = {1}", currentUserId, newFriendId);
+
             DalUser currentUser = userRepository.GetById(currentUserId);
             if (currentUser == null)
                 throw new ArgumentException(
@@ -80,7 +93,10 @@ namespace SocialNetwork.Bll.Service
                     String.Format("User id = {0} is no existst", newFriendId), "newFriendId");
 
             if (!currentUser.FriendsId.Contains(newFriendId))
+            {
+                Logger.Debug("Try remove from friends user, who isnot friend now currentUserId = {0}, newFriendId = {1}", currentUserId, newFriendId);
                 throw new InvalidOperationException("Users are not friends");
+            }
 
             userRepository.RemoveFriend(currentUser, newFriend);
             uow.Commit();
@@ -90,6 +106,13 @@ namespace SocialNetwork.Bll.Service
             DateTime? birthDayMax,
             BllSex? sex)
         {
+            Logger.Trace(
+                "UserService.FindUsers invoked  name = {0}, surname = {1}, birthDayMin = {2}, birthDayMax = {3}, sex = {4}",
+                name ?? "null", surname ?? "null",
+                birthDayMin == null ? "null" : birthDayMin.ToString(),
+                birthDayMax == null ? "null" : birthDayMax.ToString(),
+                sex == null ? "null" : sex.ToString());
+
             Expression<Func<DalUser, bool>> predicate = GetFindPredicate(name, surname, birthDayMin,
                 birthDayMax, sex);
             return userRepository.GetAllByPredicate(predicate).ToList().Select(x => x.ToBllUser());
@@ -97,6 +120,8 @@ namespace SocialNetwork.Bll.Service
 
         public IEnumerable<BllUser> GetAllUsers()
         {
+            Logger.Trace("UserService.GetAllUsers invoked");
+
             return userRepository.GetAll().ToList().Select(x => x.ToBllUser());
         }
 
@@ -149,19 +174,22 @@ namespace SocialNetwork.Bll.Service
         public bool IsUserExists(string userName)
         {
             if (userName == null) throw new ArgumentNullException("userName");
+            Logger.Trace("UserService.IsUserExists invoked userName = {0}", userName);
 
             return userRepository.GetByName(userName) != null;
         }
 
         public bool IsUserExists(int id)
         {
-            return userRepository.GetById(id) != null;
+            Logger.Trace("UserService.IsUserExists invoked id = {0}", id);
 
+            return userRepository.GetById(id) != null;
         }
 
         public void Delete(BllUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
+            Logger.Trace("UserService.Delete invoked id = {0}", e.Id);
 
             userRepository.Delete(e.ToDalUser());
             uow.Commit();
@@ -170,6 +198,7 @@ namespace SocialNetwork.Bll.Service
         public void Update(BllUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
+            Logger.Trace("UserService.Update invoked id = {0}", e.Id);
 
             userRepository.Update(e.ToDalUser());
             uow.Commit();
@@ -178,6 +207,7 @@ namespace SocialNetwork.Bll.Service
         public void SetUserAvatar(int userId, Stream avatarStream)
         {
             if (avatarStream == null) throw new ArgumentNullException("avatarStream");
+            Logger.Trace("UserService.SetUserAvatar invoked userId = {0}", userId);
 
             userRepository.SetUserAvatar(userId, avatarStream);
             uow.Commit();
@@ -185,19 +215,25 @@ namespace SocialNetwork.Bll.Service
 
         public Stream GetUserAvatarStream(int userId)
         {
+            Logger.Trace("UserService.GetUserAvatarStream invoked userId = {0}", userId);
+
             Stream avatarStream = userRepository.GetUserAvatarStream(userId);
             return avatarStream ?? userRepository.GetDefaultAvatarStream();
         }
 
         public bool CanUserAddToFriends(int userId, int friendId)
         {
+            Logger.Trace("UserService.CanUserAddToFriends invoked userId = {0}, friendId = {1}", userId, friendId);
+
             BllUser user = GetById(userId);
             if (user == null) return false;
             return !user.FriendsId.Contains(friendId) && userId != friendId;
         }
 
-        public bool CanUserWrieMesage(int targetId, int senderId)
+        public bool CanUserWriteMesage(int targetId, int senderId)
         {
+            Logger.Trace("UserService.CanUserWrieMesage invoked targetId = {0}, senderId = {1}", targetId, senderId);
+
             return !CanUserAddToFriends(targetId, senderId) && targetId != senderId;
         }
     }

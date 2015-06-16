@@ -22,7 +22,7 @@ namespace WebUi.Infractracture.Mappers
                 Sex = bllUser.Sex != null ? (Sex?)(int)bllUser.Sex : null,
                 AboutUser = bllUser.AboutUser,
                 CanAddToFriends = userService.CanUserAddToFriends(currentUserId, bllUser.Id),
-                CanWriteMessage = userService.CanUserWrieMesage(bllUser.Id, currentUserId),
+                CanWriteMessage = userService.CanUserWriteMesage(bllUser.Id, currentUserId),
                 UserName = bllUser.UserName,
                 Friends = bllUser.FriendsId.Select(x => userService.GetById(x).ToUserPreviewViewModel()),
              };

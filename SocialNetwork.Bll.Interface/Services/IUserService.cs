@@ -39,7 +39,7 @@ namespace SocialNetwork.Bll.Interface.Services
 
         bool CanUserAddToFriends(int userId, int friendId);
 
-        bool CanUserWrieMesage(int targetId, int senderId);
+        bool CanUserWriteMesage(int targetId, int senderId);
 
     }
 }
