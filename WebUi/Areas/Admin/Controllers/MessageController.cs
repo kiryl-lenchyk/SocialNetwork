@@ -53,7 +53,7 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult Edit(MessageViewModel model)
         {
             BllMessage bllMessage = messageService.GetById(model.Id);
-            if (bllMessage == null) throw new HttpException(404, string.Format("Message id = {0} Not found. Edit message", id));
+            if (bllMessage == null) throw new HttpException(404, string.Format("Message id = {0} Not found. Edit message", model.Id));
             bllMessage.Text = model.Text;
             messageService.EditMessage(bllMessage, User.Identity.Name);
             return RedirectToAction("Index");

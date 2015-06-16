@@ -35,12 +35,12 @@ namespace WebUi
             var httpException = exception as HttpException;
             if (httpException != null && httpException.GetHttpCode() == 404)
             {
-                Logger.Warn(exception, exception.Message);
+                Logger.Warn(httpException.Message);
                 Response.Redirect("/404");
             }
             else
             {
-                Logger.Fatal(exception, exception.Message);
+                Logger.Fatal(exception.ToString());
                 Response.Redirect("/Error");
             }
         }
