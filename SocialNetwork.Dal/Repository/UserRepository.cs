@@ -33,7 +33,7 @@ namespace SocialNetwork.Dal.Repository
 
         public IQueryable<DalUser> GetAll()
         {
-            Logger.Trace("UserRepository.GetAll");
+            Logger.Trace("UserRepository.GetAll ivoked");
             return context.Set<User>().Select(UserMapper.ToDalUserConvertion);
         }
 
