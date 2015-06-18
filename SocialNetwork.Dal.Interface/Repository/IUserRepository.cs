@@ -16,11 +16,5 @@ namespace SocialNetwork.Dal.Interface.Repository
         void AddToFriends(DalUser currentUser, DalUser newFriend);
 
         void RemoveFriend(DalUser currentUser, DalUser newFriend);
-
-        void SetUserAvatar(int userId, Stream avatarStream);
-
-        Stream GetUserAvatarStream(int userId);
-
-        Stream GetDefaultAvatarStream();
     }
 }

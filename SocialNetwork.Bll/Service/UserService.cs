@@ -17,14 +17,17 @@ namespace SocialNetwork.Bll.Service
     {
         private readonly IUnitOfWork uow;
         private readonly IUserRepository userRepository;
+        private readonly IRepository<DalAvatar> avatarRepository;
+
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public UserService(IUnitOfWork uow, IUserRepository repository)
+        public UserService(IUnitOfWork uow, IUserRepository userRepository, IRepository<DalAvatar> avatarRepository)
         {
 
             this.uow = uow;
-            this.userRepository = repository;
+            this.userRepository = userRepository;
+            this.avatarRepository = avatarRepository;
         }
 
         public BllUser GetById(int key)
@@ -209,7 +212,7 @@ namespace SocialNetwork.Bll.Service
             if (avatarStream == null) throw new ArgumentNullException("avatarStream");
             Logger.Trace("UserService.SetUserAvatar invoked userId = {0}", userId);
 
-            userRepository.SetUserAvatar(userId, avatarStream);
+            avatarRepository.Update(new DalAvatar(){UserId = userId, ImageStream = avatarStream});
             uow.Commit();
         }
 
@@ -217,8 +220,7 @@ namespace SocialNetwork.Bll.Service
         {
             Logger.Trace("UserService.GetUserAvatarStream invoked userId = {0}", userId);
 
-            Stream avatarStream = userRepository.GetUserAvatarStream(userId);
-            return avatarStream ?? userRepository.GetDefaultAvatarStream();
+            return avatarRepository.GetById(userId).ImageStream;
         }
 
         public bool CanUserAddToFriends(int userId, int friendId)

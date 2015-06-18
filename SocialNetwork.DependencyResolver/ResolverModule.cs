@@ -30,6 +30,7 @@ namespace SocialNetwork.DependencyResolver
             kernel.Bind<IMessageService>().To<MessageService>();
             kernel.Bind<IRoleService>().To<RoleService>();
             kernel.Bind<IRoleRepository>().To<RoleRepository>();
+            kernel.Bind<IRepository<DalAvatar>>().To<AvatarRepository>();
         }
     }
 }
