@@ -13,23 +13,51 @@ using SocialNetwork.Orm;
 
 namespace SocialNetwork.Dal.Repository
 {
+
+    /// <summary>
+    /// Represent RoleRepository for database as storage.
+    /// </summary>
     public class RoleRepository : IRoleRepository
     {
 
+        #region Fields
+
         private readonly DbContext context;
+        
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        #endregion
+
+        #region Constractors
+
+        /// <summary>
+        /// Create new instanse of RoleRepository.
+        /// </summary>
+        /// <param name="context">DbContext for save data</param>
         public RoleRepository(DbContext context)
         {
             this.context = context;
         }
-        
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Get all elements in storage. Return IQueryable for wroting long query to storage.
+        /// </summary>
+        /// <returns>IQuaryable of all elements. You can add LINQ query to it. Quary will be invoked by storage</returns>
         public IQueryable<DalRole> GetAll()
         {
             Logger.Trace("RoleRepository.GetAll ivoked");
             return context.Set<Role>().Select(RoleMapper.ToDalRolExpression);
         }
 
+        /// <summary>
+        /// Get entity by id.
+        /// </summary>
+        /// <param name="key">entity id.</param>
+        /// <returns>found entity or null if it not found.</returns>
         public DalRole GetById(int key)
         {
             Logger.Trace("RoleRepository.GetById invoked key = {0}", key);
@@ -39,6 +67,11 @@ namespace SocialNetwork.Dal.Repository
 
         }
 
+        /// <summary>
+        /// Get entity by search predicate.
+        /// </summary>
+        /// <param name="predicate">predicate to search.</param>
+        /// <returns>first founded entity or null if it not found.</returns>
         public DalRole GetByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
             if(predicate == null) throw new ArgumentNullException("predicate");
@@ -51,6 +84,11 @@ namespace SocialNetwork.Dal.Repository
             return ormRole != null ? ormRole.ToDalRole() : null;
         }
 
+        /// <summary>
+        ///  Get all entites by search predicate.
+        /// </summary>
+        /// <param name="predicate">predicate to search.</param>
+        /// <returns>IQueryable of entites, you can write long additional query to storage</returns>
         public IQueryable<DalRole> GetAllByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
@@ -62,6 +100,11 @@ namespace SocialNetwork.Dal.Repository
             return context.Set<Role>().Where(convertedPredicate).Select(RoleMapper.ToDalRolExpression);
         }
 
+        /// <summary>
+        /// Add entity to storage. Id will be selected by storage.
+        /// </summary>
+        /// <param name="e">new entity without id.</param>
+        /// <returns>created entity with new id.</returns>
         public DalRole Create(DalRole e)
         {
             if (e == null) throw new ArgumentNullException("e");
@@ -72,6 +115,10 @@ namespace SocialNetwork.Dal.Repository
             return ormRole.ToDalRole();
         }
 
+        /// <summary>
+        /// Delete entity from storage by id.
+        /// </summary>
+        /// <param name="e">entity to delete.</param>
         public void Delete(DalRole e)
         {
             if (e == null) throw new ArgumentNullException("e");
@@ -81,6 +128,10 @@ namespace SocialNetwork.Dal.Repository
             context.Set<Role>().Remove(ormRole);
         }
 
+        /// <summary>
+        /// Apdate entity value. Old value selected by id.
+        /// </summary>
+        /// <param name="e">new value for entity.</param>
         public void Update(DalRole e)
         {
             if (e == null) throw new ArgumentNullException("e");
@@ -90,6 +141,11 @@ namespace SocialNetwork.Dal.Repository
             context.Set<Role>().AddOrUpdate(ormRole);
         }
 
+        /// <summary>
+        /// Get role by name, or null if role not found.
+        /// </summary>
+        /// <param name="roleName">role name for search</param>
+        /// <returns>founded role or null if it's not found</returns>
         public DalRole GetByName(string roleName)
         {
             if (roleName == null) throw new ArgumentNullException("roleName");
@@ -99,6 +155,11 @@ namespace SocialNetwork.Dal.Repository
             return ormRole == null ? null : ormRole.ToDalRole();
         }
 
+        /// <summary>
+        /// Get IEnumerable of roles for one user.
+        /// </summary>
+        /// <param name="user">user to find roles.</param>
+        /// <returns>IEnumerable of roles</returns>
         public IEnumerable<DalRole> GetUserRoles(DalUser user)
         {
             if (user == null) throw new ArgumentNullException("user");
@@ -113,6 +174,11 @@ namespace SocialNetwork.Dal.Repository
             return ormUser.Roles.Select(x => x.ToDalRole());
         }
 
+        /// <summary>
+        /// Get IEnumarable of user for one role.
+        /// </summary>
+        /// <param name="role">role to find users.</param>
+        /// <returns>IEnumerable of users</returns>
         public IEnumerable<DalUser> GetRoleUsers(DalRole role)
         {
             if (role == null) throw new ArgumentNullException("role");
@@ -128,6 +194,11 @@ namespace SocialNetwork.Dal.Repository
                 context.Set<User>().Where(x => x.Roles.Contains(ormRole)).Select(x => x.ToDalUser());
         }
 
+        /// <summary>
+        /// Add role to user's roles list.
+        /// </summary>
+        /// <param name="user">user to add role.</param>
+        /// <param name="role">new user role.</param>
         public void AddUserToRole(DalUser user, DalRole role)
         {
             if (user == null) throw new ArgumentNullException("user");
@@ -146,6 +217,11 @@ namespace SocialNetwork.Dal.Repository
             ormUser.Roles.Add(ormRole);
         }
 
+        /// <summary>
+        /// Remove role from user's roles list.
+        /// </summary>
+        /// <param name="user">user to remove role.</param>
+        /// <param name="role">user role to remove.</param>
         public void RemoveUserFromRole(DalUser user, DalRole role)
         {
             if (user == null) throw new ArgumentNullException("user");
@@ -164,6 +240,10 @@ namespace SocialNetwork.Dal.Repository
             ormUser.Roles.Remove(ormRole);
         }
 
+        #endregion
+
+        #region Private Methods
+
         private User GetOrmUserWithRoles(DalUser dalUser, string logMethodName)
         {
             User ormCurrentUser = context.Set<User>().SingleOrDefault(x => x.Id == dalUser.Id);
@@ -175,5 +255,7 @@ namespace SocialNetwork.Dal.Repository
             context.Entry(ormCurrentUser).Collection(x => x.Roles).Load();
             return ormCurrentUser;
         }
+
+        #endregion
     }
 }
