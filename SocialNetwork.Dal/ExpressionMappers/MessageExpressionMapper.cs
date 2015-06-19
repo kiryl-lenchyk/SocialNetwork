@@ -6,6 +6,10 @@ using SocialNetwork.Orm;
 
 namespace SocialNetwork.Dal.ExpressionMappers
 {
+
+    /// <summary>
+    /// ExpressionMapper to change Expression with DalMessage arguments  Expression with Message arguments
+    /// </summary>
     class MessageExpressionMapper : GenericExpressionMapper<DalMessage, Message>
     {
         private static readonly Dictionary<MemberInfo, LambdaExpression> Mappings;
@@ -24,6 +28,9 @@ namespace SocialNetwork.Dal.ExpressionMappers
 
         }
 
+        /// <summary>
+        /// Create new instanse of MessageExpressionMapper.
+        /// </summary>
         internal MessageExpressionMapper()
             : base(Mappings)
         {

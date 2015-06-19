@@ -7,8 +7,18 @@ using SocialNetwork.Orm;
 
 namespace SocialNetwork.Dal.Mappers
 {
+
+    /// <summary>
+    /// Contains exstension methods for convertion between DalUser and User from ORM Layaer.
+    /// </summary>
     public static class UserMapper
     {
+        
+        /// <summary>
+        /// Convert to ORM User.
+        /// </summary>
+        /// <param name="dalUser">DalUser to convert</param>
+        /// <returns>ORM User from this DalUser</returns>
         public static User ToOrmUser(this DalUser  dalUser)
         {
             return new User()
@@ -25,11 +35,19 @@ namespace SocialNetwork.Dal.Mappers
             };
         }
 
+        /// <summary>
+        /// Convert to DalUser.
+        /// </summary>
+        /// <param name="user">ORM User to convert</param>
+        /// <returns>DalUser from this ORM User</returns>
         public static DalUser ToDalUser(this User user)
         {
             return ToDalUserConvertion.Compile()(user);
         }
 
+        /// <summary>
+        /// Expression that convert ORM User to DalUser. For using in LINQtoSQL query.
+        /// </summary>
         public static Expression<Func<User, DalUser>> ToDalUserConvertion
         {
             get
