@@ -47,8 +47,7 @@ namespace SocialNetwork.Dal.Interface.DTO
         /// Hash of user password.
         /// </summary>
         public string PasswordHash { get; set; }
-
-
+        
         /// <summary>
         /// IEnumarable of ids of user friends.
         /// </summary>
