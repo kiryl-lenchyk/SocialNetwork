@@ -3,8 +3,16 @@ using SocialNetwork.Dal.Interface.DTO;
 
 namespace SocialNetwork.Bll.Mappers
 {
+    /// <summary>
+    /// Contains exstension methods for convertion between DalMessage and BllMessage.
+    /// </summary>
     public static class MessageMapper
     {
+        /// <summary>
+        /// Convert to DalMessage.
+        /// </summary>
+        /// <param name="bllMessage">BllMessage to convert</param>
+        /// <returns>DalMessage from this BllMessage</returns>
         public static DalMessage ToDalMessage(this BllMessage bllMessage)
         {
             return new DalMessage()
@@ -18,6 +26,11 @@ namespace SocialNetwork.Bll.Mappers
             };
         }
 
+        /// <summary>
+        /// Convert to BllMessage.
+        /// </summary>
+        /// <param name="dalMessage">DalMessage to convert</param>
+        /// <returns>BllMessage from this DalMessage</returns>
         public static BllMessage ToBllMessage(this DalMessage dalMessage)
         {
             return new BllMessage()
