@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetwork.WebUi", "WebUi\SocialNetwork.WebUi.csproj", "{61C9C97A-454E-4B1F-A88C-3E1CE6EB87F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUi.Tests", "WebUi.Tests\WebUi.Tests.csproj", "{AA8C5B18-9E3E-4D54-94C1-7C4E5E5167E8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetwork.Orm", "SocialNetwork.Orm\SocialNetwork.Orm.csproj", "{C2D73C16-0A9C-4EEC-BFFF-869864C10654}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetwork.Dal.Interface", "SocialNetwork.Dal.Interface\SocialNetwork.Dal.Interface.csproj", "{50A48948-698C-4BD5-8EB1-B062EB8B0F15}"
@@ -31,10 +29,6 @@ Global
 		{61C9C97A-454E-4B1F-A88C-3E1CE6EB87F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61C9C97A-454E-4B1F-A88C-3E1CE6EB87F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61C9C97A-454E-4B1F-A88C-3E1CE6EB87F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA8C5B18-9E3E-4D54-94C1-7C4E5E5167E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA8C5B18-9E3E-4D54-94C1-7C4E5E5167E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA8C5B18-9E3E-4D54-94C1-7C4E5E5167E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA8C5B18-9E3E-4D54-94C1-7C4E5E5167E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C2D73C16-0A9C-4EEC-BFFF-869864C10654}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C2D73C16-0A9C-4EEC-BFFF-869864C10654}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2D73C16-0A9C-4EEC-BFFF-869864C10654}.Release|Any CPU.ActiveCfg = Release|Any CPU

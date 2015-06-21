@@ -15,18 +15,28 @@ namespace WebUi.Areas.Admin.Controllers
     [AutorizeRolesFromConfig("AdminRoleName")]
     public class UserController : Controller
     {
+
+        #region Fields
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IUserService userService;
-
         private readonly IRoleService roleService;
+
+        #endregion
+
+        #region Constractors
 
         public UserController(IUserService userService, IRoleService roleService)
         {
             this.userService = userService;
             this.roleService = roleService;
         }
-       
+
+        #endregion
+
+        #region Action Methods
+
         public ActionResult Index()
         {
             Logger.Trace("Request users list for admin");
@@ -69,6 +79,10 @@ namespace WebUi.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        #endregion
+
+        #region Private Methods
+
         private BllUser UpdateBllUser(BllUser bllUser, UserEditViewModel model)
         {
             bllUser.AboutUser = model.AboutUser;
@@ -77,7 +91,7 @@ namespace WebUi.Areas.Admin.Controllers
             return bllUser;
         }
 
-        
+        #endregion
 
     }
 }

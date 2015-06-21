@@ -17,15 +17,30 @@ namespace WebUi.Controllers
     [AllowAnonymous]
     public class AcountController : Controller
     {
+
+        #region Fields
+
         private readonly IUserService service;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly int CaptchaMinValue = 1111;
+        private static readonly int CaptchaMaxValue = 9999;
+        private static readonly int CaptchaWidth = 211;
+        private static readonly int CaptchaHeight = 50;
+        private static readonly string CaptchaFamilyName = "Helvetica";
+
+        #endregion
+
+        #region Constractors
 
         public AcountController(IUserService service)
         {
             this.service = service;
         }
-        
+
+        #endregion
+
+        #region Action Methods
 
         public ActionResult Login(string returnUrl)
         {
@@ -177,10 +192,10 @@ namespace WebUi.Controllers
         public ActionResult Captcha()
         {
             Session[CaptchaImage.captchaValueKey] =
-                new Random(DateTime.Now.Millisecond).Next(1111, 9999).ToString(CultureInfo.InvariantCulture);
+                new Random(DateTime.Now.Millisecond).Next(CaptchaMinValue, CaptchaMaxValue).ToString(CultureInfo.InvariantCulture);
             
             using(CaptchaImage captcha = 
-                new CaptchaImage(Session[CaptchaImage.captchaValueKey].ToString(), 211, 50, "Helvetica"))
+                new CaptchaImage(Session[CaptchaImage.captchaValueKey].ToString(), CaptchaWidth, CaptchaHeight, CaptchaFamilyName))
             {
                 Response.Clear();
                 Response.ContentType = "image/jpeg";
@@ -188,6 +203,10 @@ namespace WebUi.Controllers
             }
             return null;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private    ActionResult RedirectToLocal(string url)
         {
@@ -198,6 +217,7 @@ namespace WebUi.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-      
+        #endregion
+        
     }
 }

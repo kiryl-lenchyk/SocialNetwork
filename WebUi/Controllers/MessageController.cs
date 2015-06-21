@@ -12,10 +12,17 @@ namespace WebUi.Controllers
     [Authorize]
     public class MessageController : Controller
     {
+    
+        #region Fields
+
         private readonly IMessageService messageService;
         private readonly IUserService userService;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
+        #region Constractors
 
         public MessageController(IMessageService messageService, IUserService userService)
         {
@@ -23,11 +30,18 @@ namespace WebUi.Controllers
             this.userService = userService;
         }
 
+        #endregion
+
+        #region Action Methods
+
         public ActionResult Index()
         {
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
             Logger.Trace("Request dialog list page . Current user id = {0}", currentUserId.ToString());
-            return View(messageService.GetUserDialogs(currentUserId).Select(x => x.ToDialogPreviewModel(currentUserId)));
+
+            return
+                View(messageService.GetUserDialogs(currentUserId)
+                        .Select(x => x.ToDialogPreviewModel(currentUserId)));
         }
 
         public ActionResult Dialog(int id)
@@ -44,9 +58,7 @@ namespace WebUi.Controllers
 
             return View(dialog.ToDialogViewModel(currentUserId));
         }
-
         
-
         [HttpPost]
         public ActionResult Add(int targetId, String text)
         {
@@ -80,6 +92,10 @@ namespace WebUi.Controllers
                         userService.GetByName(User.Identity.Name).Id));
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void MarkDialogAsReaded(int id, BllDialog dialog)
         {
             foreach (BllMessage message in dialog.Messages.Where(x => x.SenderId == id && !x.IsReaded))
@@ -88,6 +104,7 @@ namespace WebUi.Controllers
             }
         }
 
+        #endregion
 
     }
 }

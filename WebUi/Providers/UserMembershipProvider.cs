@@ -8,13 +8,32 @@ using SocialNetwork.Bll.Interface.Services;
 
 namespace WebUi.Providers
 {
+    /// <summary>
+    /// MembershipProvider for SocialNetwork
+    /// </summary>
     public class UserMembershipProvider : MembershipProvider
     {
 
+        #region Fields
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private IUserService userService;
 
+        #endregion
+
+        #region Realized Methods
+
+        /// <summary>
+        /// Create new user.
+        /// </summary>
+        /// <param name="username">username for login</param>
+        /// <param name="password">user's password</param>
+        /// <param name="name">name of user</param>
+        /// <param name="surname">user's surname</param>
+        /// <param name="aboutUser">information about user</param>
+        /// <param name="birthDay">user's birthday</param>
+        /// <param name="sex">user's sex</param>
+        /// <returns>created MembershipUser</returns>
         public MembershipUser CreateUser(string username, string password, string name,
             string surname, string aboutUser, DateTime? birthDay, BllSex? sex)
         {
@@ -45,6 +64,13 @@ namespace WebUi.Providers
             return membershipUser;
         }
 
+        /// <summary>
+        /// Processes a request to update the password for a membership user.
+        /// </summary>
+        /// <returns>
+        /// true if the password was updated successfully; otherwise, false.
+        /// </returns>
+        /// <param name="username">The user to update the password for. </param><param name="oldPassword">The current password for the specified user. </param><param name="newPassword">The new password for the specified user. </param>
         public override bool ChangePassword(string username, string oldPassword, string newPassword)
         {
             userService =
@@ -68,6 +94,13 @@ namespace WebUi.Providers
             return true;
         }
 
+        /// <summary>
+        /// Gets information from the data source for a user. Provides an option to update the last-activity date/time stamp for the user.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Web.Security.MembershipUser"/> object populated with the specified user's information from the data source.
+        /// </returns>
+        /// <param name="username">The name of the user to get information for. </param><param name="userIsOnline">true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user. </param>
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
             userService =
@@ -86,10 +119,14 @@ namespace WebUi.Providers
                 DateTime.MinValue, DateTime.MinValue);
 
         }
-
         
-
-
+        /// <summary>
+        /// Verifies that the specified user name and password exist in the data source.
+        /// </summary>
+        /// <returns>
+        /// true if the specified username and password are valid; otherwise, false.
+        /// </returns>
+        /// <param name="username">The name of the user to validate. </param><param name="password">The password for the specified user. </param>
         public override bool ValidateUser(string username, string password)
         {
             userService =
@@ -107,6 +144,7 @@ namespace WebUi.Providers
 
         }
 
+        #endregion
 
         #region Not Implemented
 

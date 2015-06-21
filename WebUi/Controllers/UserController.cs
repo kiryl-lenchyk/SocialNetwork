@@ -15,14 +15,24 @@ namespace WebUi.Controllers
     [Authorize]
     public class UserController : Controller
     {
+        #region Fields
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IUserService service;
+
+        #endregion
+
+        #region Constractors
 
         public UserController(IUserService service)
         {
             this.service = service;
         }
+
+        #endregion
+
+        #region Action Methods
 
         public ActionResult Index(int? id)
         {
@@ -110,6 +120,7 @@ namespace WebUi.Controllers
             return RedirectToAction("Index", new { id = id });
         }
 
-       
+        #endregion
+
     }
 }

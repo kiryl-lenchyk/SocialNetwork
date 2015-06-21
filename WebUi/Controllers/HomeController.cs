@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 
 namespace WebUi.Controllers
 {
     public class HomeController : Controller
     {
-        //
-        // GET: /Home/
+        #region Action Methods
 
         public ActionResult Index()
         {
@@ -31,6 +26,8 @@ namespace WebUi.Controllers
         {
            throw new Exception("Test");
         }
+
+        #endregion
 
     }
 }
