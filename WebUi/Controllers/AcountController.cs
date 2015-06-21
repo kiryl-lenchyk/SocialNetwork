@@ -191,6 +191,7 @@ namespace WebUi.Controllers
 
         public ActionResult Captcha()
         {
+            Logger.Trace("Request Captcha page");
             Session[CaptchaImage.captchaValueKey] =
                 new Random(DateTime.Now.Millisecond).Next(CaptchaMinValue, CaptchaMaxValue).ToString(CultureInfo.InvariantCulture);
             

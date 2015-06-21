@@ -90,7 +90,7 @@ namespace WebUi.Infractracture
                 if (!isDisposed)
                 {
                     isDisposed = true;
-                    Image.Dispose();
+                    image.Dispose();
                 }
             }
 
