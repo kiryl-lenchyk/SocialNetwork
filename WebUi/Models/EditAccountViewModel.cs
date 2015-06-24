@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
 
 namespace WebUi.Models
 {
@@ -13,11 +12,11 @@ namespace WebUi.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime? BirthDay { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Name id required")]
         [Display(Name = "Name")]
         public String Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Surname is requiared")]
         [Display(Name = "Surname")]
         public String Surname { get; set; }
 

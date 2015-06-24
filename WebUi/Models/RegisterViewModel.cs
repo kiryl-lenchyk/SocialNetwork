@@ -1,16 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace WebUi.Models
 {
     public class RegisterViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "User name is required")]
         [Display(Name = "User name*")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Password is required")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password*")]
@@ -24,11 +23,11 @@ namespace WebUi.Models
         [Display(Name = "Birth day")]
         public DateTime? BirthDay { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Name is required")]
         [Display(Name = "Name*")]
         public String Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Surname is required")]
         [Display(Name = "Surname*")]
         public String Surname { get; set; }
 
