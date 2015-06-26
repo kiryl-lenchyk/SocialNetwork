@@ -18,7 +18,7 @@ namespace WebUi.Infractracture.Mappers
                 Sex = bllUser.Sex != null ? (Sex?)(int)bllUser.Sex : null,
                 AboutUser = bllUser.AboutUser,
                 CanAddToFriends = userService.CanUserAddToFriends(currentUserId, bllUser.Id),
-                CanWriteMessage = userService.CanUserWriteMesage(bllUser.Id, currentUserId),
+                CanWriteMessage = userService.CanUserWriteMessage(bllUser.Id, currentUserId),
                 UserName = bllUser.UserName,
                 Friends = bllUser.FriendsId.Select(x => userService.GetById(x).ToUserPreviewViewModel()),
              };
@@ -36,9 +36,9 @@ namespace WebUi.Infractracture.Mappers
             };
         }
 
-        public static EdirAccountViewModel ToEdirAccountViewModel(this BllUser bllUser)
+        public static EditAccountViewModel ToEdirAccountViewModel(this BllUser bllUser)
         {
-            return new EdirAccountViewModel()
+            return new EditAccountViewModel()
             {
                 Id = bllUser.Id,
                 BirthDay = bllUser.BirthDay,
@@ -49,7 +49,7 @@ namespace WebUi.Infractracture.Mappers
             };
         }
 
-        public static BllUser ToBllUser(this EdirAccountViewModel edirAccountViewModel)
+        public static BllUser ToBllUser(this EditAccountViewModel edirAccountViewModel)
         {
             return new BllUser()
             {

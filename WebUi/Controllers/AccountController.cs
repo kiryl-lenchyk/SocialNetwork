@@ -15,7 +15,7 @@ using WebUi.Providers;
 namespace WebUi.Controllers
 {
     [AllowAnonymous]
-    public class AcountController : Controller
+    public class AccountController : Controller
     {
 
         #region Fields
@@ -33,7 +33,7 @@ namespace WebUi.Controllers
 
         #region Constractors
 
-        public AcountController(IUserService service)
+        public AccountController(IUserService service)
         {
             this.service = service;
         }
@@ -137,7 +137,7 @@ namespace WebUi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Edit(EdirAccountViewModel model, HttpPostedFileWrapper avatar)
+        public ActionResult Edit(EditAccountViewModel model, HttpPostedFileWrapper avatar)
         {
            
             if (ModelState.IsValid)

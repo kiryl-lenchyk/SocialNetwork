@@ -119,7 +119,7 @@ namespace SocialNetwork.Bll.Interface.Services
         /// <param name="targetId">id of message target.</param>
         /// <param name="senderId">id of message sender.</param>
         /// <returns>true if senderId can write message to targetId and false else.</returns>
-        bool CanUserWriteMesage(int targetId, int senderId);
+        bool CanUserWriteMessage(int targetId, int senderId);
 
     }
 }

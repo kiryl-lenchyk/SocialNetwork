@@ -274,9 +274,9 @@ namespace SocialNetwork.Bll.Service
         /// <param name="targetId">id of message target.</param>
         /// <param name="senderId">id of message sender.</param>
         /// <returns>true if senderId can write message to targetId and false else.</returns>
-        public bool CanUserWriteMesage(int targetId, int senderId)
+        public bool CanUserWriteMessage(int targetId, int senderId)
         {
-            Logger.Trace("UserService.CanUserWrieMesage invoked targetId = {0}, senderId = {1}",
+            Logger.Trace("UserService.CanUserWriteMessage invoked targetId = {0}, senderId = {1}",
                 targetId, senderId);
 
             return !CanUserAddToFriends(targetId, senderId) && targetId != senderId;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebUi.Models
 {
-    public class EdirAccountViewModel
+    public class EditAccountViewModel
     {
         public int Id { get; set; }
 
@@ -12,7 +12,7 @@ namespace WebUi.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime? BirthDay { get; set; }
 
-        [Required(ErrorMessage = "Name id required")]
+        [Required(ErrorMessage = "Name is required")]
         [Display(Name = "Name")]
         public String Name { get; set; }
 
