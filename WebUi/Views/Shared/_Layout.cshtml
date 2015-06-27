@@ -21,10 +21,10 @@
                             <li>@Html.ActionLink("My Page", "Index", "Home")</li>
                             <li>@Html.ActionLink("Find User", "Find", "User")</li>
                             <li><a href="@Url.Action( "Index", "Message")">My Messages @Html.Action("NotReadedMessages", "Message")</a>  </li>
-                            <li>@Html.ActionLink("Edit Acount", "Edit", "Acount")</li>
-                            <li>@Html.ActionLink("Change password", "ChangePassword", "Acount")</li>
+                            <li>@Html.ActionLink("Edit Account", "Edit", "Account")</li>
+                            <li>@Html.ActionLink("Change password", "ChangePassword", "Account")</li>
                         </ul>
-                        @using (Html.BeginForm("LogOff", "Acount", FormMethod.Post, new {id = "logoutForm", @class = "navbar-right"}))
+                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm", @class = "navbar-right"}))
                         {
                             @Html.AntiForgeryToken()
                             <ul class="nav navbar-nav navbar-right">

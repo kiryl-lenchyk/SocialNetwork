@@ -1,4 +1,4 @@
-﻿@model WebUi.Models.EdirAccountViewModel
+﻿@model WebUi.Models.EditAccountViewModel
 
 @{
     ViewBag.Title = "Edit Account";
@@ -11,7 +11,7 @@
     <p class="success">@ViewBag.StatusMessage</p>
 }
 
-@using (Html.BeginForm("Edit", "Acount", FormMethod.Post, new { @class = "form-horizontal", role = "form" ,enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" ,enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     <hr />

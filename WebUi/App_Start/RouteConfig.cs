@@ -18,14 +18,14 @@ namespace WebUi
             routes.MapRoute(
                 name: "Login",
                 url: "Login",
-                defaults: new {controller = "Acount", action = "Login"},
+                defaults: new {controller = "Account", action = "Login"},
                 namespaces: new string[] {"WebUi.Controllers"}
                 );
 
             routes.MapRoute(
                 name: "Register",
                 url: "Register",
-                defaults: new {controller = "Acount", action = "Register"},
+                defaults: new {controller = "Account", action = "Register"},
                 namespaces: new string[] {"WebUi.Controllers"}
                 );
 
