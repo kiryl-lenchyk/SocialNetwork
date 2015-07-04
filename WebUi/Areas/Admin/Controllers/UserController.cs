@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
+using SocialNetwork.Logger.Interface;
 using WebUi.Areas.Admin.Mappers;
 using WebUi.Areas.Admin.Models;
 using WebUi.Filters;
@@ -18,19 +18,19 @@ namespace WebUi.Areas.Admin.Controllers
 
         #region Fields
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IUserService userService;
         private readonly IRoleService roleService;
+        private readonly ILogger logger;
 
         #endregion
 
         #region Constractors
 
-        public UserController(IUserService userService, IRoleService roleService)
+        public UserController(IUserService userService, IRoleService roleService, ILogger logger)
         {
             this.userService = userService;
             this.roleService = roleService;
+            this.logger = logger;
         }
 
         #endregion
@@ -39,14 +39,14 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
-            Logger.Trace("Request users list for admin");
+            logger.Log(LogLevel.Trace,"Request users list for admin");
 
            return View(userService.GetAllUsers().Select(x => x.ToUserPreviewViewModel()));
         }
 
         public ActionResult Edit(int id)
         {
-            Logger.Trace("Request user edit page for admin id = {0}", id.ToString());
+            logger.Log(LogLevel.Trace,"Request user edit page for admin id = {0}", id.ToString());
             BllUser bllUser = userService.GetById(id);
             if (bllUser == null) throw new HttpException(404, string.Format("User id = {0} Not found", id));
 

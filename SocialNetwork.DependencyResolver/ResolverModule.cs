@@ -14,6 +14,8 @@ using SocialNetwork.Dal.Interface;
 using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
 using SocialNetwork.Dal.Repository;
+using SocialNetwork.Logger.Interface;
+using SocialNetwork.Logger.NLogLogger;
 using SocialNetwork.Orm;
 
 namespace SocialNetwork.DependencyResolver
@@ -31,6 +33,7 @@ namespace SocialNetwork.DependencyResolver
             kernel.Bind<IRoleService>().To<RoleService>();
             kernel.Bind<IRoleRepository>().To<RoleRepository>();
             kernel.Bind<IRepository<DalAvatar>>().To<AvatarRepository>();
+            kernel.Bind<ILogger>().To<NLogLogger>().InSingletonScope();
         }
     }
 }

@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
-using NLog;
 using SocialNetwork.Bll.Interface.Services;
+using SocialNetwork.Logger.Interface;
 
 namespace WebUi.Providers
 {
@@ -13,9 +13,7 @@ namespace WebUi.Providers
     public class SocialNetworkRoleProvider : RoleProvider
     {
         #region Fields
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
+        private ILogger logger;
         private IRoleService roleService;
 
         #endregion
@@ -39,11 +37,12 @@ namespace WebUi.Providers
         /// <param name="username">The user name to search for.</param><param name="roleName">The role to search in.</param>
         public override bool IsUserInRole(string username, string roleName)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             roleService =
                 (IRoleService) DependencyResolver.Current.GetService(typeof (IRoleService));
 
             if (roleService.IsUserInRole(username, roleName)) return true;
-            Logger.Trace("User in role return false. Username = {0} Role = {1}",username, roleName);
+            logger.Log(LogLevel.Trace,"User in role return false. Username = {0} Role = {1}",username, roleName);
             return false;
 
         }
@@ -57,6 +56,7 @@ namespace WebUi.Providers
         /// <param name="username">The user to return a list of roles for.</param>
         public override string[] GetRolesForUser(string username)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             roleService =
                 (IRoleService) DependencyResolver.Current.GetService(typeof (IRoleService));
 
@@ -69,6 +69,7 @@ namespace WebUi.Providers
         /// <param name="usernames">A string array of user names to be added to the specified roles. </param><param name="roleNames">A string array of the role names to add the specified user names to.</param>
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             roleService =
                 (IRoleService)DependencyResolver.Current.GetService(typeof(IRoleService));
 
@@ -87,6 +88,7 @@ namespace WebUi.Providers
         /// <param name="usernames">A string array of user names to be removed from the specified roles. </param><param name="roleNames">A string array of role names to remove the specified user names from.</param>
         public override void RemoveUsersFromRoles(string[] usernames, string[] roleNames)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             roleService =
                 (IRoleService)DependencyResolver.Current.GetService(typeof(IRoleService));
 
@@ -108,6 +110,7 @@ namespace WebUi.Providers
         /// <param name="roleName">The name of the role to get the list of users for.</param>
         public override string[] GetUsersInRole(string roleName)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             roleService =
                 (IRoleService)DependencyResolver.Current.GetService(typeof(IRoleService));
 
@@ -122,6 +125,7 @@ namespace WebUi.Providers
         /// </returns>
         public override string[] GetAllRoles()
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             roleService =
                 (IRoleService)DependencyResolver.Current.GetService(typeof(IRoleService));
 

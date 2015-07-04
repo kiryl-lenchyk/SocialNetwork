@@ -8,9 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using NLog;
 using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
+using SocialNetwork.Logger.Interface;
 
 namespace SocialNetwork.Dal.Repository
 {
@@ -19,9 +19,10 @@ namespace SocialNetwork.Dal.Repository
     /// </summary>
     public class AvatarRepository : IRepository<DalAvatar>
     {
+
         #region Fields
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger logger;
 
         private static readonly string AvatarsLocation = AppDomain.CurrentDomain.GetData(
             "DataDirectory").ToString()
@@ -37,6 +38,19 @@ namespace SocialNetwork.Dal.Repository
 
         #endregion
 
+        #region Constractors
+
+        /// <summary>
+        /// Create new instanse of AvatarRepository.
+        /// </summary>
+        /// <param name="logger">class for log</param>
+        public AvatarRepository(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -45,7 +59,7 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>IQuaryable of all elements. You can add LINQ query to it. Quary will be invoked by storage</returns>
         public IQueryable<DalAvatar> GetAll()
         {
-            Logger.Trace("AvatarRepository.GetAll invoked");
+            logger.Log(LogLevel.Trace,"AvatarRepository.GetAll invoked");
 
             return GetByPredicateEnumerable(x => true).AsQueryable();
         }
@@ -57,13 +71,13 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>found entity or null if it not found.</returns>
         public DalAvatar GetById(int id)
         {
-            Logger.Trace("AvatarRepository.GetById invoked key = {0}", id);
+            logger.Log(LogLevel.Trace,"AvatarRepository.GetById invoked key = {0}", id);
             string fullAvatarPath = string.Format("{0}//{1}", AvatarsLocation,
                 string.Format(AvatarNameMask, id));
 
             if (!File.Exists(fullAvatarPath))
             {
-                Logger.Trace("UserRepository.Avatar for user id = {0} not found", id);
+                logger.Log(LogLevel.Trace,"UserRepository.Avatar for user id = {0} not found", id);
                 return GetDefaultAvatar(id);
             }
 
@@ -73,7 +87,7 @@ namespace SocialNetwork.Dal.Repository
             }
             catch (ArgumentException ex)
             {
-                Logger.Error(
+                logger.Log(LogLevel.Error,
                     "AvatarRepository.GetUserAvatarStream cant load avatar image from {0} userId = {1} exception: {2}",
                     fullAvatarPath, id, ex.ToString());
                 throw new DataException("Can't load user avatar", ex);
@@ -88,7 +102,7 @@ namespace SocialNetwork.Dal.Repository
         public DalAvatar GetByPredicate(Expression<Func<DalAvatar, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            Logger.Trace("AvatarRepository.GetByPredicate invoked predicate = {0}",
+            logger.Log(LogLevel.Trace,"AvatarRepository.GetByPredicate invoked predicate = {0}",
                 predicate.ToString());
 
             return GetByPredicateEnumerable(predicate.Compile()).FirstOrDefault();
@@ -102,7 +116,7 @@ namespace SocialNetwork.Dal.Repository
         public IQueryable<DalAvatar> GetAllByPredicate(Expression<Func<DalAvatar, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            Logger.Trace("AvatarRepository.GetAllByPredicate invoked predicate = {0}",
+            logger.Log(LogLevel.Trace,"AvatarRepository.GetAllByPredicate invoked predicate = {0}",
                 predicate.ToString());
 
             return GetByPredicateEnumerable(predicate.Compile()).AsQueryable();
@@ -118,7 +132,7 @@ namespace SocialNetwork.Dal.Repository
             if (e == null) throw new ArgumentNullException("e");
             if (e.ImageStream == null)
                 throw new ArgumentException("e.ImageStream cant be null", "e");
-            Logger.Trace("UserRepository.Create invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace,"UserRepository.Create invoked id = {0}", e.Id);
             string fullAvatarPath = string.Format("{0}//{1}", AvatarsLocation,
                 string.Format(AvatarNameMask, e.UserId));
 
@@ -132,7 +146,7 @@ namespace SocialNetwork.Dal.Repository
             }
             catch (System.Runtime.InteropServices.ExternalException ex)
             {
-                Logger.Error(
+                logger.Log(LogLevel.Error,
                     "UserRepository.SetUserAvatar cant save avatar image to {0} userId = {1} exception: {2}",
                     fullAvatarPath, e.UserId, ex.ToString());
                 throw new DataException("Can't save user avatar", ex);
@@ -145,13 +159,13 @@ namespace SocialNetwork.Dal.Repository
         /// <param name="e">entity to delete.</param>
         public void Delete(DalAvatar e)
         {
-            Logger.Trace("AvatarRepository.Delete invoked key = {0}", e.Id);
+            logger.Log(LogLevel.Trace,"AvatarRepository.Delete invoked key = {0}", e.Id);
             string fullAvatarPath = string.Format("{0}//{1}", AvatarsLocation,
                 string.Format(AvatarNameMask, e.UserId));
 
             if (!File.Exists(fullAvatarPath))
             {
-                Logger.Trace("UserRepository.Delete avatar for user id = {0} not found", e.Id);
+                logger.Log(LogLevel.Trace,"UserRepository.Delete avatar for user id = {0} not found", e.Id);
                 return;
             }
 
@@ -161,7 +175,7 @@ namespace SocialNetwork.Dal.Repository
             }
             catch (Exception ex)
             {
-                Logger.Error(
+                logger.Log(LogLevel.Error,
                     "AvatarRepository.GetUserAvatarStream cant delete avatar image from {0} userId = {1} exception: {2}",
                     fullAvatarPath, e.Id, ex.ToString());
                 throw new DataException("Can't delete user avatar", ex);
@@ -199,7 +213,7 @@ namespace SocialNetwork.Dal.Repository
 
         private DalAvatar GetDefaultAvatar(int userId)
         {
-            Logger.Trace("AvatarRepository.GetDefaultAvatarStream invoked");
+            logger.Log(LogLevel.Trace,"AvatarRepository.GetDefaultAvatarStream invoked");
             string fullAvatarPath = string.Format("{0}//{1}", AvatarsLocation,
                 string.Format(AvatarNameMask, DefaultAvatar));
 
@@ -209,7 +223,7 @@ namespace SocialNetwork.Dal.Repository
             }
             catch (FileNotFoundException ex)
             {
-                Logger.Error(
+                logger.Log(LogLevel.Error,
                     "UserRepository.GetDefaultAvatarStream cant load avatar image from {0} exception: {1}",
                     fullAvatarPath, ex.ToString());
                 throw new DataException("Can't load user avatar", ex);

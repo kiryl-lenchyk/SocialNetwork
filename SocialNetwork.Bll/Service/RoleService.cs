@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Mappers;
 using SocialNetwork.Dal.Interface;
 using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
+using SocialNetwork.Logger.Interface;
 
 namespace SocialNetwork.Bll.Service
 { 
@@ -21,8 +21,7 @@ namespace SocialNetwork.Bll.Service
         private readonly IRoleRepository roleRepository;
         private readonly IUserRepository userRepository;
         private readonly IUnitOfWork uow;
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger logger;
 
         #endregion
 
@@ -34,11 +33,13 @@ namespace SocialNetwork.Bll.Service
         /// <param name="uow">unit of work for commit in storage.</param>
         /// <param name="userRepository">user strorage.</param>
         /// <param name="roleRepository">roles storage.</param>
-        public RoleService(IRoleRepository roleRepository, IUserRepository userRepository, IUnitOfWork uow)
+        /// <param name="logger">class for log</param>
+        public RoleService(IRoleRepository roleRepository, IUserRepository userRepository, IUnitOfWork uow, ILogger logger)
         {
             this.roleRepository = roleRepository;
             this.userRepository = userRepository;
             this.uow = uow;
+            this.logger = logger;
         }
 
         #endregion
@@ -55,7 +56,7 @@ namespace SocialNetwork.Bll.Service
         {
             if (username == null) throw new ArgumentNullException("username");
             if (roleName == null) throw new ArgumentNullException("roleName");
-            Logger.Trace("RoleService.IsUserInRole invoked username = {0}, roleName = {1}", username,
+            logger.Log(LogLevel.Trace,"RoleService.IsUserInRole invoked username = {0}, roleName = {1}", username,
                 roleName);
 
             DalUser user = userRepository.GetByName(username);
@@ -73,7 +74,7 @@ namespace SocialNetwork.Bll.Service
         public IEnumerable<BllRole> GetUserRoles(string username)
         {
             if (username == null) throw new ArgumentNullException("username");
-            Logger.Trace("RoleService.GetUserRoles invoked username = {0}", username);
+            logger.Log(LogLevel.Trace,"RoleService.GetUserRoles invoked username = {0}", username);
 
             DalUser user = userRepository.GetByName(username);
             if (user == null)
@@ -91,7 +92,7 @@ namespace SocialNetwork.Bll.Service
         {
             if (username == null) throw new ArgumentNullException("username");
             if (roleName == null) throw new ArgumentNullException("roleName");
-            Logger.Trace("RoleService.AddUserInRole invoked username = {0}, roleName = {1}",
+            logger.Log(LogLevel.Trace,"RoleService.AddUserInRole invoked username = {0}, roleName = {1}",
                 username, roleName);
 
             DalRole role = roleRepository.GetByName(roleName);
@@ -112,7 +113,7 @@ namespace SocialNetwork.Bll.Service
         /// <param name="roleName">role name.</param>
         public void RemoveUserFromRole(string username, string roleName)
         {
-            Logger.Trace("RoleService.RemoveUserFromRole invoked username = {0}, roleName = {1}",
+            logger.Log(LogLevel.Trace,"RoleService.RemoveUserFromRole invoked username = {0}, roleName = {1}",
                 username, roleName);
 
             DalRole role = roleRepository.GetByName(roleName);
@@ -135,7 +136,7 @@ namespace SocialNetwork.Bll.Service
         {
             if (username == null) throw new ArgumentNullException("username");
             if (rolesIds == null) throw new ArgumentNullException("rolesIds");
-            Logger.Trace("RoleService.UpdateUserRoles invoked username = {0}", username);
+            logger.Log(LogLevel.Trace,"RoleService.UpdateUserRoles invoked username = {0}", username);
 
             DalUser user = userRepository.GetByName(username);
             if (user == null)
@@ -154,7 +155,7 @@ namespace SocialNetwork.Bll.Service
         public IEnumerable<BllUser> GetUsersInRole(string roleName)
         {
             if (roleName == null) throw new ArgumentNullException("roleName");
-            Logger.Trace("RoleService.GetUsersInRole invoked roleName = {0}", roleName);
+            logger.Log(LogLevel.Trace,"RoleService.GetUsersInRole invoked roleName = {0}", roleName);
 
             DalRole role = roleRepository.GetByName(roleName);
             if (role == null)
@@ -169,7 +170,7 @@ namespace SocialNetwork.Bll.Service
         /// <returns>IEnumerable of all roles.</returns>
         public IEnumerable<BllRole> GetAllRoles()
         {
-            Logger.Trace("RoleService.GetAllRoles invoked");
+            logger.Log(LogLevel.Trace,"RoleService.GetAllRoles invoked");
 
             return roleRepository.GetAll().ToList().Select(x => x.ToBllRole());
         }

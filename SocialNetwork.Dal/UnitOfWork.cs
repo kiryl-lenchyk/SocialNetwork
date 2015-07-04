@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.Entity;
-using NLog;
 using SocialNetwork.Dal.Interface;
+using SocialNetwork.Logger.Interface;
 
 namespace SocialNetwork.Dal
 {
@@ -14,8 +14,7 @@ namespace SocialNetwork.Dal
         #region Fields
 
         private readonly DbContext context;
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger logger;
 
         #endregion
 
@@ -25,9 +24,11 @@ namespace SocialNetwork.Dal
         /// Create new instanse of UnitOfWork
         /// </summary>
         /// <param name="context">DbContext for commit</param>
-        public UnitOfWork(DbContext context)
+        /// <param name="logger">class for log</param>
+        public UnitOfWork(DbContext context, ILogger logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         #endregion
@@ -39,14 +40,14 @@ namespace SocialNetwork.Dal
         /// </summary>
         public void Commit()
         {
-            Logger.Trace("UnitOfWork.Commit ivoked");
+            logger.Log(LogLevel.Trace,"UnitOfWork.Commit ivoked");
             try
             {
                 context.SaveChanges();
             }
             catch (InvalidOperationException ex)
             {
-                Logger.Error("UnitOfWork.Commit cant save data to database exception: {0}",
+                logger.Log(LogLevel.Error,"UnitOfWork.Commit cant save data to database exception: {0}",
                     ex.ToString());
                 throw new DataException("Can't save data to database",ex);
             }

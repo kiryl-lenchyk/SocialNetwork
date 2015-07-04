@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
+using SocialNetwork.Logger.Interface;
 using WebUi.Infractracture.Mappers;
 using WebUi.Models;
 
@@ -17,17 +17,17 @@ namespace WebUi.Controllers
     {
         #region Fields
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IUserService service;
+        private readonly ILogger logger;
 
         #endregion
 
         #region Constractors
 
-        public UserController(IUserService service)
+        public UserController(IUserService service, ILogger logger)
         {
             this.service = service;
+            this.logger = logger;
         }
 
         #endregion
@@ -38,7 +38,7 @@ namespace WebUi.Controllers
         {
             int currentUserId = service.GetByName(HttpContext.User.Identity.Name).Id;
             int userId = id ?? currentUserId;
-            Logger.Trace("Request user page id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
+            logger.Log(LogLevel.Trace,"Request user page id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
 
             BllUser user = service.GetById(userId);
             if (user == null) throw new HttpException(404, string.Format("User id = {0} Not found", userId));
@@ -47,7 +47,7 @@ namespace WebUi.Controllers
         
         public ActionResult Avatar(int id)
         {
-            Logger.Trace("Request user avatar id = {0}", id.ToString());
+            logger.Log(LogLevel.Trace,"Request user avatar id = {0}", id.ToString());
 
             return File(service.GetUserAvatarStream(id),  "image/png");
         }
@@ -77,14 +77,14 @@ namespace WebUi.Controllers
 
         public ActionResult Find()
         {
-            Logger.Trace("Request find page");
+            logger.Log(LogLevel.Trace,"Request find page");
             return View();
         }
 
         [HttpPost]
         public ActionResult Find(UserFinViewModel model)
         {
-            Logger.Trace(
+            logger.Log(LogLevel.Trace,
                 "Request find result. Name = {0}, Surname = {1}, Sex = {2}, BithdayMin = {3}, BithdayMax = {4}",
                 model.Name, model.Surname, model.Sex, model.BirthDayMin, model.BirthDayMax);
 
@@ -102,7 +102,7 @@ namespace WebUi.Controllers
 
             if (!service.IsUserExists(id)) throw new HttpException(404, string.Format("User id = {0} Not found. Add to friend", id));
             int currentUserId = service.GetByName(User.Identity.Name).Id;
-            Logger.Trace("Request add to friend id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
+            logger.Log(LogLevel.Trace,"Request add to friend id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
             
             service.AddFriend(currentUserId, id);
             return RedirectToAction("Index", new{id = id});
@@ -114,7 +114,7 @@ namespace WebUi.Controllers
         {
             if (!service.IsUserExists(id)) throw new HttpException(404, string.Format("User id = {0} Not found. Delete from friend", id));
             int currentUserId = service.GetByName(User.Identity.Name).Id;
-            Logger.Trace("Request add to friend id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
+            logger.Log(LogLevel.Trace,"Request add to friend id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
 
             service.RemoveFriend(service.GetByName(User.Identity.Name).Id, id);
             return RedirectToAction("Index", new { id = id });

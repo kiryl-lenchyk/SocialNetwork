@@ -2,9 +2,9 @@
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Security;
-using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
+using SocialNetwork.Logger.Interface;
 
 namespace WebUi.Providers
 {
@@ -15,9 +15,9 @@ namespace WebUi.Providers
     {
 
         #region Fields
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private IUserService userService;
+        private ILogger logger;
 
         #endregion
 
@@ -37,10 +37,12 @@ namespace WebUi.Providers
         public MembershipUser CreateUser(string username, string password, string name,
             string surname, string aboutUser, DateTime? birthDay, BllSex? sex)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
+
             MembershipUser membershipUser = GetUser(username, false);
             if (membershipUser != null)
             {
-                Logger.Debug("Try create user with exsist username = {0}", username);
+                logger.Log(LogLevel.Debug,"Try create user with exsist username = {0}", username);
                 return null;
             }
 
@@ -60,7 +62,7 @@ namespace WebUi.Providers
             });
 
             membershipUser = GetUser(username, false);
-            Logger.Trace("User username = {0} created", username);
+            logger.Log(LogLevel.Trace,"User username = {0} created", username);
             return membershipUser;
         }
 
@@ -73,24 +75,25 @@ namespace WebUi.Providers
         /// <param name="username">The user to update the password for. </param><param name="oldPassword">The current password for the specified user. </param><param name="newPassword">The new password for the specified user. </param>
         public override bool ChangePassword(string username, string oldPassword, string newPassword)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             userService =
                (IUserService)DependencyResolver.Current.GetService(typeof(IUserService));
 
             BllUser bllUser = userService.GetByName(username);
             if (bllUser == null)
             {
-                Logger.Debug("Try change password not exist user username = {0}", username);
+                logger.Log(LogLevel.Debug,"Try change password not exist user username = {0}", username);
                 return false;
             }
 
             if (!Crypto.VerifyHashedPassword(bllUser.PasswordHash, oldPassword))
             {
-                Logger.Debug("Try change password with incorrect password user username = {0}", username);
+                logger.Log(LogLevel.Debug,"Try change password with incorrect password user username = {0}", username);
                 return false;
             }
             bllUser.PasswordHash = Crypto.HashPassword(newPassword);
             userService.Update(bllUser);
-            Logger.Trace("Password cnahged. Username = {0}", username);
+            logger.Log(LogLevel.Trace,"Password cnahged. Username = {0}", username);
             return true;
         }
 
@@ -103,13 +106,14 @@ namespace WebUi.Providers
         /// <param name="username">The name of the user to get information for. </param><param name="userIsOnline">true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user. </param>
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             userService =
                 (IUserService) DependencyResolver.Current.GetService(typeof (IUserService));
 
             BllUser bllUser = userService.GetByName(username);
             if (bllUser == null)
             {
-                Logger.Debug("Try get not exist user username = {0}", username);
+                logger.Log(LogLevel.Debug,"Try get not exist user username = {0}", username);
                 return null;
             }
 
@@ -129,17 +133,18 @@ namespace WebUi.Providers
         /// <param name="username">The name of the user to validate. </param><param name="password">The password for the specified user. </param>
         public override bool ValidateUser(string username, string password)
         {
+            logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
             userService =
                 (IUserService) DependencyResolver.Current.GetService(typeof (IUserService));
 
             BllUser bllUser = userService.GetByName(username);
             if (bllUser == null)
             {
-                Logger.Debug("Try validate not exist user username = {0}", username);
+                logger.Log(LogLevel.Debug,"Try validate not exist user username = {0}", username);
                 return false;
             }
             if (Crypto.VerifyHashedPassword(bllUser.PasswordHash, password)) return true;
-            Logger.Debug("User validate fault username = {0}", username);
+            logger.Log(LogLevel.Debug,"User validate fault username = {0}", username);
             return false;
 
         }

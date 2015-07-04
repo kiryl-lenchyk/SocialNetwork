@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
+using SocialNetwork.Logger.Interface;
 using WebUi.Areas.Admin.Mappers;
 using WebUi.Areas.Admin.Models;
 using WebUi.Filters;
@@ -16,19 +16,19 @@ namespace WebUi.Areas.Admin.Controllers
 
         #region Fields
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IUserService userService;
         private readonly IMessageService messageService;
+        private readonly ILogger logger;
 
         #endregion
 
         #region Constractors
 
-        public MessageController(IUserService userService, IMessageService messageService)
+        public MessageController(IUserService userService, IMessageService messageService, ILogger logger)
         {
             this.userService = userService;
             this.messageService = messageService;
+            this.logger = logger;
         }
 
         #endregion
@@ -37,7 +37,7 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
-            Logger.Trace("Request messages list for admin");
+            logger.Log(LogLevel.Trace,"Request messages list for admin");
             return
                 View(
                     messageService.GetAllMessages().Select(
@@ -48,7 +48,7 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Edit(int id)
         {
-            Logger.Trace("Request message edit page for admin id = {0}", id.ToString());
+            logger.Log(LogLevel.Trace,"Request message edit page for admin id = {0}", id.ToString());
             BllMessage bllMessage = messageService.GetById(id);
             if (bllMessage == null)
                 throw new HttpException(404,

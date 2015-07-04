@@ -71,6 +71,14 @@
       <Project>{81A7E3C6-8910-462D-B8B4-9E4A6BF55ADA}</Project>
       <Name>SocialNetwork.Dal</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SocialNetwork.Logger.Interface\SocialNetwork.Logger.Interface.csproj">
+      <Project>{502EC729-D45B-4338-B831-76991321BF19}</Project>
+      <Name>SocialNetwork.Logger.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SocialNetwork.Logger.NLog\SocialNetwork.Logger.NLogLogger.csproj">
+      <Project>{1476C93B-65EB-43C7-A348-58CA5474C48F}</Project>
+      <Name>SocialNetwork.Logger.NLogLogger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SocialNetwork.Orm\SocialNetwork.Orm.csproj">
       <Project>{C2D73C16-0A9C-4EEC-BFFF-869864C10654}</Project>
       <Name>SocialNetwork.Orm</Name>

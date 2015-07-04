@@ -3,11 +3,11 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
-using NLog;
 using SocialNetwork.Dal.ExpressionMappers;
 using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
 using SocialNetwork.Dal.Mappers;
+using SocialNetwork.Logger.Interface;
 using SocialNetwork.Orm;
 
 namespace SocialNetwork.Dal.Repository
@@ -22,8 +22,7 @@ namespace SocialNetwork.Dal.Repository
         #region Fields
 
         private readonly DbContext context;
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger logger;
 
         #endregion
 
@@ -33,9 +32,11 @@ namespace SocialNetwork.Dal.Repository
         /// Create new instanse of UserRepository.
         /// </summary>
         /// <param name="context">DbContext for save data</param>
-        public UserRepository(DbContext context)
+        /// <param name="logger">class for log</param>
+        public UserRepository(DbContext context, ILogger logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         #endregion
@@ -48,7 +49,7 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>IQuaryable of all elements. You can add LINQ query to it. Quary will be invoked by storage</returns>
         public IQueryable<DalUser> GetAll()
         {
-            Logger.Trace("UserRepository.GetAll ivoked");
+            logger.Log(LogLevel.Trace,"UserRepository.GetAll ivoked");
             return context.Set<User>().Select(UserMapper.ToDalUserConvertion);
         }
 
@@ -59,7 +60,7 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>found entity or null if it not found.</returns>
         public DalUser GetById(int key)
         {
-            Logger.Trace("UserRepository.GetById invoked key = {0}", key);
+            logger.Log(LogLevel.Trace,"UserRepository.GetById invoked key = {0}", key);
 
             User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == key);
             return ormUser != null ? ormUser.ToDalUser() : null;
@@ -73,7 +74,7 @@ namespace SocialNetwork.Dal.Repository
         public DalUser GetByName(String name)
         {
             if(name == null) throw new ArgumentNullException("name");
-            Logger.Trace("UserRepository.GetByName invoked name = {0}", name);
+            logger.Log(LogLevel.Trace,"UserRepository.GetByName invoked name = {0}", name);
 
             User ormUser = context.Set<User>().FirstOrDefault(x => x.UserName == name);
             return ormUser != null ? ormUser.ToDalUser() : null;
@@ -88,7 +89,7 @@ namespace SocialNetwork.Dal.Repository
         {
             if(currentUser == null) throw new ArgumentNullException("currentUser");
             if (newFriend == null) throw new ArgumentNullException("newFriend");
-            Logger.Trace("UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
+            logger.Log(LogLevel.Trace,"UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
                 currentUser, newFriend);
 
             User ormCurrentUser = GetOrmUserWithFriends(currentUser);
@@ -107,7 +108,7 @@ namespace SocialNetwork.Dal.Repository
         {
             if (currentUser == null) throw new ArgumentNullException("currentUser");
             if (newFriend == null) throw new ArgumentNullException("newFriend");
-            Logger.Trace("UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
+            logger.Log(LogLevel.Trace,"UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
                 currentUser, newFriend);
 
             User ormCurrentUser = GetOrmUserWithFriends(currentUser);
@@ -124,7 +125,7 @@ namespace SocialNetwork.Dal.Repository
         public DalUser GetByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            Logger.Trace("UserRepository.GetByPredicate invoked predicate = {0}",predicate.ToString());
+            logger.Log(LogLevel.Trace,"UserRepository.GetByPredicate invoked predicate = {0}",predicate.ToString());
 
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
@@ -141,7 +142,7 @@ namespace SocialNetwork.Dal.Repository
         public IQueryable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            Logger.Trace("UserRepository.GetAllByPredicate invoked predicate = {0}", predicate.ToString());
+            logger.Log(LogLevel.Trace,"UserRepository.GetAllByPredicate invoked predicate = {0}", predicate.ToString());
 
             Expression<Func<User, bool>> convertedPredicate =
                 (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
@@ -157,7 +158,7 @@ namespace SocialNetwork.Dal.Repository
         public DalUser Create(DalUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            Logger.Trace("UserRepository.Create invoked userName = {0}",e.UserName);
+            logger.Log(LogLevel.Trace,"UserRepository.Create invoked userName = {0}",e.UserName);
 
             User ormUser = e.ToOrmUser();
             context.Set<User>().Add(ormUser);
@@ -170,7 +171,7 @@ namespace SocialNetwork.Dal.Repository
         /// <param name="e">entity to delete.</param>
         public void Delete(DalUser e)
         {
-            Logger.Trace("UserRepository.Delete invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace,"UserRepository.Delete invoked id = {0}", e.Id);
 
             User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == e.Id);
             if (ormUser == null) throw new ArgumentException("User has incorrect id");
@@ -184,7 +185,7 @@ namespace SocialNetwork.Dal.Repository
         public void Update(DalUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            Logger.Trace("UserRepository.Update invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace,"UserRepository.Update invoked id = {0}", e.Id);
 
             context.Set<User>().AddOrUpdate(e.ToOrmUser());
         }

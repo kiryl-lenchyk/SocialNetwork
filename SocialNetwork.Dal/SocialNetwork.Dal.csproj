@@ -41,9 +41,6 @@
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.4.0.0\lib\net45\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -74,6 +71,10 @@
     <ProjectReference Include="..\SocialNetwork.Dal.Interface\SocialNetwork.Dal.Interface.csproj">
       <Project>{50A48948-698C-4BD5-8EB1-B062EB8B0F15}</Project>
       <Name>SocialNetwork.Dal.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SocialNetwork.Logger.Interface\SocialNetwork.Logger.Interface.csproj">
+      <Project>{502EC729-D45B-4338-B831-76991321BF19}</Project>
+      <Name>SocialNetwork.Logger.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\SocialNetwork.Orm\SocialNetwork.Orm.csproj">
       <Project>{C2D73C16-0A9C-4EEC-BFFF-869864C10654}</Project>

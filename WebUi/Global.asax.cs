@@ -6,7 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using NLog;
+using SocialNetwork.Logger.Interface;
 
 namespace WebUi
 {
@@ -15,8 +15,6 @@ namespace WebUi
 
     public class MvcApplication : System.Web.HttpApplication
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -29,18 +27,20 @@ namespace WebUi
 
         protected void Application_Error(object sender, EventArgs e)
         {
+            ILogger logger = (ILogger)DependencyResolver.Current.GetService(typeof(ILogger));
+
             Exception exception = Server.GetLastError();
             Server.ClearError();
             
             var httpException = exception as HttpException;
             if (httpException != null && httpException.GetHttpCode() == 404)
             {
-                Logger.Warn(httpException.Message);
+                logger.Log(LogLevel.Warn,httpException.Message);
                 Response.Redirect("/404");
             }
             else
             {
-                Logger.Fatal(exception.ToString());
+                logger.Log(LogLevel.Fatal,exception.ToString());
                 Response.Redirect("/Error");
             }
         }

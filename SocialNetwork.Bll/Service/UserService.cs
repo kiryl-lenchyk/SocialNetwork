@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using NLog;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Mappers;
 using SocialNetwork.Dal.Interface;
 using SocialNetwork.Dal.Interface.DTO;
 using SocialNetwork.Dal.Interface.Repository;
+using SocialNetwork.Logger.Interface;
 
 namespace SocialNetwork.Bll.Service
 {
@@ -23,8 +23,7 @@ namespace SocialNetwork.Bll.Service
         private readonly IUnitOfWork uow;
         private readonly IUserRepository userRepository;
         private readonly IRepository<DalAvatar> avatarRepository;
-        
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger logger;
 
         #endregion
 
@@ -36,12 +35,14 @@ namespace SocialNetwork.Bll.Service
         /// <param name="uow">unit of work for commit in storage.</param>
         /// <param name="userRepository">user strorage.</param>
         /// <param name="avatarRepository">avatar storage.</param>
-        public UserService(IUnitOfWork uow, IUserRepository userRepository, IRepository<DalAvatar> avatarRepository)
+        /// <param name="logger">class for log</param>
+        public UserService(IUnitOfWork uow, IUserRepository userRepository, IRepository<DalAvatar> avatarRepository, ILogger logger)
         {
 
             this.uow = uow;
             this.userRepository = userRepository;
             this.avatarRepository = avatarRepository;
+            this.logger = logger;
         }
 
         #endregion
@@ -55,7 +56,7 @@ namespace SocialNetwork.Bll.Service
         /// <returns>fiunded BllUser or null, if it's not found.</returns>
         public BllUser GetById(int key)
         {
-            Logger.Trace("UserService.GetById invoked key = {0}",key);
+            logger.Log(LogLevel.Trace,"UserService.GetById invoked key = {0}",key);
             DalUser dalUser = userRepository.GetById(key);
             return dalUser == null ? null : dalUser.ToBllUser();
         }
@@ -68,7 +69,7 @@ namespace SocialNetwork.Bll.Service
         public BllUser GetByName(string name)
         {
             if(name == null) throw new ArgumentNullException("name");
-            Logger.Trace("UserService.GetByName invoked name = {0}", name);
+            logger.Log(LogLevel.Trace,"UserService.GetByName invoked name = {0}", name);
 
             DalUser dalUser = userRepository.GetByName(name);
             return dalUser == null ? null : dalUser.ToBllUser();
@@ -82,7 +83,7 @@ namespace SocialNetwork.Bll.Service
         public BllUser Create(BllUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            Logger.Trace("UserService.Create invoked userName = {0}", e.UserName);
+            logger.Log(LogLevel.Trace,"UserService.Create invoked userName = {0}", e.UserName);
             
             DalUser dalUser = e.ToDalUser();
             dalUser = userRepository.Create(dalUser);
@@ -97,7 +98,7 @@ namespace SocialNetwork.Bll.Service
         /// <param name="newFriendId">id of second friend.</param>
         public void AddFriend(int currentUserId, int newFriendId)
         {
-            Logger.Trace("UserService.AddFriend invoked currentUserId = {0}, newFriendId = {1}",
+            logger.Log(LogLevel.Trace,"UserService.AddFriend invoked currentUserId = {0}, newFriendId = {1}",
                 currentUserId, newFriendId);
 
             DalUser currentUser = GetByIdWithException(currentUserId, "currentUserId");
@@ -105,7 +106,7 @@ namespace SocialNetwork.Bll.Service
             
             if (currentUser.FriendsId.Contains(newFriendId))
             {
-                Logger.Debug(
+                logger.Log(LogLevel.Debug,
                     "Try add to friend user, who is friend already currentUserId = {0}, newFriendId = {1}",
                     currentUserId, newFriendId);
                 throw new InvalidOperationException("Users are friends");
@@ -122,14 +123,14 @@ namespace SocialNetwork.Bll.Service
         /// <param name="newFriendId">id of second friend.</param>
         public void RemoveFriend(int currentUserId, int newFriendId)
         {
-            Logger.Trace("UserService.RemoveFriend invoked currentUserId = {0}, newFriendId = {1}", currentUserId, newFriendId);
+            logger.Log(LogLevel.Trace,"UserService.RemoveFriend invoked currentUserId = {0}, newFriendId = {1}", currentUserId, newFriendId);
 
             DalUser currentUser = GetByIdWithException(currentUserId, "currentUserId");
             DalUser newFriend = GetByIdWithException(newFriendId, "newFriendId");
 
             if (!currentUser.FriendsId.Contains(newFriendId))
             {
-                Logger.Debug(
+                logger.Log(LogLevel.Debug,
                     "Try remove from friends user, who isnot friend now currentUserId = {0}, newFriendId = {1}",
                     currentUserId, newFriendId);
                 throw new InvalidOperationException("Users are not friends");
@@ -152,7 +153,7 @@ namespace SocialNetwork.Bll.Service
             DateTime? birthDayMax,
             BllSex? sex)
         {
-            Logger.Trace(
+            logger.Log(LogLevel.Trace,
                 "UserService.FindUsers invoked  name = {0}, surname = {1}, birthDayMin = {2}, birthDayMax = {3}, sex = {4}",
                 name ?? "null", surname ?? "null",
                 birthDayMin == null ? "null" : birthDayMin.ToString(),
@@ -170,7 +171,7 @@ namespace SocialNetwork.Bll.Service
         /// <returns>IEnumerable of all users.</returns>
         public IEnumerable<BllUser> GetAllUsers()
         {
-            Logger.Trace("UserService.GetAllUsers invoked");
+            logger.Log(LogLevel.Trace,"UserService.GetAllUsers invoked");
 
             return userRepository.GetAll().ToList().Select(x => x.ToBllUser());
         }
@@ -183,7 +184,7 @@ namespace SocialNetwork.Bll.Service
         public bool IsUserExists(string userName)
         {
             if (userName == null) throw new ArgumentNullException("userName");
-            Logger.Trace("UserService.IsUserExists invoked userName = {0}", userName);
+            logger.Log(LogLevel.Trace,"UserService.IsUserExists invoked userName = {0}", userName);
 
             return userRepository.GetByName(userName) != null;
         }
@@ -195,7 +196,7 @@ namespace SocialNetwork.Bll.Service
         /// <returns>true if user with determinated id existst, false else</returns>
         public bool IsUserExists(int id)
         {
-            Logger.Trace("UserService.IsUserExists invoked id = {0}", id);
+            logger.Log(LogLevel.Trace,"UserService.IsUserExists invoked id = {0}", id);
 
             return userRepository.GetById(id) != null;
         }
@@ -207,7 +208,7 @@ namespace SocialNetwork.Bll.Service
         public void Delete(BllUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            Logger.Trace("UserService.Delete invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace,"UserService.Delete invoked id = {0}", e.Id);
 
             userRepository.Delete(e.ToDalUser());
             uow.Commit();
@@ -220,7 +221,7 @@ namespace SocialNetwork.Bll.Service
         public void Update(BllUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            Logger.Trace("UserService.Update invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace,"UserService.Update invoked id = {0}", e.Id);
 
             userRepository.Update(e.ToDalUser());
             uow.Commit();
@@ -234,7 +235,7 @@ namespace SocialNetwork.Bll.Service
         public void SetUserAvatar(int userId, Stream avatarStream)
         {
             if (avatarStream == null) throw new ArgumentNullException("avatarStream");
-            Logger.Trace("UserService.SetUserAvatar invoked userId = {0}", userId);
+            logger.Log(LogLevel.Trace,"UserService.SetUserAvatar invoked userId = {0}", userId);
 
             avatarRepository.Update(new DalAvatar(){UserId = userId, ImageStream = avatarStream});
             uow.Commit();
@@ -247,7 +248,7 @@ namespace SocialNetwork.Bll.Service
         /// <returns>stream contains avatar as image.</returns>
         public Stream GetUserAvatarStream(int userId)
         {
-            Logger.Trace("UserService.GetUserAvatarStream invoked userId = {0}", userId);
+            logger.Log(LogLevel.Trace,"UserService.GetUserAvatarStream invoked userId = {0}", userId);
 
             return avatarRepository.GetById(userId).ImageStream;
         }
@@ -260,7 +261,7 @@ namespace SocialNetwork.Bll.Service
         /// <returns>true if userId can add friendId to friends and false else.</returns>
         public bool CanUserAddToFriends(int userId, int friendId)
         {
-            Logger.Trace("UserService.CanUserAddToFriends invoked userId = {0}, friendId = {1}",
+            logger.Log(LogLevel.Trace,"UserService.CanUserAddToFriends invoked userId = {0}, friendId = {1}",
                 userId, friendId);
 
             BllUser user = GetById(userId);
@@ -276,7 +277,7 @@ namespace SocialNetwork.Bll.Service
         /// <returns>true if senderId can write message to targetId and false else.</returns>
         public bool CanUserWriteMessage(int targetId, int senderId)
         {
-            Logger.Trace("UserService.CanUserWriteMessage invoked targetId = {0}, senderId = {1}",
+            logger.Log(LogLevel.Trace,"UserService.CanUserWriteMessage invoked targetId = {0}, senderId = {1}",
                 targetId, senderId);
 
             return !CanUserAddToFriends(targetId, senderId) && targetId != senderId;
