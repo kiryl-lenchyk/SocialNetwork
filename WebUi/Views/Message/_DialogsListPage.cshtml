@@ -6,7 +6,15 @@
 
 <div id="contentPager">
     <span id="loading" class="loading"> <i class="glyphicon glyphicon-refresh gly-spin"></i></span>
-    @Html.PagedListPager(Model, page => Url.Action("DialogsListPage", new {page}))
+    @Html.PagedListPager(Model, page => Url.Action("DialogsListPage", new {page}),
+                            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.Classic, 
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "Get",
+                                    UpdateTargetId = "content",
+                                    InsertionMode = InsertionMode.Replace,
+                                    LoadingElementId = "loading"
+                                }))
 
 </div>
 

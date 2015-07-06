@@ -9,29 +9,3 @@
 <div id="content">
     @Html.Action("DialogsListPage")
 </div>
-
-
-@section scripts
-{
-    <script language="javascript" type="text/javascript">
-        $(document).ready(function () {
-            $(document).on("click", "#contentPager a[href]", function () {
-                $.ajax({
-                    beforeSend: function() {
-                        $('#loading').attr("style","display:inline");
-                    },
-                    complete: function () {
-                        $('#loading').attr("style", "display:none");
-                    },
-                    url: $(this).attr("href"),
-                    type: 'GET',
-                    cache: false,
-                    success: function (result) {
-                        $('#content').html(result);
-                    }
-                });
-                return false;
-            });
-        });
-    </script>
-}
