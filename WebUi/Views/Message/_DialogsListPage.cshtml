@@ -1,0 +1,37 @@
+﻿@using PagedList.Mvc
+@using WebUi.Models
+@model PagedList.IPagedList<WebUi.Models.DialogPreviewModel>
+
+
+
+<div id="contentPager">
+    <span id="loading" class="loading"> <i class="glyphicon glyphicon-refresh gly-spin"></i></span>
+    @Html.PagedListPager(Model, page => Url.Action("DialogsListPage", new {page}))
+
+</div>
+
+@foreach (DialogPreviewModel dialogPreviewModel in Model)
+{
+    <div class="row">
+        <div class="col-md-8 col-xs-12">
+            <div class="row">
+                <div class="col-xs-2">
+                    <img src="@Url.Action("Avatar", "User", new {id = dialogPreviewModel.UserId})"
+                         alt="@string.Format("{0} {1}", dialogPreviewModel.UserName, dialogPreviewModel.UserSurname)" width="60"
+                         height="90" class="img-thumbnail">
+                </div>
+                <div class="col-xs-10">
+                    <a href="@Url.Action("Dialog", new {id = dialogPreviewModel.UserId})"><strong>@string.Format("{0} {1}", dialogPreviewModel.UserName, dialogPreviewModel.UserSurname)</strong> </a><br/>
+                    <div class="bigword @(dialogPreviewModel.IsReaded ? "" : "admin-message")">@dialogPreviewModel.LastMessage</div>
+
+                </div>
+            </div>
+
+            <hr/>
+        </div>
+
+    </div>
+}
+
+
+

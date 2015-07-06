@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
+using PagedList;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Logger.Interface;
 using WebUi.Infractracture.Mappers;
+using WebUi.Models;
 
 namespace WebUi.Controllers
 {
@@ -19,9 +23,24 @@ namespace WebUi.Controllers
         private readonly IUserService userService;
         private readonly ILogger logger;
 
+        private static readonly int DialogsListPageSize;
+
         #endregion
 
         #region Constractors
+
+        static MessageController ()
+        {
+            if (!Int32.TryParse(WebConfigurationManager.AppSettings["DialogsListPageSize"],
+                out DialogsListPageSize))
+            {
+                DialogsListPageSize = 3;
+                ((ILogger) DependencyResolver.Current.GetService(typeof (ILogger))).Log(
+                    LogLevel.Error,
+                    "web.config contains incorrect date for DialogsListPageSize. Value: {0}",
+                    WebConfigurationManager.AppSettings["DialogsListPageSize"]);
+            }
+        }
 
         public MessageController(IMessageService messageService, IUserService userService, ILogger logger)
         {
@@ -36,12 +55,20 @@ namespace WebUi.Controllers
 
         public ActionResult Index()
         {
-            int currentUserId = userService.GetByName(User.Identity.Name).Id;
-            logger.Log(LogLevel.Trace,"Request dialog list page . Current user id = {0}", currentUserId.ToString());
+            return View();
+        }
 
-            return
-                View(messageService.GetUserDialogs(currentUserId)
-                        .Select(x => x.ToDialogPreviewModel(currentUserId)));
+        public ActionResult DialogsListPage(int? page)
+        {
+            int pageNumber = page ?? 1;
+            int currentUserId = userService.GetByName(User.Identity.Name).Id;
+            logger.Log(LogLevel.Trace, "Request dialog list page . Current user id = {0}", currentUserId.ToString());
+
+            IEnumerable<DialogPreviewModel> dialogPreviewModels = messageService.GetUserDialogs(currentUserId)
+                .Select(x => x.ToDialogPreviewModel(currentUserId));
+
+            return PartialView("_DialogsListPage",
+                dialogPreviewModels.ToPagedList(pageNumber, DialogsListPageSize));
         }
 
         public ActionResult Dialog(int id)
