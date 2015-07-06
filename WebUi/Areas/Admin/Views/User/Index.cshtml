@@ -1,30 +1,14 @@
-﻿@using WebUi.Areas.Admin.Models
-@model IEnumerable<WebUi.Areas.Admin.Models.UserPreviewViewModel>
-
-@{
+﻿@{
     ViewBag.Title = "User manage";
 }
 
 <h1>@ViewBag.Title</h1>
 
-<table class="table table-hover table-condensed">
-    <thead>
-    <tr>
-        <td>Id</td>
-        <td>Username</td>
-        <td>Name</td>
-        <td>Surname</td>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (UserPreviewViewModel user in Model)
-    {
-        <tr onclick="document.location ='@Url.Action("Edit", "User", new {Id = user.Id})'">
-            <td>@user.Id</td>
-            <td>@user.UserName</td>
-            <td>@user.Name</td>
-            <td>@user.Surname</td>
-        </tr>
-    }
-    </tbody>
-</table>
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryajax")
+}
+
+<div id="content">
+    @Html.Action("UsersListPage")
+</div>

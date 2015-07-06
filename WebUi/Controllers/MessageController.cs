@@ -24,6 +24,8 @@ namespace WebUi.Controllers
         private readonly ILogger logger;
 
         private static readonly int DialogsListPageSize;
+        private static readonly int DialogPageSize;
+        private static readonly int DefaultPageSize = 3;
 
         #endregion
 
@@ -34,11 +36,21 @@ namespace WebUi.Controllers
             if (!Int32.TryParse(WebConfigurationManager.AppSettings["DialogsListPageSize"],
                 out DialogsListPageSize))
             {
-                DialogsListPageSize = 3;
+                DialogsListPageSize = DefaultPageSize;
                 ((ILogger) DependencyResolver.Current.GetService(typeof (ILogger))).Log(
                     LogLevel.Error,
                     "web.config contains incorrect date for DialogsListPageSize. Value: {0}",
                     WebConfigurationManager.AppSettings["DialogsListPageSize"]);
+            }
+
+            if (!Int32.TryParse(WebConfigurationManager.AppSettings["DialogPageSize"],
+                out DialogPageSize))
+            {
+                DialogPageSize = DefaultPageSize;
+                ((ILogger)DependencyResolver.Current.GetService(typeof(ILogger))).Log(
+                    LogLevel.Error,
+                    "web.config contains incorrect date for DialogPageSize. Value: {0}",
+                    WebConfigurationManager.AppSettings["DialogPageSize"]);
             }
         }
 
@@ -83,7 +95,7 @@ namespace WebUi.Controllers
                 secondUser);
             MarkDialogAsReaded(id, dialog);
 
-            return View(dialog.ToDialogViewModel(currentUserId,1,5));
+            return View(dialog.ToDialogViewModel(currentUserId, 1, DialogPageSize));
         }
         
         [HttpPost]
@@ -106,7 +118,7 @@ namespace WebUi.Controllers
             return PartialView("_DialogMessages", messageService.GetUsersDialog(
                 userService.GetById(currentUserId),
                 userService.GetById(targetId))
-                .ToDialogViewModel(currentUserId,1,5));
+                .ToDialogViewModel(currentUserId, 1, DialogPageSize));
         }
 
 
@@ -119,7 +131,7 @@ namespace WebUi.Controllers
             return PartialView("_DialogMessages", messageService.GetUsersDialog(
                userService.GetById(currentUserId),
                userService.GetById(targetId))
-               .ToDialogViewModel(currentUserId, pageNumber,5));
+               .ToDialogViewModel(currentUserId, pageNumber, DialogPageSize));
         }
 
 

@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
+using PagedList;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Logger.Interface;
@@ -22,9 +25,25 @@ namespace WebUi.Areas.Admin.Controllers
         private readonly IRoleService roleService;
         private readonly ILogger logger;
 
+        private static readonly int UsersListPageSize;
+        private static readonly int DefaultPageSize = 3;
+
         #endregion
 
         #region Constractors
+
+        static UserController()
+        {
+            if (!Int32.TryParse(WebConfigurationManager.AppSettings["UsersListPageSize"],
+                out UsersListPageSize))
+            {
+                UsersListPageSize = DefaultPageSize;
+                ((ILogger) DependencyResolver.Current.GetService(typeof (ILogger))).Log(
+                    LogLevel.Error,
+                    "web.config contains incorrect date for UsersListPageSize. Value: {0}",
+                    WebConfigurationManager.AppSettings["UsersListPageSize"]);
+            }
+        }
 
         public UserController(IUserService userService, IRoleService roleService, ILogger logger)
         {
@@ -41,7 +60,17 @@ namespace WebUi.Areas.Admin.Controllers
         {
             logger.Log(LogLevel.Trace,"Request users list for admin");
 
-           return View(userService.GetAllUsers().Select(x => x.ToUserPreviewViewModel()));
+           return View();
+        }
+
+        public ActionResult UsersListPage(int? page)
+        {
+            int pageNumber = page ?? 1;
+
+            return PartialView("_UsersListPage",
+                userService.GetAllUsers()
+                    .Select(x => x.ToUserPreviewViewModel())
+                    .ToPagedList(pageNumber, UsersListPageSize));
         }
 
         public ActionResult Edit(int id)

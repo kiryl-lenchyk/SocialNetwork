@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
+using PagedList;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Logger.Interface;
@@ -20,11 +23,28 @@ namespace WebUi.Areas.Admin.Controllers
         private readonly IMessageService messageService;
         private readonly ILogger logger;
 
+        private static readonly int MessagesListPageSize;
+        private static readonly int DefaultPageSize = 3;
+
         #endregion
 
         #region Constractors
 
-        public MessageController(IUserService userService, IMessageService messageService, ILogger logger)
+        static MessageController()
+        {
+            if (!Int32.TryParse(WebConfigurationManager.AppSettings["MessagesListPageSize"],
+                out MessagesListPageSize))
+            {
+                MessagesListPageSize = DefaultPageSize;
+                ((ILogger) DependencyResolver.Current.GetService(typeof (ILogger))).Log(
+                    LogLevel.Error,
+                    "web.config contains incorrect date for MessagesListPageSize. Value: {0}",
+                    WebConfigurationManager.AppSettings["MessagesListPageSize"]);
+            }
+        }
+
+        public MessageController(IUserService userService, IMessageService messageService,
+            ILogger logger)
         {
             this.userService = userService;
             this.messageService = messageService;
@@ -37,18 +57,27 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
-            logger.Log(LogLevel.Trace,"Request messages list for admin");
+            logger.Log(LogLevel.Trace, "Request messages list for admin");
+            return View();
+        }
+
+        public ActionResult MessagesListPage(int? page)
+        {
+            int pageNumber = page ?? 1;
+
             return
-                View(
+                PartialView("_MessagesListPage",
                     messageService.GetAllMessages().Select(
                         x => x.ToMessageViewModel(
-                                userService.GetById(x.SenderId),
-                                userService.GetById(x.TargetId))));
+                            userService.GetById(x.SenderId),
+                            userService.GetById(x.TargetId)))
+                        .ToPagedList(pageNumber, MessagesListPageSize));
+
         }
 
         public ActionResult Edit(int id)
         {
-            logger.Log(LogLevel.Trace,"Request message edit page for admin id = {0}", id.ToString());
+            logger.Log(LogLevel.Trace, "Request message edit page for admin id = {0}", id.ToString());
             BllMessage bllMessage = messageService.GetById(id);
             if (bllMessage == null)
                 throw new HttpException(404,
@@ -86,6 +115,8 @@ namespace WebUi.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-      #endregion
+        #endregion
+
+
     }
 }

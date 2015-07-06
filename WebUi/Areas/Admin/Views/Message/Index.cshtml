@@ -1,25 +1,16 @@
 ﻿@using WebUi.Areas.Admin.Models
-@model IEnumerable<WebUi.Areas.Admin.Models.MessageViewModel>
 
 @{
     ViewBag.Title = "Message manage";
 }
 
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryajax")
+}
+
 <h1>@ViewBag.Title</h1>
 
-@foreach (MessageViewModel message in Model)
-{
-    <hr/>
-    <a href="@Url.Action("Edit", new {id = message.Id})">
-        <strong>ID </strong> @message.Id
-        <strong>Time </strong> @message.CreatingTime.ToString("g")
-        <br/>
-
-        <strong>Sender </strong> @String.Format("{0} {1} ({2} ID{3})", message.Sender.Name, message.Sender.Surname, message.Sender.UserName, message.Sender.Id)
-        <br/>
-        <strong>Target </strong> @String.Format("{0} {1} ({2} ID{3})", message.Target.Name, message.Target.Surname, message.Target.UserName, message.Target.Id)
-        <br/>
-
-        <div class="bigword admin-message">@message.Text</div>
-    </a>
-}
+<div id="content">
+    @Html.Action("MessagesListPage")
+</div>

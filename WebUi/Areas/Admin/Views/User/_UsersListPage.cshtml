@@ -1,0 +1,40 @@
+﻿@using PagedList.Mvc
+@using WebUi.Areas.Admin.Models
+@model PagedList.IPagedList<UserPreviewViewModel>
+
+<div id="contentPager">
+    <span id="loading" class="loading"> <i class="glyphicon glyphicon-refresh gly-spin"></i></span>
+    @Html.PagedListPager(Model, page => Url.Action("UsersListPage", new {page}),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.Classic,
+            new AjaxOptions()
+            {
+                HttpMethod = "Get",
+                UpdateTargetId = "content",
+                InsertionMode = InsertionMode.Replace,
+                LoadingElementId = "loading"
+            }))
+
+</div>
+
+<table class="table table-hover table-condensed">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Username</td>
+            <td>Name</td>
+            <td>Surname</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UserPreviewViewModel user in Model)
+        {
+            <tr onclick="document.location ='@Url.Action("Edit", "User", new {Id = user.Id})'">
+                <td>@user.Id</td>
+                <td>@user.UserName</td>
+                <td>@user.Name</td>
+                <td>@user.Surname</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
