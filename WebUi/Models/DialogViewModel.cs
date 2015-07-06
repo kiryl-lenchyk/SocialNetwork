@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using PagedList;
 
 namespace WebUi.Models
 {
@@ -11,7 +11,7 @@ namespace WebUi.Models
 
         public String SecondUserSurname { get; set; }
 
-        public IEnumerable<MessageViewModel> Messages { get; set; }
+        public IPagedList<MessageViewModel> Messages { get; set; }
 
     }
 }

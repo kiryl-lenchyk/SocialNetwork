@@ -83,7 +83,7 @@ namespace WebUi.Controllers
                 secondUser);
             MarkDialogAsReaded(id, dialog);
 
-            return View(dialog.ToDialogViewModel(currentUserId));
+            return View(dialog.ToDialogViewModel(currentUserId,1,5));
         }
         
         [HttpPost]
@@ -106,9 +106,22 @@ namespace WebUi.Controllers
             return PartialView("_DialogMessages", messageService.GetUsersDialog(
                 userService.GetById(currentUserId),
                 userService.GetById(targetId))
-                .ToDialogViewModel(currentUserId)
-                .Messages);
+                .ToDialogViewModel(currentUserId,1,5));
         }
+
+
+        public ActionResult DialogPage(int? page, int targetId)
+        {
+            int pageNumber = page ?? 1;
+            int currentUserId = userService.GetByName(User.Identity.Name).Id;
+            if (!userService.IsUserExists(targetId)) throw new HttpException(404, string.Format("User id = {0} Not found", targetId));
+
+            return PartialView("_DialogMessages", messageService.GetUsersDialog(
+               userService.GetById(currentUserId),
+               userService.GetById(targetId))
+               .ToDialogViewModel(currentUserId, pageNumber,5));
+        }
+
 
         [ChildActionOnly]
         public ActionResult NotReadedMessages()

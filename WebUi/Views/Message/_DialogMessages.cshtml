@@ -1,7 +1,26 @@
-﻿@using WebUi.Models
-@model System.Collections.Generic.IEnumerable<WebUi.Models.MessageViewModel>
+﻿@using PagedList.Mvc
+@using WebUi.Helpers
+@using WebUi.Models
+@model DialogViewModel
 
-@foreach (MessageViewModel messageView in Model)
+
+
+<div id="contentPager">
+    <span id="loading" class="loading"> <i class="glyphicon glyphicon-refresh gly-spin"></i></span>
+    @Html.PagedListPager(Model.Messages, page => Url.Action("DialogPage", new { page,targetId = Model.SecondUserId }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PageListRenderOptionsHelper.MessagesPageListRenderOptions,
+            new AjaxOptions()
+            {
+                HttpMethod = "Get",
+                UpdateTargetId = "messages",
+                InsertionMode = InsertionMode.Replace,
+                LoadingElementId = "loading"
+            }))
+
+</div>
+
+
+@foreach (MessageViewModel messageView in Model.Messages)
 {
     <div class="row">
         <div class="col-md-8 col-xs-10 @(messageView.IsSended ? "col-md-offset-0 col-xs-offset-0" : "col-md-offset-4 col-xs-offset-2")">
@@ -14,7 +33,7 @@
                 <div class="col-xs-9 col-md-10 @(messageView.IsSended ? "" : "col-xs-pull-2" )">
                     <div @(messageView.IsSended ? "" : "align = right")>
                         <a href="@Url.Action("Index", new {id = messageView.UserId})"><strong>@string.Format("{0} {1}", messageView.UserName, messageView.UserSurname)</strong> </a>
-                        @messageView.CreaingTime.ToShortTimeString() <br/>
+                        @messageView.CreaingTime.ToShortDateString()  @messageView.CreaingTime.ToShortTimeString()<br/>
                     </div>
                     <div class="bigword @(messageView.IsReaded ? "" : "admin-message") ">@messageView.Text</div>
 

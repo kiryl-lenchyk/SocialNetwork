@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using PagedList;
 using SocialNetwork.Bll.Interface.Entity;
 using WebUi.Models;
 
@@ -22,7 +23,7 @@ namespace WebUi.Infractracture.Mappers
             };
         }
 
-        public static DialogViewModel ToDialogViewModel(this BllDialog dialog, int currentUserId)
+        public static DialogViewModel ToDialogViewModel(this BllDialog dialog, int currentUserId, int pageNumber, int pageSize)
         {
             BllUser interlocutor = dialog.FirstUser.Id == currentUserId
                ? dialog.SecondUser
@@ -32,7 +33,9 @@ namespace WebUi.Infractracture.Mappers
                 SecondUserId = interlocutor.Id,
                 SecondUserName = interlocutor.Name,
                 SecondUserSurname = interlocutor.Surname,
-                Messages = dialog.Messages.Select(x => x.ToMessageViewModel(currentUserId,dialog))
+                Messages =
+                    dialog.Messages.Select(x => x.ToMessageViewModel(currentUserId, dialog))
+                        .ToPagedList(pageNumber, pageSize)
             };
         }
 
