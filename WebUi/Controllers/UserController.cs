@@ -40,16 +40,36 @@ namespace WebUi.Controllers
             int userId = id ?? currentUserId;
             logger.Log(LogLevel.Trace,"Request user page id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
 
-            BllUser user = service.GetById(userId);
-            if (user == null) throw new HttpException(404, string.Format("User id = {0} Not found", userId));
-            return View(user.ToUserPageViewModel(service, currentUserId));
+            try
+            {
+                BllUser user = service.GetById(userId);
+                if (user == null)
+                    throw new HttpException(404, string.Format("User id = {0} Not found", userId));
+                return View(user.ToUserPageViewModel(service, currentUserId));
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                return RedirectToAction("Error","Home");
+            }
+
         }
         
         public ActionResult Avatar(int id)
         {
             logger.Log(LogLevel.Trace,"Request user avatar id = {0}", id.ToString());
 
-            return File(service.GetUserAvatarStream(id),  "image/png");
+            try
+            {
+                return File(service.GetUserAvatarStream(id), "image/png");
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                return new EmptyResult();
+            }
+
+           
         }
 
         [ChildActionOnly]
@@ -88,10 +108,23 @@ namespace WebUi.Controllers
                 "Request find result. Name = {0}, Surname = {1}, Sex = {2}, BithdayMin = {3}, BithdayMax = {4}",
                 model.Name, model.Surname, model.Sex, model.BirthDayMin, model.BirthDayMax);
 
-            List<UserPreviewViewModel> partialModel =
-                service.FindUsers(model.Name, model.Surname, model.BirthDayMin, model.BirthDayMax,
-                    model.Sex.ToNullableBllSex()).Select(x => x.ToUserPreviewViewModel()).ToList();
+            List<UserPreviewViewModel> partialModel;
 
+            try
+            {
+                partialModel =
+                    service.FindUsers(model.Name, model.Surname, model.BirthDayMin,
+                        model.BirthDayMax,
+                        model.Sex.ToNullableBllSex())
+                        .Select(x => x.ToUserPreviewViewModel())
+                        .ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                partialModel = new List<UserPreviewViewModel>();
+            }
+            
             return PartialView("_FindResult",partialModel);
         }
 
@@ -103,9 +136,18 @@ namespace WebUi.Controllers
             if (!service.IsUserExists(id)) throw new HttpException(404, string.Format("User id = {0} Not found. Add to friend", id));
             int currentUserId = service.GetByName(User.Identity.Name).Id;
             logger.Log(LogLevel.Trace,"Request add to friend id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
+
+            try
+            {
+                service.AddFriend(currentUserId, id);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                ViewBag.StatusMessage = "Can't add to friends. Please try again later";
+            }
             
-            service.AddFriend(currentUserId, id);
-            return RedirectToAction("Index", new{id = id});
+            return RedirectToAction("Index", new{id});
         }
 
         [HttpPost]
@@ -116,8 +158,18 @@ namespace WebUi.Controllers
             int currentUserId = service.GetByName(User.Identity.Name).Id;
             logger.Log(LogLevel.Trace,"Request add to friend id = {0}. Current user id = {1}", id.ToString(), currentUserId.ToString());
 
-            service.RemoveFriend(service.GetByName(User.Identity.Name).Id, id);
-            return RedirectToAction("Index", new { id = id });
+
+            try
+            {
+                service.RemoveFriend(service.GetByName(User.Identity.Name).Id, id);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                ViewBag.StatusMessage = "Can't add to friends. Please try again later";
+            }
+
+            return RedirectToAction("Index", new { id });
         }
 
         #endregion

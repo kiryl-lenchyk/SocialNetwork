@@ -132,7 +132,16 @@ namespace WebUi.Controllers
         public ActionResult Edit()
         {
             logger.Log(LogLevel.Trace,"Request edit user page userName = {0}", User.Identity.Name);
-            return View(service.GetByName(User.Identity.Name).ToEdirAccountViewModel());
+            try
+            {
+                return View(service.GetByName(User.Identity.Name).ToEdirAccountViewModel());
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                ViewBag.StatusMessage = "User not found. Please try again later.";
+                return View((object)null);
+            }     
         }
 
         [HttpPost]

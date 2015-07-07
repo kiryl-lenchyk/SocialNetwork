@@ -11,52 +11,54 @@
     <p class="success">@ViewBag.StatusMessage</p>
 }
 
-@using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" ,enctype = "multipart/form-data" }))
+@if (Model != null)
 {
-    @Html.AntiForgeryToken()
-    <hr />
-    @Html.ValidationSummary()
-    @Html.HiddenFor(m => m.Id)
-   <div class="form-group">
-        @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
-        <div class="col-md-8 col-xs-10">
-            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+    using (Html.BeginForm("Edit", "Account", FormMethod.Post, new {@class = "form-horizontal", role = "form", enctype = "multipart/form-data"}))
+    {
+        @Html.AntiForgeryToken()
+        <hr/>
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.Id)
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new {@class = "col-md-2 control-label"})
+            <div class="col-md-8 col-xs-10">
+                @Html.TextBoxFor(m => m.Name, new {@class = "form-control"})
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Surname, new { @class = "col-md-2 control-label" })
-        <div class="col-md-8 col-xs-10">
-            @Html.TextBoxFor(m => m.Surname, new { @class = "form-control" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.Surname, new {@class = "col-md-2 control-label"})
+            <div class="col-md-8 col-xs-10">
+                @Html.TextBoxFor(m => m.Surname, new {@class = "form-control"})
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.BirthDay, new { @class = "col-md-2 control-label" })
-        <div class="col-md-8 col-xs-10">
-            <input class="form-control" id="BirthDay" name="BirthDay" type="date" value="@(Model.BirthDay == null ? "" : Model.BirthDay.Value.ToString("yyy-MM-dd") )">
+        <div class="form-group">
+            @Html.LabelFor(m => m.BirthDay, new {@class = "col-md-2 control-label"})
+            <div class="col-md-8 col-xs-10">
+                <input class="form-control" id="BirthDay" name="BirthDay" type="date" value="@(Model.BirthDay == null ? "" : Model.BirthDay.Value.ToString("yyy-MM-dd") )">
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Sex, new { @class = "col-md-2 control-label" })
-        <div class="col-md-8 col-xs-10">
-            @Html.Action("SexList", "User", new {selected = Model.Sex})
+        <div class="form-group">
+            @Html.LabelFor(m => m.Sex, new {@class = "col-md-2 control-label"})
+            <div class="col-md-8 col-xs-10">
+                @Html.Action("SexList", "User", new {selected = Model.Sex})
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.AboutUser, new {@class = "col-md-2 control-label"})
-        <div class="col-md-8 col-xs-10">
-            @Html.TextAreaFor(m => m.AboutUser, new {@class = "form-control"})
+        <div class="form-group">
+            @Html.LabelFor(m => m.AboutUser, new {@class = "col-md-2 control-label"})
+            <div class="col-md-8 col-xs-10">
+                @Html.TextAreaFor(m => m.AboutUser, new {@class = "form-control"})
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label" for="avatar">Upload avatar</label>
-        <div class="col-md-8 col-xs-10">
-            <input type="file" name="avatar" id="avatar"  class="form-control" />
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="avatar">Upload avatar</label>
+            <div class="col-md-8 col-xs-10">
+                <input type="file" name="avatar" id="avatar" class="form-control"/>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-xs-offset-2 col-md-8 col-xs-10">
-            <input type="submit" class="btn btn-default" value="Edit" />
+        <div class="form-group">
+            <div class="col-xs-offset-2 col-md-8 col-xs-10">
+                <input type="submit" class="btn btn-default" value="Edit"/>
+            </div>
         </div>
-    </div>
+    }
 }
-

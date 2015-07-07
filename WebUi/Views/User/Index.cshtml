@@ -5,7 +5,7 @@
 @{
     String fullName = string.Format("{0} {1}", Model.Name, Model.Surname);
     ViewBag.Title = fullName;
-} 
+}
 
 <div class="row">
     <div class="col-md-2 col-xs-4">
@@ -22,12 +22,12 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.Hidden("id", Model.Id)
-    <input type="submit" value="Add to friends" class="btn btn-primary btn-sm btn-block friend-btn" />
+                <input type="submit" value="Add to friends" class="btn btn-primary btn-sm btn-block friend-btn"/>
             }
         }
         else if (Model.UserName != User.Identity.Name)
         {
-            using (Html.BeginForm("RemoveFriend", "User", FormMethod.Post, new { id = "add-friend-form" }))
+            using (Html.BeginForm("RemoveFriend", "User", FormMethod.Post, new {id = "add-friend-form"}))
             {
                 @Html.AntiForgeryToken()
                 @Html.Hidden("id", Model.Id)
@@ -49,6 +49,12 @@
         </dl>
     </div>
 </div>
+
+@if (ViewBag.StatusMessage != "")
+{
+    <p class="error-message">@ViewBag.StatusMessage</p>
+}
+
 <div class="row">
     <h3 align="center">Friends @fullName</h3>
 </div>

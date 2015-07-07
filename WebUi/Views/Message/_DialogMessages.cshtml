@@ -3,7 +3,10 @@
 @using WebUi.Models
 @model DialogViewModel
 
-
+@if (ViewBag.StatusMessage != "")
+{
+    <p class="error-message">@ViewBag.StatusMessage</p>
+}
 
 <div id="contentPager">
     <span id="loading" class="loading"> <i class="glyphicon glyphicon-refresh gly-spin"></i></span>
@@ -44,4 +47,9 @@
         </div>
 
     </div>
+}
+
+@if (Model.Messages.Count == 0)
+{
+    @:Dialog is empty
 }
