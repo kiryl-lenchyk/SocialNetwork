@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -49,8 +51,15 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>IQuaryable of all elements. You can add LINQ query to it. Quary will be invoked by storage</returns>
         public IQueryable<DalMessage> GetAll()
         {
-            logger.Log(LogLevel.Trace,"MessageRepository.GetAll");
-            return context.Set<Message>().Select(MessageMapper.ToDalMesaageConvertion);
+            logger.Log(LogLevel.Trace, "MessageRepository.GetAll");
+            try
+            {
+                return context.Set<Message>().Select(MessageMapper.ToDalMesaageConvertion);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -60,10 +69,17 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>found entity or null if it not found.</returns>
         public DalMessage GetById(int key)
         {
-            logger.Log(LogLevel.Trace,"MessageRepository.GetById invoked key = {0}", key);
+            logger.Log(LogLevel.Trace, "MessageRepository.GetById invoked key = {0}", key);
 
-            Message ormMessage = context.Set<Message>().FirstOrDefault(x => x.Id == key);
-            return ormMessage != null ? ormMessage.ToDalMessage() : null;
+            try
+            {
+                Message ormMessage = context.Set<Message>().FirstOrDefault(x => x.Id == key);
+                return ormMessage != null ? ormMessage.ToDalMessage() : null;
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -74,13 +90,21 @@ namespace SocialNetwork.Dal.Repository
         public DalMessage GetByPredicate(Expression<Func<DalMessage, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            logger.Log(LogLevel.Trace,"MessageRepository.GetByPredicate invoked predicate = {0}", predicate.ToString());
+            logger.Log(LogLevel.Trace, "MessageRepository.GetByPredicate invoked predicate = {0}",
+                predicate.ToString());
 
             Expression<Func<Message, bool>> convertedPredicate =
-                (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));
+                (Expression<Func<Message, bool>>) (new MessageExpressionMapper().Visit(predicate));
 
-            Message ormMessage = context.Set<Message>().FirstOrDefault(convertedPredicate);
-            return ormMessage != null ? ormMessage.ToDalMessage() : null;
+            try
+            {
+                Message ormMessage = context.Set<Message>().FirstOrDefault(convertedPredicate);
+                return ormMessage != null ? ormMessage.ToDalMessage() : null;
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -91,12 +115,23 @@ namespace SocialNetwork.Dal.Repository
         public IQueryable<DalMessage> GetAllByPredicate(Expression<Func<DalMessage, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            logger.Log(LogLevel.Trace,"MessageRepository.GetAllByPredicate invoked predicate = {0}", predicate.ToString());
+            logger.Log(LogLevel.Trace, "MessageRepository.GetAllByPredicate invoked predicate = {0}",
+                predicate.ToString());
 
             Expression<Func<Message, bool>> convertedPredicate =
-                (Expression<Func<Message, bool>>)(new MessageExpressionMapper().Visit(predicate));
+                (Expression<Func<Message, bool>>) (new MessageExpressionMapper().Visit(predicate));
 
-            return context.Set<Message>().Where(convertedPredicate).Select(MessageMapper.ToDalMesaageConvertion);
+            try
+            {
+                return
+                    context.Set<Message>()
+                        .Where(convertedPredicate)
+                        .Select(MessageMapper.ToDalMesaageConvertion);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -107,11 +142,19 @@ namespace SocialNetwork.Dal.Repository
         public DalMessage Create(DalMessage e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"MessageRepository.Create invoked sender = {0}, target = {1}", e.SenderId, e.TargetId);
+            logger.Log(LogLevel.Trace, "MessageRepository.Create invoked sender = {0}, target = {1}",
+                e.SenderId, e.TargetId);
 
-            Message ormMessage = e.ToOrmMessage();
-            context.Set<Message>().Add(ormMessage);
-            return ormMessage.ToDalMessage();
+            try
+            {
+                Message ormMessage = e.ToOrmMessage();
+                context.Set<Message>().Add(ormMessage);
+                return ormMessage.ToDalMessage();
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -121,9 +164,16 @@ namespace SocialNetwork.Dal.Repository
         public void Delete(DalMessage e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"MessageRepository.Delete invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace, "MessageRepository.Delete invoked id = {0}", e.Id);
 
-            context.Set<Message>().Remove(e.ToOrmMessage());
+            try
+            {
+                context.Set<Message>().Remove(e.ToOrmMessage());
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -133,9 +183,16 @@ namespace SocialNetwork.Dal.Repository
         public void Update(DalMessage e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"MessageRepository.Update invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace, "MessageRepository.Update invoked id = {0}", e.Id);
 
-            context.Set<Message>().AddOrUpdate(e.ToOrmMessage());
+            try
+            {
+                context.Set<Message>().AddOrUpdate(e.ToOrmMessage());
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         #endregion

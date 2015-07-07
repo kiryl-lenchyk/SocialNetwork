@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using SocialNetwork.Dal.Interface;
 using SocialNetwork.Logger.Interface;
 
@@ -45,7 +46,7 @@ namespace SocialNetwork.Dal
             {
                 context.SaveChanges();
             }
-            catch (InvalidOperationException ex)
+            catch (DbUpdateException ex)
             {
                 logger.Log(LogLevel.Error,"UnitOfWork.Commit cant save data to database exception: {0}",
                     ex.ToString());

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -27,7 +29,7 @@ namespace SocialNetwork.Dal.Repository
         #endregion
 
         #region Constractor
-       
+
         /// <summary>
         /// Create new instanse of UserRepository.
         /// </summary>
@@ -49,8 +51,15 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>IQuaryable of all elements. You can add LINQ query to it. Quary will be invoked by storage</returns>
         public IQueryable<DalUser> GetAll()
         {
-            logger.Log(LogLevel.Trace,"UserRepository.GetAll ivoked");
-            return context.Set<User>().Select(UserMapper.ToDalUserConvertion);
+            logger.Log(LogLevel.Trace, "UserRepository.GetAll ivoked");
+            try
+            {
+                return context.Set<User>().Select(UserMapper.ToDalUserConvertion);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -60,10 +69,16 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>found entity or null if it not found.</returns>
         public DalUser GetById(int key)
         {
-            logger.Log(LogLevel.Trace,"UserRepository.GetById invoked key = {0}", key);
-
-            User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == key);
-            return ormUser != null ? ormUser.ToDalUser() : null;
+            logger.Log(LogLevel.Trace, "UserRepository.GetById invoked key = {0}", key);
+            try
+            {
+                User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == key);
+                return ormUser != null ? ormUser.ToDalUser() : null;
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -73,11 +88,17 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>founded user, or null if it's not found.</returns>
         public DalUser GetByName(String name)
         {
-            if(name == null) throw new ArgumentNullException("name");
-            logger.Log(LogLevel.Trace,"UserRepository.GetByName invoked name = {0}", name);
-
-            User ormUser = context.Set<User>().FirstOrDefault(x => x.UserName == name);
-            return ormUser != null ? ormUser.ToDalUser() : null;
+            if (name == null) throw new ArgumentNullException("name");
+            logger.Log(LogLevel.Trace, "UserRepository.GetByName invoked name = {0}", name);
+            try
+            {
+                User ormUser = context.Set<User>().FirstOrDefault(x => x.UserName == name);
+                return ormUser != null ? ormUser.ToDalUser() : null;
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -87,15 +108,22 @@ namespace SocialNetwork.Dal.Repository
         /// <param name="newFriend">second user to be friend.</param>
         public void AddToFriends(DalUser currentUser, DalUser newFriend)
         {
-            if(currentUser == null) throw new ArgumentNullException("currentUser");
+            if (currentUser == null) throw new ArgumentNullException("currentUser");
             if (newFriend == null) throw new ArgumentNullException("newFriend");
-            logger.Log(LogLevel.Trace,"UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
+            logger.Log(LogLevel.Trace,
+                "UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
                 currentUser, newFriend);
-
-            User ormCurrentUser = GetOrmUserWithFriends(currentUser);
-            User ormNewFriend = GetOrmUserWithFriends(newFriend);
-            ormCurrentUser.Friends.Add(ormNewFriend);
-            ormNewFriend.Friends.Add(ormCurrentUser);
+            try
+            {
+                User ormCurrentUser = GetOrmUserWithFriends(currentUser);
+                User ormNewFriend = GetOrmUserWithFriends(newFriend);
+                ormCurrentUser.Friends.Add(ormNewFriend);
+                ormNewFriend.Friends.Add(ormCurrentUser);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
 
@@ -108,13 +136,20 @@ namespace SocialNetwork.Dal.Repository
         {
             if (currentUser == null) throw new ArgumentNullException("currentUser");
             if (newFriend == null) throw new ArgumentNullException("newFriend");
-            logger.Log(LogLevel.Trace,"UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
+            logger.Log(LogLevel.Trace,
+                "UserRepository.AddToFriends invoked currentUser = {0}, newFriend = {1} ",
                 currentUser, newFriend);
-
-            User ormCurrentUser = GetOrmUserWithFriends(currentUser);
-            User ormNewFriend = GetOrmUserWithFriends(newFriend);
-            ormCurrentUser.Friends.Remove(ormNewFriend);
-            ormNewFriend.Friends.Remove(ormCurrentUser);
+            try
+            {
+                User ormCurrentUser = GetOrmUserWithFriends(currentUser);
+                User ormNewFriend = GetOrmUserWithFriends(newFriend);
+                ormCurrentUser.Friends.Remove(ormNewFriend);
+                ormNewFriend.Friends.Remove(ormCurrentUser);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -125,13 +160,20 @@ namespace SocialNetwork.Dal.Repository
         public DalUser GetByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            logger.Log(LogLevel.Trace,"UserRepository.GetByPredicate invoked predicate = {0}",predicate.ToString());
+            logger.Log(LogLevel.Trace, "UserRepository.GetByPredicate invoked predicate = {0}",
+                predicate.ToString());
 
             Expression<Func<User, bool>> convertedPredicate =
-                (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
-
-            User ormUser = context.Set<User>().FirstOrDefault(convertedPredicate);
-            return ormUser != null ? ormUser.ToDalUser() : null;
+                (Expression<Func<User, bool>>) (new UserExpressionMapper().Visit(predicate));
+            try
+            {
+                User ormUser = context.Set<User>().FirstOrDefault(convertedPredicate);
+                return ormUser != null ? ormUser.ToDalUser() : null;
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -142,12 +184,22 @@ namespace SocialNetwork.Dal.Repository
         public IQueryable<DalUser> GetAllByPredicate(Expression<Func<DalUser, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            logger.Log(LogLevel.Trace,"UserRepository.GetAllByPredicate invoked predicate = {0}", predicate.ToString());
+            logger.Log(LogLevel.Trace, "UserRepository.GetAllByPredicate invoked predicate = {0}",
+                predicate.ToString());
 
             Expression<Func<User, bool>> convertedPredicate =
-                (Expression<Func<User, bool>>)(new UserExpressionMapper().Visit(predicate));
-
-            return context.Set<User>().Where( convertedPredicate).Select(UserMapper.ToDalUserConvertion);
+                (Expression<Func<User, bool>>) (new UserExpressionMapper().Visit(predicate));
+            try
+            {
+                return
+                    context.Set<User>()
+                        .Where(convertedPredicate)
+                        .Select(UserMapper.ToDalUserConvertion);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -158,11 +210,17 @@ namespace SocialNetwork.Dal.Repository
         public DalUser Create(DalUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"UserRepository.Create invoked userName = {0}",e.UserName);
-
-            User ormUser = e.ToOrmUser();
-            context.Set<User>().Add(ormUser);
-            return ormUser.ToDalUser();
+            logger.Log(LogLevel.Trace, "UserRepository.Create invoked userName = {0}", e.UserName);
+            try
+            {
+                User ormUser = e.ToOrmUser();
+                context.Set<User>().Add(ormUser);
+                return ormUser.ToDalUser();
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -171,11 +229,17 @@ namespace SocialNetwork.Dal.Repository
         /// <param name="e">entity to delete.</param>
         public void Delete(DalUser e)
         {
-            logger.Log(LogLevel.Trace,"UserRepository.Delete invoked id = {0}", e.Id);
-
-            User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == e.Id);
-            if (ormUser == null) throw new ArgumentException("User has incorrect id");
-            context.Set<User>().Remove(ormUser);
+            logger.Log(LogLevel.Trace, "UserRepository.Delete invoked id = {0}", e.Id);
+            try
+            {
+                User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == e.Id);
+                if (ormUser == null) throw new ArgumentException("User has incorrect id");
+                context.Set<User>().Remove(ormUser);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -185,9 +249,15 @@ namespace SocialNetwork.Dal.Repository
         public void Update(DalUser e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"UserRepository.Update invoked id = {0}", e.Id);
-
-            context.Set<User>().AddOrUpdate(e.ToOrmUser());
+            logger.Log(LogLevel.Trace, "UserRepository.Update invoked id = {0}", e.Id);
+            try
+            {
+                context.Set<User>().AddOrUpdate(e.ToOrmUser());
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         #endregion

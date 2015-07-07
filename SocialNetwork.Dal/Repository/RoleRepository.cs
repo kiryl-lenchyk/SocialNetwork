@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -50,8 +52,15 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>IQuaryable of all elements. You can add LINQ query to it. Quary will be invoked by storage</returns>
         public IQueryable<DalRole> GetAll()
         {
-            logger.Log(LogLevel.Trace,"RoleRepository.GetAll ivoked");
-            return context.Set<Role>().Select(RoleMapper.ToDalRolExpression);
+            logger.Log(LogLevel.Trace, "RoleRepository.GetAll ivoked");
+            try
+            {
+                return context.Set<Role>().Select(RoleMapper.ToDalRolExpression);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -61,10 +70,17 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>found entity or null if it not found.</returns>
         public DalRole GetById(int key)
         {
-            logger.Log(LogLevel.Trace,"RoleRepository.GetById invoked key = {0}", key);
+            logger.Log(LogLevel.Trace, "RoleRepository.GetById invoked key = {0}", key);
 
-            Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == key);
-            return ormRole == null ? null : ormRole.ToDalRole();
+            try
+            {
+                Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == key);
+                return ormRole == null ? null : ormRole.ToDalRole();
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
 
         }
 
@@ -75,14 +91,23 @@ namespace SocialNetwork.Dal.Repository
         /// <returns>first founded entity or null if it not found.</returns>
         public DalRole GetByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
-            if(predicate == null) throw new ArgumentNullException("predicate");
-            logger.Log(LogLevel.Trace,"RoleRepository.GetByPredicate invoked predicate = {0}", predicate.ToString());
+            if (predicate == null) throw new ArgumentNullException("predicate");
+            logger.Log(LogLevel.Trace, "RoleRepository.GetByPredicate invoked predicate = {0}",
+                predicate.ToString());
 
             Expression<Func<Role, bool>> convertedPredicate =
-                 (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole,Role>().Visit(predicate));
+                (Expression<Func<Role, bool>>)
+                    (new GenericExpressionMapper<DalRole, Role>().Visit(predicate));
 
-            Role ormRole = context.Set<Role>().FirstOrDefault(convertedPredicate);
-            return ormRole != null ? ormRole.ToDalRole() : null;
+            try
+            {
+                Role ormRole = context.Set<Role>().FirstOrDefault(convertedPredicate);
+                return ormRole != null ? ormRole.ToDalRole() : null;
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -93,12 +118,24 @@ namespace SocialNetwork.Dal.Repository
         public IQueryable<DalRole> GetAllByPredicate(Expression<Func<DalRole, bool>> predicate)
         {
             if (predicate == null) throw new ArgumentNullException("predicate");
-            logger.Log(LogLevel.Trace,"RoleRepository.GetAllByPredicate invoked predicate = {0}", predicate.ToString());
+            logger.Log(LogLevel.Trace, "RoleRepository.GetAllByPredicate invoked predicate = {0}",
+                predicate.ToString());
 
             Expression<Func<Role, bool>> convertedPredicate =
-                 (Expression<Func<Role, bool>>)(new GenericExpressionMapper<DalRole, Role>().Visit(predicate));
+                (Expression<Func<Role, bool>>)
+                    (new GenericExpressionMapper<DalRole, Role>().Visit(predicate));
 
-            return context.Set<Role>().Where(convertedPredicate).Select(RoleMapper.ToDalRolExpression);
+            try
+            {
+                return
+                    context.Set<Role>()
+                        .Where(convertedPredicate)
+                        .Select(RoleMapper.ToDalRolExpression);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -109,11 +146,18 @@ namespace SocialNetwork.Dal.Repository
         public DalRole Create(DalRole e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"RoleRepository.Create invoked roleName = {0}", e.Name);
+            logger.Log(LogLevel.Trace, "RoleRepository.Create invoked roleName = {0}", e.Name);
 
-            Role ormRole = e.ToOrmRole();
-            context.Set<Role>().Add(ormRole);
-            return ormRole.ToDalRole();
+            try
+            {
+                Role ormRole = e.ToOrmRole();
+                context.Set<Role>().Add(ormRole);
+                return ormRole.ToDalRole();
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -123,10 +167,17 @@ namespace SocialNetwork.Dal.Repository
         public void Delete(DalRole e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"RoleRepository.Delete invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace, "RoleRepository.Delete invoked id = {0}", e.Id);
 
-            Role ormRole = e.ToOrmRole();
-            context.Set<Role>().Remove(ormRole);
+            try
+            {
+                Role ormRole = e.ToOrmRole();
+                context.Set<Role>().Remove(ormRole);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -136,10 +187,17 @@ namespace SocialNetwork.Dal.Repository
         public void Update(DalRole e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            logger.Log(LogLevel.Trace,"RoleRepository.Update invoked id = {0}", e.Id);
+            logger.Log(LogLevel.Trace, "RoleRepository.Update invoked id = {0}", e.Id);
 
-            Role ormRole = e.ToOrmRole();
-            context.Set<Role>().AddOrUpdate(ormRole);
+            try
+            {
+                Role ormRole = e.ToOrmRole();
+                context.Set<Role>().AddOrUpdate(ormRole);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -150,10 +208,17 @@ namespace SocialNetwork.Dal.Repository
         public DalRole GetByName(string roleName)
         {
             if (roleName == null) throw new ArgumentNullException("roleName");
-            logger.Log(LogLevel.Trace,"RoleRepository.GetByName invoked name = {0}", roleName);
-            
-            Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Name == roleName);
-            return ormRole == null ? null : ormRole.ToDalRole();
+            logger.Log(LogLevel.Trace, "RoleRepository.GetByName invoked name = {0}", roleName);
+
+            try
+            {
+                Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Name == roleName);
+                return ormRole == null ? null : ormRole.ToDalRole();
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -164,15 +229,23 @@ namespace SocialNetwork.Dal.Repository
         public IEnumerable<DalRole> GetUserRoles(DalUser user)
         {
             if (user == null) throw new ArgumentNullException("user");
-            logger.Log(LogLevel.Trace,"RoleRepository.GetUserRoles invoked userId = {0}", user.Id);
+            logger.Log(LogLevel.Trace, "RoleRepository.GetUserRoles invoked userId = {0}", user.Id);
 
-            User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == user.Id);
-            if (ormUser == null)
+            try
             {
-                logger.Log(LogLevel.Debug,"RoleRepository.GetUserRoles cant find user userId = {0}", user.Id);
-                return new List<DalRole>();
+                User ormUser = context.Set<User>().FirstOrDefault(x => x.Id == user.Id);
+                if (ormUser == null)
+                {
+                    logger.Log(LogLevel.Debug,
+                        "RoleRepository.GetUserRoles cant find user userId = {0}", user.Id);
+                    return new List<DalRole>();
+                }
+                return ormUser.Roles.Select(x => x.ToDalRole());
             }
-            return ormUser.Roles.Select(x => x.ToDalRole());
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -183,16 +256,26 @@ namespace SocialNetwork.Dal.Repository
         public IEnumerable<DalUser> GetRoleUsers(DalRole role)
         {
             if (role == null) throw new ArgumentNullException("role");
-            logger.Log(LogLevel.Trace,"RoleRepository.GetRoleUsers invoked roleId = {0}", role.Id);
+            logger.Log(LogLevel.Trace, "RoleRepository.GetRoleUsers invoked roleId = {0}", role.Id);
 
-            Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
-            if (ormRole == null)
+            try
             {
-                logger.Log(LogLevel.Debug,"RoleRepository.GetUserRoles cant find role roleId = {0}", role.Id);
-                return new List<DalUser>();
+                Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
+                if (ormRole == null)
+                {
+                    logger.Log(LogLevel.Debug,
+                        "RoleRepository.GetUserRoles cant find role roleId = {0}", role.Id);
+                    return new List<DalUser>();
+                }
+                return
+                    context.Set<User>()
+                        .Where(x => x.Roles.Contains(ormRole))
+                        .Select(x => x.ToDalUser());
             }
-            return
-                context.Set<User>().Where(x => x.Roles.Contains(ormRole)).Select(x => x.ToDalUser());
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -204,18 +287,27 @@ namespace SocialNetwork.Dal.Repository
         {
             if (user == null) throw new ArgumentNullException("user");
             if (role == null) throw new ArgumentNullException("role");
-            logger.Log(LogLevel.Trace,"RoleRepository.AddUserToRole invoked roleId = {0} userId = {1}",
+            logger.Log(LogLevel.Trace,
+                "RoleRepository.AddUserToRole invoked roleId = {0} userId = {1}",
                 role.Id, user.Id);
 
-            User ormUser = GetOrmUserWithRoles(user, "AddUserToRole");
-            Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
-            if (ormRole == null)
+            try
             {
-                logger.Log(LogLevel.Debug,"RoleRepository.AddUserToRole cant find role roleId = {0}", role.Id);
-                throw new ArgumentException("Role has incorrect id");
-            }
+                User ormUser = GetOrmUserWithRoles(user, "AddUserToRole");
+                Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
+                if (ormRole == null)
+                {
+                    logger.Log(LogLevel.Debug,
+                        "RoleRepository.AddUserToRole cant find role roleId = {0}", role.Id);
+                    throw new ArgumentException("Role has incorrect id");
+                }
 
-            ormUser.Roles.Add(ormRole);
+                ormUser.Roles.Add(ormRole);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         /// <summary>
@@ -227,18 +319,27 @@ namespace SocialNetwork.Dal.Repository
         {
             if (user == null) throw new ArgumentNullException("user");
             if (role == null) throw new ArgumentNullException("role");
-            logger.Log(LogLevel.Trace,"RoleRepository.RemoveUserFromRole invoked roleId = {0} userId = {1}",
+            logger.Log(LogLevel.Trace,
+                "RoleRepository.RemoveUserFromRole invoked roleId = {0} userId = {1}",
                 role.Id, user.Id);
 
-            User ormUser = GetOrmUserWithRoles(user, "RemoveUserFromRole");
-            Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
-            if (ormRole == null)
+            try
             {
-                logger.Log(LogLevel.Debug,"RoleRepository.RemoveUserFromRole cant find role roleId = {0}", role.Id);
-                throw new ArgumentException("Role has incorrect id");
-            }
+                User ormUser = GetOrmUserWithRoles(user, "RemoveUserFromRole");
+                Role ormRole = context.Set<Role>().FirstOrDefault(x => x.Id == role.Id);
+                if (ormRole == null)
+                {
+                    logger.Log(LogLevel.Debug,
+                        "RoleRepository.RemoveUserFromRole cant find role roleId = {0}", role.Id);
+                    throw new ArgumentException("Role has incorrect id");
+                }
 
-            ormUser.Roles.Remove(ormRole);
+                ormUser.Roles.Remove(ormRole);
+            }
+            catch (EntityException ex)
+            {
+                throw new DataException("Can't access to database", ex);
+            }
         }
 
         #endregion
@@ -250,7 +351,8 @@ namespace SocialNetwork.Dal.Repository
             User ormCurrentUser = context.Set<User>().SingleOrDefault(x => x.Id == dalUser.Id);
             if (ormCurrentUser == null)
             {
-                logger.Log(LogLevel.Debug,"RoleRepository.{0} cant find user id = {1}", logMethodName,dalUser.Id);
+                logger.Log(LogLevel.Debug, "RoleRepository.{0} cant find user id = {1}",
+                    logMethodName, dalUser.Id);
                 throw new ArgumentException("User has incorrect id");
             }
             context.Entry(ormCurrentUser).Collection(x => x.Roles).Load();
