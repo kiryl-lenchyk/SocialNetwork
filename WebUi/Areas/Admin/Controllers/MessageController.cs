@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Configuration;
@@ -64,14 +65,23 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult MessagesListPage(int? page)
         {
             int pageNumber = page ?? 1;
+            IPagedList<MessageViewModel> messageViewModels;
 
-            return
-                PartialView("_MessagesListPage",
-                    messageService.GetAllMessages().Select(
-                        x => x.ToMessageViewModel(
-                            userService.GetById(x.SenderId),
-                            userService.GetById(x.TargetId)))
-                        .ToPagedList(pageNumber, MessagesListPageSize));
+            try
+            {
+                messageViewModels = messageService.GetAllMessages().Select(
+                    x => x.ToMessageViewModel(
+                        userService.GetById(x.SenderId),
+                        userService.GetById(x.TargetId)))
+                    .ToPagedList(pageNumber, MessagesListPageSize);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                messageViewModels = new List<MessageViewModel>().ToPagedList(1, 1);
+            }
+
+            return PartialView("_MessagesListPage", messageViewModels);
 
         }
 
@@ -83,9 +93,25 @@ namespace WebUi.Areas.Admin.Controllers
                 throw new HttpException(404,
                     string.Format("Message id = {0} Not found. Edit message", id));
 
-            return View(bllMessage.ToMessageViewModel(
-                userService.GetById(bllMessage.SenderId),
-                userService.GetById(bllMessage.TargetId)));
+            MessageViewModel messageViewModel;
+
+            try
+            {
+                messageViewModel = bllMessage.ToMessageViewModel(
+                    userService.GetById(bllMessage.SenderId),
+                    userService.GetById(bllMessage.TargetId));
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                messageViewModel = new MessageViewModel()
+                {
+                    Sender = new UserPreviewViewModel(),
+                    Target = new UserPreviewViewModel()
+                };
+            }
+
+            return View(messageViewModel);
         }
 
         [ValidateAntiForgeryToken]

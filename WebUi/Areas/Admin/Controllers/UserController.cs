@@ -66,22 +66,46 @@ namespace WebUi.Areas.Admin.Controllers
         public ActionResult UsersListPage(int? page)
         {
             int pageNumber = page ?? 1;
+            IPagedList<UserPreviewViewModel> userPreviewViewModels;
 
-            return PartialView("_UsersListPage",
-                userService.GetAllUsers()
+            try
+            {
+                userPreviewViewModels = userService.GetAllUsers()
                     .Select(x => x.ToUserPreviewViewModel())
-                    .ToPagedList(pageNumber, UsersListPageSize));
+                    .ToPagedList(pageNumber, UsersListPageSize);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                userPreviewViewModels = new List<UserPreviewViewModel>().ToPagedList(1, 1);
+            }
+            
+            return PartialView("_UsersListPage",userPreviewViewModels);
         }
 
         public ActionResult Edit(int id)
         {
-            logger.Log(LogLevel.Trace,"Request user edit page for admin id = {0}", id.ToString());
+            logger.Log(LogLevel.Trace, "Request user edit page for admin id = {0}", id.ToString());
             BllUser bllUser = userService.GetById(id);
-            if (bllUser == null) throw new HttpException(404, string.Format("User id = {0} Not found", id));
+            if (bllUser == null)
+                throw new HttpException(404, string.Format("User id = {0} Not found", id));
 
-            return
-                View(bllUser.ToUserEditViewModel(roleService.GetAllRoles(),
+            try
+            {
+                return View(bllUser.ToUserEditViewModel(roleService.GetAllRoles(),
                     roleService.GetUserRoles(bllUser.UserName).Select(x => x.Id)));
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                return
+                    View(new UserEditViewModel()
+                    {
+                        AllRoles = roleService.GetAllRoles().Select(x => x.ToRoleView()).ToList(),
+                        UserRolesIds = new List<int>()
+                    });
+            }
+
         }
 
         [ValidateAntiForgeryToken]
