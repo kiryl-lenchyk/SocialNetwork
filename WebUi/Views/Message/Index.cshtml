@@ -12,5 +12,5 @@
 <h2>Dialogs</h2>
 
 <div id="content">
-    @Html.Action("DialogsListPage")
+    @Html.Action("DialogsListPage",new {page =  ViewBag.PageNumber})
 </div>

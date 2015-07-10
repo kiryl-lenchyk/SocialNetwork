@@ -58,9 +58,9 @@ namespace WebUi.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
-            logger.Log(LogLevel.Trace,"Request users list for admin");
+            logger.Log(LogLevel.Trace, "Request users list for admin");
 
-           return View();
+            return View();
         }
 
         public ActionResult UsersListPage(int? page)

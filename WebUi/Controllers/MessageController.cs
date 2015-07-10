@@ -68,6 +68,8 @@ namespace WebUi.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.PageNumber = 1;
+
             return View();
         }
 
@@ -81,8 +83,13 @@ namespace WebUi.Controllers
             {
                 IEnumerable<DialogPreviewModel> dialogPreviewModels = messageService.GetUserDialogs(
                     currentUserId).Select(x => x.ToDialogPreviewModel(currentUserId));
-                return PartialView("_DialogsListPage",
-                    dialogPreviewModels.ToPagedList(pageNumber, DialogsListPageSize));
+                if (Request.IsAjaxRequest() || ControllerContext.IsChildAction)
+                {
+                    return PartialView("_DialogsListPage",
+                        dialogPreviewModels.ToPagedList(pageNumber, DialogsListPageSize));
+                }
+                ViewBag.PageNumber = pageNumber;
+                return View("Index");
             }
             catch (Exception ex)
             {
@@ -141,16 +148,7 @@ namespace WebUi.Controllers
                 ViewBag.StatusMessage = "Can't send message. Please, try again later";
             }
 
-            try
-            {
-                DialogViewModel dialogViewModel = GetDialogViewModel(targetId, currentUserId, 1);
-                return PartialView("_DialogMessages", dialogViewModel);
-            }
-            catch (Exception ex)
-            {
-                logger.Log(LogLevel.Fatal, ex.ToString());
-                return  PartialView("_DialogMessages",DialogViewModel.Empty);
-            }
+            return GetDialogPageViewModel(targetId, currentUserId, 1);
             
         }
 
@@ -161,19 +159,12 @@ namespace WebUi.Controllers
             int currentUserId = userService.GetByName(User.Identity.Name).Id;
             if (!userService.IsUserExists(targetId)) throw new HttpException(404, string.Format("User id = {0} Not found", targetId));
 
-            try
-            {
-                DialogViewModel dialogViewModel = GetDialogViewModel(targetId, currentUserId,pageNumber);
-                return PartialView("_DialogMessages", dialogViewModel);
-            }
-            catch (Exception ex)
-            {
-                logger.Log(LogLevel.Fatal, ex.ToString());
-                return PartialView("_DialogMessages", DialogViewModel.Empty);
-            }
+            return GetDialogPageViewModel(targetId, currentUserId, pageNumber);
         }
 
         
+
+
         [ChildActionOnly]
         public ActionResult NotReadedMessages()
         {
@@ -211,6 +202,25 @@ namespace WebUi.Controllers
                 userService.GetById(currentUserId),
                 userService.GetById(targetId))
                 .ToDialogViewModel(currentUserId, pageNumber, DialogPageSize);
+        }
+
+        private ActionResult GetDialogPageViewModel(int targetId, int currentUserId, int pageNumber)
+        {
+            try
+            {
+                DialogViewModel dialogViewModel = GetDialogViewModel(targetId, currentUserId, pageNumber);
+                if (Request.IsAjaxRequest() || ControllerContext.IsChildAction)
+                {
+                    return PartialView("_DialogMessages", dialogViewModel);
+                }
+                ViewBag.PageNumber = pageNumber;
+                return View("Dialog", dialogViewModel); 
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Fatal, ex.ToString());
+                return PartialView("_DialogMessages", DialogViewModel.Empty);
+            }
         }
 
         #endregion
