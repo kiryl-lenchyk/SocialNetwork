@@ -70,9 +70,8 @@ namespace WebUi.Areas.Admin.Controllers
 
             try
             {
-                userPreviewViewModels = userService.GetAllUsers()
-                    .Select(x => x.ToUserPreviewViewModel())
-                    .ToPagedList(pageNumber, UsersListPageSize);
+                userPreviewViewModels = userService.GetAllUsersPage(UsersListPageSize, pageNumber)
+                    .Map(x => x.ToUserPreviewViewModel());
             }
             catch (Exception ex)
             {

@@ -69,11 +69,10 @@ namespace WebUi.Areas.Admin.Controllers
 
             try
             {
-                messageViewModels = messageService.GetAllMessages().Select(
+                messageViewModels = messageService.GetAllMessagesPage(MessagesListPageSize,pageNumber).Map(
                     x => x.ToMessageViewModel(
                         userService.GetById(x.SenderId),
-                        userService.GetById(x.TargetId)))
-                    .ToPagedList(pageNumber, MessagesListPageSize);
+                        userService.GetById(x.TargetId)));
             }
             catch (Exception ex)
             {

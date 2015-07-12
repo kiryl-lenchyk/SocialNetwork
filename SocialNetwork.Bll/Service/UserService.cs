@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using SocialNetwork.Bll.Interface;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Mappers;
@@ -174,6 +175,17 @@ namespace SocialNetwork.Bll.Service
             logger.Log(LogLevel.Trace,"UserService.GetAllUsers invoked");
 
             return userRepository.GetAll().ToList().Select(x => x.ToBllUser());
+        }
+
+        public IMappedPagedList<BllUser> GetAllUsersPage(int pageSize, int pageNumber)
+        {
+            logger.Log(LogLevel.Trace, "UserService.GetAllUsersPage invokedpageSize = {0} pageNumber = {1}",
+                pageSize, pageNumber);
+
+            return
+                PagedList<BllUser>.GetPagedListWithConvert(
+                    userRepository.GetAll().OrderBy(x => x.Id), pageSize, pageNumber,
+                    x => x.ToBllUser());
         }
 
         /// <summary>

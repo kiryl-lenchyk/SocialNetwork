@@ -52,6 +52,24 @@ namespace SocialNetwork.Bll.Service
         #region Public Methods
 
         /// <summary>
+        /// Get all messages from storage.
+        /// </summary>
+        /// <param name="pageSize">elements count on one page</param>
+        /// <param name="pageNumber">number of page to draw</param>
+        /// <returns>IEnumerable of all messages.</returns>
+        public IMappedPagedList<BllMessage> GetAllMessagesPage(int pageSize, int pageNumber)
+        {
+            logger.Log(LogLevel.Trace,
+                "MessageService.GetAllMessagesPage invoked pageSize = {0} pageNumber = {1}",
+                pageSize, pageNumber);
+
+            return
+                PagedList<BllMessage>.GetPagedListWithConvert(
+                    messageRepository.GetAll().OrderByDescending(x => x.CreatingTime), pageSize,
+                    pageNumber, x => x.ToBllMessage());
+        }
+
+        /// <summary>
         /// Get message by id.
         /// </summary>
         /// <param name="id">message id.</param>

@@ -18,6 +18,14 @@ namespace SocialNetwork.Bll.Interface.Services
         IEnumerable<BllMessage> GetAllMessages();
 
         /// <summary>
+        /// Get all messages from storage.
+        /// </summary>
+        /// <param name="pageSize">elements count on one page</param>
+        /// <param name="pageNumber">number of page to draw</param>
+        /// <returns>IEnumerable of all messages.</returns>
+        IMappedPagedList<BllMessage> GetAllMessagesPage(int pageSize, int pageNumber);
+
+        /// <summary>
         /// Get message by id.
         /// </summary>
         /// <param name="id">message id.</param>

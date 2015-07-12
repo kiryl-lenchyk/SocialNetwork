@@ -66,6 +66,14 @@ namespace SocialNetwork.Bll.Interface.Services
         IEnumerable<BllUser> GetAllUsers();
 
         /// <summary>
+        /// Get all users from storage.
+        /// </summary>
+        /// <param name="pageSize">elements count on one page</param>
+        /// <param name="pageNumber">number of page to draw</param>
+        /// <returns>IEnumerable of all users.</returns>
+        IMappedPagedList<BllUser> GetAllUsersPage(int pageSize, int pageNumber);
+
+        /// <summary>
         /// Check is user existst by username.
         /// </summary>
         /// <param name="userName">username to found</param>
