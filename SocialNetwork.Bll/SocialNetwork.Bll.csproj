@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PagedList">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +46,7 @@
     <Compile Include="Mappers\MessageMapper.cs" />
     <Compile Include="Mappers\RoleMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
+    <Compile Include="PagedList.cs" />
     <Compile Include="Service\MessageService.cs" />
     <Compile Include="Service\RoleService.cs" />
     <Compile Include="Service\UserService.cs" />

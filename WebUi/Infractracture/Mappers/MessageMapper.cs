@@ -22,8 +22,8 @@ namespace WebUi.Infractracture.Mappers
                 IsReaded = lastMessage.SenderId == currentUserId || lastMessage.IsReaded
             };
         }
-
-        public static DialogViewModel ToDialogViewModel(this BllDialog dialog, int currentUserId, int pageNumber, int pageSize)
+        
+        public static DialogViewModel ToDialogPageViewModel(this BllDialogPage dialog, int currentUserId)
         {
             BllUser interlocutor = dialog.FirstUser.Id == currentUserId
                ? dialog.SecondUser
@@ -34,16 +34,17 @@ namespace WebUi.Infractracture.Mappers
                 SecondUserName = interlocutor.Name,
                 SecondUserSurname = interlocutor.Surname,
                 Messages =
-                    dialog.Messages.Select(x => x.ToMessageViewModel(currentUserId, dialog))
-                        .ToPagedList(pageNumber, pageSize)
+                    dialog.Messages.Map(x => x.ToMessageViewModel(currentUserId, dialog.FirstUser,dialog.SecondUser))
+                        
             };
         }
 
-        public static MessageViewModel ToMessageViewModel(this BllMessage message, int currentUserId, BllDialog dialog)
+        public static MessageViewModel ToMessageViewModel(this BllMessage message, int currentUserId,
+            BllUser firstDialogUser, BllUser secondDialogUser)
         {
-            BllUser sender = message.SenderId == dialog.FirstUser.Id
-                ? dialog.FirstUser
-                : dialog.SecondUser;
+            BllUser sender = message.SenderId == firstDialogUser.Id
+                ? firstDialogUser
+                : secondDialogUser;
             return new MessageViewModel()
             {
                 CreaingTime = message.CreatingTime,

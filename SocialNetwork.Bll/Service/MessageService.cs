@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PagedList;
+using SocialNetwork.Bll.Interface;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Bll.Mappers;
@@ -76,13 +78,29 @@ namespace SocialNetwork.Bll.Service
                 throw new ArgumentException(string.Format("User with id = {0} not found", userId));
             BllUser currentBllUser = currentDalUser.ToBllUser();
 
-            return messageRepository.GetAllByPredicate(x => x.SenderId == userId)
-                .Select(x => x.TargetId)
-                .Union(
-                    messageRepository.GetAllByPredicate(x => x.TargetId == userId)
-                        .Select(x => x.SenderId))
-                .ToList()
-                .Select(x => GetUsersDialog(currentBllUser, userRepository.GetById(x).ToBllUser()));
+            return  GetUserInterloctorsIds(userId).ToList()
+               .Select(x => GetUsersDialog(currentBllUser, userRepository.GetById(x).ToBllUser()));
+        }
+
+       
+
+        public IMappedPagedList<BllDialog> GetUserDialogsPage(int userId, int pageSize, int pageNumber)
+        {
+
+            logger.Log(LogLevel.Trace,
+                "MessageService.GetUserDialogsPage invoked userId = {0} pageSize = {1} pageNumber = {2}",
+                userId, pageSize, pageNumber);
+
+            DalUser currentDalUser = userRepository.GetById(userId);
+            if (currentDalUser == null)
+                throw new ArgumentException(string.Format("User with id = {0} not found", userId));
+            BllUser currentBllUser = currentDalUser.ToBllUser();
+
+            IOrderedQueryable<int> userInterloctorsIds = GetUserInterloctorsIds(userId);
+            return PagedList<BllDialog>.GetPagedListWithConvert(userInterloctorsIds, pageSize,
+                pageNumber,
+                x => GetUsersDialog(currentBllUser, userRepository.GetById(x).ToBllUser()));
+
         }
 
         /// <summary>
@@ -101,12 +119,41 @@ namespace SocialNetwork.Bll.Service
             {
                 FirstUser = firstUser,
                 SecondUser = secondUser,
-                Messages = messageRepository.GetAllByPredicate(
-                    x =>
-                        x.SenderId == firstUser.Id && x.TargetId == secondUser.Id ||
-                        x.TargetId == firstUser.Id && x.SenderId == secondUser.Id)
-                    .OrderByDescending(x => x.CreatingTime).ToList().Select(x => x.ToBllMessage())
+                Messages =
+                    GetUsersDialogsMessaages(firstUser, secondUser)
+                        .ToList()
+                        .Select(x => x.ToBllMessage())
             };
+        }
+
+        
+
+        /// <summary>
+        /// Get dialog of two users separeted to pages. Result can contains zero messages.
+        /// </summary>
+        /// <param name="firstUser">first user from dialog</param>
+        /// <param name="secondUser">second user from dialog</param>
+        /// <param name="pageSize">elements count on one page</param>
+        /// <param name="pageNumber">number of page to draw</param>
+        /// <returns>Users dialog. Can contains empty list of messages (if users don't write messages)</returns>
+        public BllDialogPage GetUsersDialogPage(BllUser firstUser, BllUser secondUser, int pageSize, int pageNumber)
+        {
+            if (firstUser == null) throw new ArgumentNullException("firstUser");
+            if (secondUser == null) throw new ArgumentNullException("secondUser");
+            logger.Log(LogLevel.Trace, "MessageService.GetUsersDialog invoked firstUser = {0}, secondUser = {1} pageSize = {2}  pageNumber = {3}",
+                firstUser, secondUser,pageSize,pageNumber);
+
+
+            return new BllDialogPage()
+            {
+                FirstUser = firstUser,
+                SecondUser = secondUser,
+                Messages =
+                    PagedList<BllMessage>.GetPagedListWithConvert(
+                        GetUsersDialogsMessaages(firstUser, secondUser), pageSize, pageNumber,
+                        x => x.ToBllMessage())
+            };
+
         }
 
         /// <summary>
@@ -198,6 +245,28 @@ namespace SocialNetwork.Bll.Service
                 messageRepository.GetAll()
                     .OrderByDescending(x => x.CreatingTime).ToList()
                     .Select(x => x.ToBllMessage());
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private IOrderedQueryable<int> GetUserInterloctorsIds(int userId)
+        {
+            return messageRepository.GetAllByPredicate(x => x.SenderId == userId)
+                .Select(x => x.TargetId)
+                .Union(
+                    messageRepository.GetAllByPredicate(x => x.TargetId == userId)
+                        .Select(x => x.SenderId)).OrderBy(x => x);
+        }
+
+        private IOrderedQueryable<DalMessage> GetUsersDialogsMessaages(BllUser firstUser, BllUser secondUser)
+        {
+            return messageRepository.GetAllByPredicate(
+                x =>
+                    x.SenderId == firstUser.Id && x.TargetId == secondUser.Id ||
+                    x.TargetId == firstUser.Id && x.SenderId == secondUser.Id)
+                .OrderByDescending(x => x.CreatingTime);
         }
 
         #endregion

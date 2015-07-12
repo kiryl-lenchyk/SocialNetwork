@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using PagedList;
+using SocialNetwork.Bll.Interface;
 using SocialNetwork.Bll.Interface.Entity;
 using SocialNetwork.Bll.Interface.Services;
 using SocialNetwork.Logger.Interface;
@@ -81,12 +82,11 @@ namespace WebUi.Controllers
 
             try
             {
-                IEnumerable<DialogPreviewModel> dialogPreviewModels = messageService.GetUserDialogs(
-                    currentUserId).Select(x => x.ToDialogPreviewModel(currentUserId));
+                IMappedPagedList<DialogPreviewModel> dialogPreviewModels = messageService.GetUserDialogsPage(
+                    currentUserId, DialogsListPageSize, pageNumber).Map(x => x.ToDialogPreviewModel(currentUserId));
                 if (Request.IsAjaxRequest() || ControllerContext.IsChildAction)
                 {
-                    return PartialView("_DialogsListPage",
-                        dialogPreviewModels.ToPagedList(pageNumber, DialogsListPageSize));
+                    return PartialView("_DialogsListPage",dialogPreviewModels);
                 }
                 ViewBag.PageNumber = pageNumber;
                 return View("Index");
@@ -110,12 +110,12 @@ namespace WebUi.Controllers
 
             try
             {
-                BllDialog dialog = messageService.GetUsersDialog(
+                BllDialogPage dialog = messageService.GetUsersDialogPage(
                     userService.GetById(currentUserId),
-                    secondUser);
+                    secondUser,  DialogPageSize,1);
                 MarkDialogAsReaded(id, dialog);
 
-                return View(dialog.ToDialogViewModel(currentUserId, 1, DialogPageSize));
+                return View(dialog.ToDialogPageViewModel(currentUserId));
             }
             catch (Exception ex)
             {
@@ -183,12 +183,12 @@ namespace WebUi.Controllers
             return
                 PartialView("_NotReadedMessages",userNotReadedMessagesCount);
         }
-
+        
         #endregion
 
         #region Private Methods
 
-        private void MarkDialogAsReaded(int id, BllDialog dialog)
+        private void MarkDialogAsReaded(int id, BllDialogPage dialog)
         {
             foreach (BllMessage message in dialog.Messages.Where(x => x.SenderId == id && !x.IsReaded))
             {
@@ -198,10 +198,14 @@ namespace WebUi.Controllers
 
         private DialogViewModel GetDialogViewModel(int targetId, int currentUserId, int pageNumber)
         {
-            return messageService.GetUsersDialog(
+            BllDialogPage dialog = messageService.GetUsersDialogPage(
                 userService.GetById(currentUserId),
-                userService.GetById(targetId))
-                .ToDialogViewModel(currentUserId, pageNumber, DialogPageSize);
+                userService.GetById(targetId), DialogPageSize, pageNumber);
+            MarkDialogAsReaded(targetId, dialog);
+
+            return dialog
+                .ToDialogPageViewModel(currentUserId);
+           
         }
 
         private ActionResult GetDialogPageViewModel(int targetId, int currentUserId, int pageNumber)

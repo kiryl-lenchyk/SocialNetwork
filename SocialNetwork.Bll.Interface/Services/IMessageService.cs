@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PagedList;
 using SocialNetwork.Bll.Interface.Entity;
 
 namespace SocialNetwork.Bll.Interface.Services
@@ -30,6 +31,16 @@ namespace SocialNetwork.Bll.Interface.Services
         /// <returns>IEnumerable of all user's dialogs.</returns>
         IEnumerable<BllDialog> GetUserDialogs(int userId);
 
+
+        /// <summary>
+        /// Get all dialogs for user separeted to pages. 
+        /// </summary>
+        /// <param name="userId">user id.</param>
+        /// <param name="pageSize">elements count on one page</param>
+        /// <param name="pageNumber">number of page to draw</param>
+        /// <returns>IEnumerable of all user's dialogs.</returns>
+        IMappedPagedList<BllDialog> GetUserDialogsPage(int userId, int pageSize, int pageNumber);
+
         /// <summary>
         /// Get dialog of two users. Result can contains zero messages.
         /// </summary>
@@ -37,6 +48,16 @@ namespace SocialNetwork.Bll.Interface.Services
         /// <param name="secondUser">second user from dialog</param>
         /// <returns>Users dialog. Can contains empty list of messages (if users don't write messages)</returns>
         BllDialog GetUsersDialog(BllUser firstUser, BllUser secondUser);
+
+        /// <summary>
+        /// Get dialog of two users separeted to pages. Result can contains zero messages.
+        /// </summary>
+        /// <param name="firstUser">first user from dialog</param>
+        /// <param name="secondUser">second user from dialog</param>
+        /// <param name="pageSize">elements count on one page</param>
+        /// <param name="pageNumber">number of page to draw</param>
+        /// <returns>Users dialog. Can contains empty list of messages (if users don't write messages)</returns>
+        BllDialogPage GetUsersDialogPage(BllUser firstUser, BllUser secondUser, int pageSize, int pageNumber);
 
         /// <summary>
         /// Save new message to storage.
