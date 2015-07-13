@@ -30,6 +30,7 @@ namespace SocialNetwork.Orm
         public Nullable<System.DateTime> BirthDay { get; set; }
         public Nullable<Sex> Sex { get; set; }
         public string AboutUser { get; set; }
+        public byte[] Avatar { get; set; }
     
         public virtual ICollection<Message> SendedMessages { get; set; }
         public virtual ICollection<Message> GottenMessages { get; set; }

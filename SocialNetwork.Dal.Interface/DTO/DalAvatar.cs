@@ -20,6 +20,6 @@ namespace SocialNetwork.Dal.Interface.DTO
         /// <summary>
         /// Stream where avatar image saved.
         /// </summary>
-        public Stream ImageStream { get; set; }
+        public byte[] ImageBytes { get; set; }
     }
 }

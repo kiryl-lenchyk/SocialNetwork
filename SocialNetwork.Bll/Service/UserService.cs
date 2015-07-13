@@ -248,11 +248,11 @@ namespace SocialNetwork.Bll.Service
         {
             if (avatarStream == null) throw new ArgumentNullException("avatarStream");
             logger.Log(LogLevel.Trace,"UserService.SetUserAvatar invoked userId = {0}", userId);
-
-            avatarRepository.Update(new DalAvatar(){UserId = userId, ImageStream = avatarStream});
+            
+            avatarRepository.Update(new DalAvatar(){UserId = userId, ImageBytes =   ConvertToBytes(avatarStream)});
             uow.Commit();
         }
-
+        
         /// <summary>
         /// Get avatar for user.
         /// </summary>
@@ -262,7 +262,7 @@ namespace SocialNetwork.Bll.Service
         {
             logger.Log(LogLevel.Trace,"UserService.GetUserAvatarStream invoked userId = {0}", userId);
 
-            return avatarRepository.GetById(userId).ImageStream;
+            return new MemoryStream(avatarRepository.GetById(userId).ImageBytes);
         }
 
         /// <summary>
@@ -344,6 +344,15 @@ namespace SocialNetwork.Bll.Service
                 compareRule(
                     Expression.MakeMemberAccess(parametr, typeof(DalUser).GetProperty(propertyName)),
                     Expression.Constant(value, valuType)));
+        }
+
+        private static byte[] ConvertToBytes(Stream avatarStream)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                avatarStream.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
         #endregion
     }

@@ -56,7 +56,9 @@
     <Compile Include="ExpressionMappers\GenericExpressionMapper.cs" />
     <Compile Include="ExpressionMappers\SimpleExpressionReplacer .cs" />
     <Compile Include="ExpressionMappers\MessageExpressionMapper.cs" />
+    <Compile Include="ExpressionMappers\AvatarExpressionMapper.cs" />
     <Compile Include="ExpressionMappers\UserExpressionMapper.cs" />
+    <Compile Include="Mappers\AvatarMapper.cs" />
     <Compile Include="Mappers\MessageMapper.cs" />
     <Compile Include="Mappers\RoleMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
