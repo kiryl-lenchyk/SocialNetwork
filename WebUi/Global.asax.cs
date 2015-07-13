@@ -36,12 +36,12 @@ namespace WebUi
             if (httpException != null && httpException.GetHttpCode() == 404)
             {
                 logger.Log(LogLevel.Warn,httpException.Message);
-                Response.Redirect("/404");
+                Response.Redirect("~/404");
             }
             else
             {
                 logger.Log(LogLevel.Fatal,exception.ToString());
-                Response.Redirect("/Error");
+                Response.Redirect("~/Error");
             }
         }
     }
