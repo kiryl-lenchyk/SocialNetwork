@@ -140,7 +140,7 @@ namespace SocialNetwork.Bll
         /// </value>
         public bool HasNextPage
         {
-            get { return PageNumber != PageCount; }
+            get { return PageNumber < PageCount; }
         }
 
         /// <summary>
